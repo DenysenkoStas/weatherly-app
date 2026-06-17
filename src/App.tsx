@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
 import { useLanguage } from './hooks/useLanguage'
 import { useGeocoding } from './hooks/useGeocoding'
 import { useWeather } from './hooks/useWeather'
@@ -11,6 +11,11 @@ import { getWeatherLabel } from './utils'
 import type { GeoResult } from './types'
 import styles from './App.module.scss'
 
+interface Coords {
+  lat: number
+  lon: number
+}
+
 function App() {
   const { language, toggleLanguage, t } = useLanguage()
   const { results, loading: geoLoading, error: geoError, search, reset } = useGeocoding(language)
@@ -18,30 +23,46 @@ function App() {
   const { latitude, longitude, loading: geolocLoading } = useGeolocation()
   const { cityName, fetchCityName } = useReverseGeocoding(language)
 
-  const [selectedCity, setSelectedCity] = useState<GeoResult | null>(null)
+  const [selectedCoords, setSelectedCoords] = useState<Coords | null>(null)
+
+  const geoCoords = useMemo<Coords | null>(
+    () => (latitude !== null && longitude !== null ? { lat: latitude, lon: longitude } : null),
+    [latitude, longitude],
+  )
+
+  const displayCoords = useMemo(
+    () => selectedCoords ?? geoCoords,
+    [selectedCoords, geoCoords],
+  )
 
   useEffect(() => {
-    if (latitude === null || longitude === null) return
-    void fetchWeather(latitude, longitude)
-    void fetchCityName(latitude, longitude)
-  }, [latitude, longitude, fetchWeather, fetchCityName])
+    if (!geoCoords) return
+    void fetchWeather(geoCoords.lat, geoCoords.lon)
+  }, [geoCoords, fetchWeather])
+
+  useEffect(() => {
+    if (!displayCoords) return
+    void fetchCityName(displayCoords.lat, displayCoords.lon)
+  }, [displayCoords, fetchCityName])
 
   const handleSearch = useCallback(
     (query: string) => {
-      setSelectedCity(null)
+      setSelectedCoords(null)
       void search(query)
     },
     [search],
   )
 
-  const handleSelectCity = (city: GeoResult) => {
-    setSelectedCity(city)
-    reset()
-    void fetchWeather(city.latitude, city.longitude)
-  }
+  const handleSelectCity = useCallback(
+    (city: GeoResult) => {
+      reset()
+      setSelectedCoords({ lat: city.latitude, lon: city.longitude })
+      void fetchWeather(city.latitude, city.longitude)
+    },
+    [reset, fetchWeather],
+  )
 
   const error = geoError || weatherError
-  const displayCity = selectedCity?.name ?? cityName
 
   return (
     <div className={styles.app}>
@@ -66,9 +87,9 @@ function App() {
         <CityList results={results} onSelect={handleSelectCity} />
       ) : null}
 
-      {weather && displayCity && !weatherLoading && (
+      {weather && cityName && !weatherLoading && (
         <WeatherCard
-          city={displayCity}
+          city={cityName}
           weather={weather}
           description={getWeatherLabel(weather.weather_code, t.weather)}
           t={t}

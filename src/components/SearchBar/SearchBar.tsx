@@ -9,19 +9,24 @@ interface SearchBarProps {
 export function SearchBar({ placeholder, onSearch }: SearchBarProps) {
   const [value, setValue] = useState('')
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const onSearchRef = useRef(onSearch)
+
+  useEffect(() => {
+    onSearchRef.current = onSearch
+  }, [onSearch])
 
   useEffect(() => {
     if (timerRef.current) clearTimeout(timerRef.current)
     if (!value.trim()) return
 
     timerRef.current = setTimeout(() => {
-      onSearch(value.trim())
+      onSearchRef.current(value.trim())
     }, 500)
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [value, onSearch])
+  }, [value])
 
   return (
     <div className={styles.wrapper}>
