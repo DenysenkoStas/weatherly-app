@@ -1,0 +1,1 @@
+export { getWeatherLabel } from './wmo'
