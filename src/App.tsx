@@ -34,7 +34,7 @@ function App() {
       <header className={styles.header}>
         <h1 className={styles.logo}>{t.appName}</h1>
         <button className={styles.langToggle} onClick={toggleLanguage}>
-          {language === 'en' ? 'UA' : 'EN'}
+          {language === 'en' ? 'EN' : 'UA'}
         </button>
       </header>
 
