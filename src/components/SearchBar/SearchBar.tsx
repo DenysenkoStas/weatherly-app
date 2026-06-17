@@ -1,23 +1,27 @@
-import { useState } from 'react'
-import type { KeyboardEvent } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import styles from './SearchBar.module.scss'
 
 interface SearchBarProps {
   placeholder: string
-  buttonLabel: string
   onSearch: (query: string) => void
 }
 
-export function SearchBar({ placeholder, buttonLabel, onSearch }: SearchBarProps) {
+export function SearchBar({ placeholder, onSearch }: SearchBarProps) {
   const [value, setValue] = useState('')
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const handleSearch = () => {
-    if (value.trim()) onSearch(value.trim())
-  }
+  useEffect(() => {
+    if (timerRef.current) clearTimeout(timerRef.current)
+    if (!value.trim()) return
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') handleSearch()
-  }
+    timerRef.current = setTimeout(() => {
+      onSearch(value.trim())
+    }, 500)
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current)
+    }
+  }, [value, onSearch])
 
   return (
     <div className={styles.wrapper}>
@@ -27,11 +31,7 @@ export function SearchBar({ placeholder, buttonLabel, onSearch }: SearchBarProps
         value={value}
         placeholder={placeholder}
         onChange={(e) => setValue(e.target.value)}
-        onKeyDown={handleKeyDown}
       />
-      <button className={styles.button} onClick={handleSearch}>
-        {buttonLabel}
-      </button>
     </div>
   )
 }

@@ -38,7 +38,6 @@
 
 .details {
   display: flex;
-  justify-content: space-between;
   padding-top: 16px;
   width: 100%;
   border-top: 1px solid var(--border);
@@ -46,6 +45,7 @@
 
 .detail {
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: center;
   gap: 4px;

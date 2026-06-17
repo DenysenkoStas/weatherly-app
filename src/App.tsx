@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useLanguage } from './hooks/useLanguage'
 import { useGeocoding } from './hooks/useGeocoding'
 import { useWeather } from './hooks/useWeather'
@@ -11,15 +11,18 @@ import styles from './App.module.scss'
 
 function App() {
   const { language, toggleLanguage, t } = useLanguage()
-  const { results, loading: geoLoading, error: geoError, search, reset } = useGeocoding()
+  const { results, loading: geoLoading, error: geoError, search, reset } = useGeocoding(language)
   const { weather, loading: weatherLoading, error: weatherError, fetch: fetchWeather } = useWeather()
 
   const [selectedCity, setSelectedCity] = useState<GeoResult | null>(null)
 
-  const handleSearch = (query: string) => {
-    setSelectedCity(null)
-    void search(query)
-  }
+  const handleSearch = useCallback(
+    (query: string) => {
+      setSelectedCity(null)
+      void search(query)
+    },
+    [search],
+  )
 
   const handleSelectCity = (city: GeoResult) => {
     setSelectedCity(city)
@@ -40,7 +43,6 @@ function App() {
 
       <SearchBar
         placeholder={t.searchPlaceholder}
-        buttonLabel={t.searchButton}
         onSearch={handleSearch}
       />
 

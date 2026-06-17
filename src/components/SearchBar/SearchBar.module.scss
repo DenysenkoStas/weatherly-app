@@ -1,6 +1,5 @@
 .wrapper {
   display: flex;
-  gap: 8px;
   margin-top: 32px;
   width: 100%;
   max-width: 480px;
@@ -23,21 +22,5 @@
 
   &:focus {
     border-color: var(--accent);
-  }
-}
-
-.button {
-  padding: 10px 18px;
-  font-size: 15px;
-  font-weight: 600;
-  color: #fff;
-  background: var(--accent);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.2s;
-
-  &:hover {
-    background: var(--accent-hover);
   }
 }
