@@ -1,14 +1,14 @@
 import { useLanguage } from './hooks/useLanguage'
-import './App.css'
+import styles from './App.module.scss'
 
 function App() {
   const { language, toggleLanguage, t } = useLanguage()
 
   return (
-    <div className="app">
-      <header className="header">
-        <h1 className="logo">{t.appName}</h1>
-        <button className="lang-toggle" onClick={toggleLanguage}>
+    <div className={styles.app}>
+      <header className={styles.header}>
+        <h1 className={styles.logo}>{t.appName}</h1>
+        <button className={styles.langToggle} onClick={toggleLanguage}>
           {language === 'en' ? 'UA' : 'EN'}
         </button>
       </header>

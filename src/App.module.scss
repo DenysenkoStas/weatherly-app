@@ -1,17 +1,17 @@
 .app {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 24px 16px;
+  min-height: 100vh;
 }
 
 .header {
-  width: 100%;
-  max-width: 480px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+  max-width: 480px;
 }
 
 .logo {
@@ -19,19 +19,19 @@
   font-weight: 600;
 }
 
-.lang-toggle {
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--text);
+.langToggle {
+  padding: 4px 10px;
   font-size: 14px;
   font-weight: 600;
-  padding: 4px 10px;
+  color: var(--text);
+  background: none;
+  border: 1px solid var(--border);
   border-radius: 6px;
   cursor: pointer;
   transition: border-color 0.2s;
-}
 
-.lang-toggle:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+  &:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
 }
