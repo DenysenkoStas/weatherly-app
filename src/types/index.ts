@@ -1,4 +1,7 @@
+import type { en, uk } from '../locales'
+
 export type Language = 'en' | 'uk'
+export type Translations = typeof en | typeof uk
 
 export interface GeoResult {
   id: number

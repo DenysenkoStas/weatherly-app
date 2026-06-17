@@ -1,17 +1,22 @@
 import type { WeatherCurrent } from '../../types'
-import type { en } from '../../locales'
-import { getWeatherLabel } from '../../utils'
 import styles from './WeatherCard.module.scss'
+
+interface WeatherCardTranslations {
+  feels_like: string
+  humidity: string
+  wind: string
+  wind_unit: string
+  temp_unit: string
+}
 
 interface WeatherCardProps {
   city: string
   weather: WeatherCurrent
-  t: typeof en
+  description: string
+  t: WeatherCardTranslations
 }
 
-export function WeatherCard({ city, weather, t }: WeatherCardProps) {
-  const description = getWeatherLabel(weather.weather_code, t.weather)
-
+export function WeatherCard({ city, weather, description, t }: WeatherCardProps) {
   return (
     <div className={styles.card}>
       <div className={styles.top}>
