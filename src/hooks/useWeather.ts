@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import type { WeatherResponse, WeatherCurrent } from '../types'
 
 const WEATHER_API = 'https://api.open-meteo.com/v1/forecast'
@@ -15,7 +15,7 @@ export function useWeather(): UseWeatherReturn {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const fetch = async (lat: number, lon: number) => {
+  const fetch = useCallback(async (lat: number, lon: number) => {
     setLoading(true)
     setError(null)
 
@@ -40,7 +40,7 @@ export function useWeather(): UseWeatherReturn {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   return { weather, loading, error, fetch }
 }

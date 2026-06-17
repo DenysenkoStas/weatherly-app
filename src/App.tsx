@@ -1,7 +1,9 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useLanguage } from './hooks/useLanguage'
 import { useGeocoding } from './hooks/useGeocoding'
 import { useWeather } from './hooks/useWeather'
+import { useGeolocation } from './hooks/useGeolocation'
+import { useReverseGeocoding } from './hooks/useReverseGeocoding'
 import { SearchBar } from './components/SearchBar'
 import { CityList } from './components/CityList'
 import { WeatherCard } from './components/WeatherCard'
@@ -13,8 +15,16 @@ function App() {
   const { language, toggleLanguage, t } = useLanguage()
   const { results, loading: geoLoading, error: geoError, search, reset } = useGeocoding(language)
   const { weather, loading: weatherLoading, error: weatherError, fetch: fetchWeather } = useWeather()
+  const { latitude, longitude, loading: geolocLoading } = useGeolocation()
+  const { cityName, fetchCityName } = useReverseGeocoding(language)
 
   const [selectedCity, setSelectedCity] = useState<GeoResult | null>(null)
+
+  useEffect(() => {
+    if (latitude === null || longitude === null) return
+    void fetchWeather(latitude, longitude)
+    void fetchCityName(latitude, longitude)
+  }, [latitude, longitude, fetchWeather, fetchCityName])
 
   const handleSearch = useCallback(
     (query: string) => {
@@ -31,6 +41,7 @@ function App() {
   }
 
   const error = geoError || weatherError
+  const displayCity = selectedCity?.name ?? cityName
 
   return (
     <div className={styles.app}>
@@ -41,28 +52,23 @@ function App() {
         </button>
       </header>
 
-      <SearchBar
-        placeholder={t.searchPlaceholder}
-        onSearch={handleSearch}
-      />
+      <SearchBar placeholder={t.searchPlaceholder} onSearch={handleSearch} />
 
-      {(geoLoading || weatherLoading) && (
+      {(geoLoading || weatherLoading || geolocLoading) && (
         <p className={styles.status}>...</p>
       )}
 
       {error && (
-        <p className={styles.error}>
-          {t.errors[error as keyof typeof t.errors]}
-        </p>
+        <p className={styles.error}>{t.errors[error as keyof typeof t.errors]}</p>
       )}
 
       {!geoLoading ? (
         <CityList results={results} onSelect={handleSelectCity} />
       ) : null}
 
-      {weather && selectedCity && !weatherLoading && (
+      {weather && displayCity && !weatherLoading && (
         <WeatherCard
-          city={selectedCity.name}
+          city={displayCity}
           weather={weather}
           description={getWeatherLabel(weather.weather_code, t.weather)}
           t={t}
