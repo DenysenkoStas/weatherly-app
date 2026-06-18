@@ -20,7 +20,7 @@ function App() {
   const { language, toggleLanguage, t } = useLanguage()
   const { results, loading: geoLoading, error: geoError, search, reset } = useGeocoding(language)
   const { weather, loading: weatherLoading, error: weatherError, fetch: fetchWeather } = useWeather()
-  const { latitude, longitude, loading: geolocLoading } = useGeolocation()
+  const { latitude, longitude, loading: geolocLoading, denied: geolocDenied } = useGeolocation()
   const { cityName, fetchCityName } = useReverseGeocoding(language)
 
   const [selectedCoords, setSelectedCoords] = useState<Coords | null>(null)
@@ -79,6 +79,10 @@ function App() {
         <p className={styles.status}>...</p>
       )}
 
+      {geolocDenied && !error && (
+        <p className={styles.error}>{t.errors.geolocation_denied}</p>
+      )}
+
       {error && (
         <p className={styles.error}>{t.errors[error as keyof typeof t.errors]}</p>
       )}
@@ -94,6 +98,10 @@ function App() {
           description={getWeatherLabel(weather.weather_code, t.weather)}
           t={t}
         />
+      )}
+
+      {!weather && !weatherLoading && !geolocLoading && !geolocDenied && !error && (
+        <p className={styles.emptyState}>{t.empty_state}</p>
       )}
     </div>
   )

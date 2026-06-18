@@ -38,6 +38,8 @@ export const en = {
   errors: {
     city_not_found: 'City not found',
     fetch_failed: 'Failed to fetch weather data',
+    geolocation_denied: 'Location access denied. Search for a city manually.',
   },
+  empty_state: 'Search for a city to see the weather',
   weather,
 } as const

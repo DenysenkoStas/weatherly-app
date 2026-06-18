@@ -38,6 +38,8 @@ export const uk = {
   errors: {
     city_not_found: 'Місто не знайдено',
     fetch_failed: 'Не вдалося отримати дані погоди',
+    geolocation_denied: 'Доступ до геолокації заборонено. Шукайте місто вручну.',
   },
+  empty_state: 'Введіть назву міста, щоб дізнатися погоду',
   weather,
 } as const
