@@ -1,12 +1,16 @@
 import { useState, useEffect, useRef } from 'react'
+import { CityList } from '../CityList'
+import type { GeoResult } from '../../types'
 import styles from './SearchBar.module.scss'
 
 interface SearchBarProps {
   placeholder: string
   onSearch: (query: string) => void
+  results: GeoResult[]
+  onSelect: (city: GeoResult) => void
 }
 
-export function SearchBar({ placeholder, onSearch }: SearchBarProps) {
+export function SearchBar({ placeholder, onSearch, results, onSelect }: SearchBarProps) {
   const [value, setValue] = useState('')
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const onSearchRef = useRef(onSearch)
@@ -37,6 +41,7 @@ export function SearchBar({ placeholder, onSearch }: SearchBarProps) {
         placeholder={placeholder}
         onChange={(e) => setValue(e.target.value)}
       />
+      <CityList results={results} onSelect={onSelect} />
     </div>
   )
 }

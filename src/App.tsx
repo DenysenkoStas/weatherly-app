@@ -5,7 +5,6 @@ import { useWeather } from './hooks/useWeather'
 import { useGeolocation } from './hooks/useGeolocation'
 import { useReverseGeocoding } from './hooks/useReverseGeocoding'
 import { SearchBar } from './components/SearchBar'
-import { CityList } from './components/CityList'
 import { WeatherCard } from './components/WeatherCard'
 import { getWeatherLabel } from './utils'
 import type { GeoResult } from './types'
@@ -73,7 +72,12 @@ function App() {
         </button>
       </header>
 
-      <SearchBar placeholder={t.searchPlaceholder} onSearch={handleSearch} />
+      <SearchBar
+        placeholder={t.searchPlaceholder}
+        onSearch={handleSearch}
+        results={results}
+        onSelect={handleSelectCity}
+      />
 
       {(geoLoading || weatherLoading || geolocLoading) && (
         <p className={styles.status}>...</p>
@@ -86,10 +90,6 @@ function App() {
       {error && (
         <p className={styles.error}>{t.errors[error as keyof typeof t.errors]}</p>
       )}
-
-      {!geoLoading ? (
-        <CityList results={results} onSelect={handleSelectCity} />
-      ) : null}
 
       {weather && cityName && !weatherLoading && (
         <WeatherCard

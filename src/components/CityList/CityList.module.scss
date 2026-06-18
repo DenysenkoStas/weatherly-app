@@ -1,13 +1,17 @@
 .list {
-  margin: 4px 0 0;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 10;
+  margin: 0;
   padding: 0;
   width: 100%;
-  max-width: 480px;
   list-style: none;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 .item {
