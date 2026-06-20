@@ -40,6 +40,7 @@ export const en = {
     fetch_failed: 'Failed to fetch weather data',
     geolocation_denied: 'Location access denied. Search for a city manually.',
   },
+  updated_at: 'Updated at',
   empty_state: 'Search for a city to see the weather',
   days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
   months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],

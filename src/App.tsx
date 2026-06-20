@@ -20,7 +20,7 @@ interface Coords {
 function App() {
   const { language, toggleLanguage, t } = useLanguage()
   const { results, error: geoError, search, reset } = useGeocoding(language)
-  const { weather, forecast, loading: weatherLoading, error: weatherError, fetch: fetchWeather } = useWeather()
+  const { weather, forecast, updatedAt, loading: weatherLoading, error: weatherError, fetch: fetchWeather } = useWeather()
   const { latitude, longitude, loading: geolocLoading, denied: geolocDenied } = useGeolocation()
   const { cityName, fetchCityName } = useReverseGeocoding(language)
 
@@ -65,6 +65,11 @@ function App() {
 
   const error = geoError || weatherError
 
+  const handleRefresh = useCallback(() => {
+    if (!displayCoords) return
+    void fetchWeather(displayCoords.lat, displayCoords.lon)
+  }, [displayCoords, fetchWeather])
+
   return (
     <div className={styles.app}>
       <header className={styles.header}>
@@ -91,11 +96,13 @@ function App() {
         <p className={styles.error}>{t.errors[error as keyof typeof t.errors]}</p>
       )}
 
-      {weather && cityName && !weatherLoading && (
+      {weather && cityName && updatedAt && !weatherLoading && (
         <WeatherCard
           city={cityName}
           weather={weather}
           description={getWeatherLabel(weather.weather_code, t.weather)}
+          updatedAt={updatedAt}
+          onRefresh={handleRefresh}
           t={t}
         />
       )}

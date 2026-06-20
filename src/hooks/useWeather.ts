@@ -6,6 +6,7 @@ const WEATHER_API = 'https://api.open-meteo.com/v1/forecast'
 interface UseWeatherReturn {
   weather: WeatherCurrent | null
   forecast: WeatherDaily | null
+  updatedAt: Date | null
   loading: boolean
   error: string | null
   fetch: (lat: number, lon: number) => Promise<void>
@@ -14,6 +15,7 @@ interface UseWeatherReturn {
 export function useWeather(): UseWeatherReturn {
   const [weather, setWeather] = useState<WeatherCurrent | null>(null)
   const [forecast, setForecast] = useState<WeatherDaily | null>(null)
+  const [updatedAt, setUpdatedAt] = useState<Date | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -40,6 +42,7 @@ export function useWeather(): UseWeatherReturn {
       const data: WeatherResponse = await res.json()
       setWeather(data.current)
       setForecast(data.daily)
+      setUpdatedAt(new Date())
     } catch {
       setError('fetch_failed')
     } finally {
@@ -47,5 +50,5 @@ export function useWeather(): UseWeatherReturn {
     }
   }, [])
 
-  return { weather, forecast, loading, error, fetch }
+  return { weather, forecast, updatedAt, loading, error, fetch }
 }

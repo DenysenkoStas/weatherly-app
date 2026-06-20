@@ -3,6 +3,7 @@ import styles from './WeatherCardSkeleton.module.scss'
 export function WeatherCardSkeleton() {
   return (
     <div className={styles.card}>
+      <div className={styles.refresh} />
       <div className={styles.top}>
         <div className={styles.city} />
         <div className={styles.description} />
@@ -25,6 +26,8 @@ export function WeatherCardSkeleton() {
           <div className={styles.value} />
         </div>
       </div>
+
+      <div className={styles.updatedAt} />
     </div>
   )
 }
