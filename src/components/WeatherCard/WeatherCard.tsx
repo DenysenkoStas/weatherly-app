@@ -1,4 +1,5 @@
 import type { WeatherCurrent } from '../../types'
+import { getWeatherIcon } from '../../utils/wmoIcons'
 import styles from './WeatherCard.module.scss'
 
 interface WeatherCardTranslations {
@@ -23,6 +24,12 @@ export function WeatherCard({ city, weather, description, t }: WeatherCardProps)
         <h2 className={styles.city}>{city}</h2>
         <p className={styles.description}>{description}</p>
       </div>
+
+      <img
+        className={styles.icon}
+        src={getWeatherIcon(weather.weather_code)}
+        alt={description}
+      />
 
       <div className={styles.temp}>
         {Math.round(weather.temperature_2m)}{t.temp_unit}
