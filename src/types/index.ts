@@ -3,6 +3,13 @@ import type { en, uk } from '../locales'
 export type Language = 'en' | 'uk'
 export type Translations = typeof en | typeof uk
 
+export interface FavoriteCity {
+  id: string
+  name: string
+  latitude: number
+  longitude: number
+}
+
 export interface GeoResult {
   id: number
   name: string

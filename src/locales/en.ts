@@ -41,6 +41,8 @@ export const en = {
     geolocation_denied: 'Location access denied. Search for a city manually.',
   },
   updated_at: 'Updated at',
+  add_favorite: 'Add to favorites',
+  remove_favorite: 'Remove from favorites',
   empty_state: 'Search for a city to see the weather',
   days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
   months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],

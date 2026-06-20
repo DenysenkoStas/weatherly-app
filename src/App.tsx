@@ -8,6 +8,9 @@ import { SearchBar } from './components/SearchBar'
 import { WeatherCard } from './components/WeatherCard'
 import { WeatherCardSkeleton } from './components/WeatherCardSkeleton/WeatherCardSkeleton'
 import { ForecastCard } from './components/ForecastCard/ForecastCard'
+import { FavoritesList } from './components/FavoritesList/FavoritesList'
+import { useFavorites, makeFavoriteId } from './hooks/useFavorites'
+import type { FavoriteCity } from './types'
 import { getWeatherLabel } from './utils'
 import type { GeoResult } from './types'
 import styles from './App.module.scss'
@@ -23,6 +26,7 @@ function App() {
   const { weather, forecast, updatedAt, loading: weatherLoading, error: weatherError, fetch: fetchWeather } = useWeather()
   const { latitude, longitude, loading: geolocLoading, denied: geolocDenied } = useGeolocation()
   const { cityName, loading: cityLoading, fetchCityName } = useReverseGeocoding(language)
+  const { favorites, isFavorite, toggleFavorite } = useFavorites()
 
   const [selectedCoords, setSelectedCoords] = useState<Coords | null>(null)
 
@@ -63,6 +67,29 @@ function App() {
     [reset, fetchWeather],
   )
 
+  const currentFavoriteId = displayCoords
+    ? makeFavoriteId(displayCoords.lat, displayCoords.lon)
+    : null
+
+  const handleToggleFavorite = useCallback(() => {
+    if (!displayCoords || !cityName) return
+    const city: FavoriteCity = {
+      id: makeFavoriteId(displayCoords.lat, displayCoords.lon),
+      name: cityName,
+      latitude: displayCoords.lat,
+      longitude: displayCoords.lon,
+    }
+    toggleFavorite(city)
+  }, [displayCoords, cityName, toggleFavorite])
+
+  const handleSelectFavorite = useCallback(
+    (city: FavoriteCity) => {
+      setSelectedCoords({ lat: city.latitude, lon: city.longitude })
+      void fetchWeather(city.latitude, city.longitude)
+    },
+    [fetchWeather],
+  )
+
   const error = geoError || weatherError
 
   const handleRefresh = useCallback(() => {
@@ -86,6 +113,8 @@ function App() {
         onSelect={handleSelectCity}
       />
 
+      <FavoritesList favorites={favorites} onSelect={handleSelectFavorite} />
+
       {(weatherLoading || geolocLoading || cityLoading || (!!displayCoords && (!weather || !cityName))) && <WeatherCardSkeleton />}
 
       {geolocDenied && !error && (
@@ -102,7 +131,9 @@ function App() {
           weather={weather}
           description={getWeatherLabel(weather.weather_code, t.weather)}
           updatedAt={updatedAt}
+          isFavorite={currentFavoriteId ? isFavorite(currentFavoriteId) : false}
           onRefresh={handleRefresh}
+          onToggleFavorite={handleToggleFavorite}
           t={t}
         />
       )}

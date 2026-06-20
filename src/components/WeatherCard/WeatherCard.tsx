@@ -9,6 +9,8 @@ interface WeatherCardTranslations {
   wind_unit: string
   temp_unit: string
   updated_at: string
+  add_favorite: string
+  remove_favorite: string
 }
 
 interface WeatherCardProps {
@@ -16,7 +18,9 @@ interface WeatherCardProps {
   weather: WeatherCurrent
   description: string
   updatedAt: Date
+  isFavorite: boolean
   onRefresh: () => void
+  onToggleFavorite: () => void
   t: WeatherCardTranslations
 }
 
@@ -25,7 +29,9 @@ export function WeatherCard({
   weather,
   description,
   updatedAt,
+  isFavorite,
   onRefresh,
+  onToggleFavorite,
   t,
 }: WeatherCardProps) {
   const time = updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -34,6 +40,13 @@ export function WeatherCard({
     <div className={styles.card}>
       <button className={styles.refresh} onClick={onRefresh} aria-label="Refresh">
         ↻
+      </button>
+      <button
+        className={`${styles.favorite}${isFavorite ? ` ${styles.favoriteActive}` : ''}`}
+        onClick={onToggleFavorite}
+        aria-label={isFavorite ? t.remove_favorite : t.add_favorite}
+      >
+        {isFavorite ? '★' : '☆'}
       </button>
 
       <div className={styles.top}>
