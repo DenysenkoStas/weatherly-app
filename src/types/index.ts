@@ -25,6 +25,14 @@ export interface WeatherCurrent {
   weather_code: number
 }
 
+export interface WeatherDaily {
+  time: string[]
+  weather_code: number[]
+  temperature_2m_max: number[]
+  temperature_2m_min: number[]
+}
+
 export interface WeatherResponse {
   current: WeatherCurrent
+  daily: WeatherDaily
 }

@@ -7,6 +7,7 @@ import { useReverseGeocoding } from './hooks/useReverseGeocoding'
 import { SearchBar } from './components/SearchBar'
 import { WeatherCard } from './components/WeatherCard'
 import { WeatherCardSkeleton } from './components/WeatherCardSkeleton/WeatherCardSkeleton'
+import { ForecastCard } from './components/ForecastCard/ForecastCard'
 import { getWeatherLabel } from './utils'
 import type { GeoResult } from './types'
 import styles from './App.module.scss'
@@ -19,7 +20,7 @@ interface Coords {
 function App() {
   const { language, toggleLanguage, t } = useLanguage()
   const { results, error: geoError, search, reset } = useGeocoding(language)
-  const { weather, loading: weatherLoading, error: weatherError, fetch: fetchWeather } = useWeather()
+  const { weather, forecast, loading: weatherLoading, error: weatherError, fetch: fetchWeather } = useWeather()
   const { latitude, longitude, loading: geolocLoading, denied: geolocDenied } = useGeolocation()
   const { cityName, fetchCityName } = useReverseGeocoding(language)
 
@@ -97,6 +98,10 @@ function App() {
           description={getWeatherLabel(weather.weather_code, t.weather)}
           t={t}
         />
+      )}
+
+      {forecast && !weatherLoading && (
+        <ForecastCard forecast={forecast} t={{ ...t, weather: t.weather as Record<number, string> }} />
       )}
 
       {!weather && !weatherLoading && !geolocLoading && !geolocDenied && !error && (

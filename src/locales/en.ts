@@ -41,5 +41,8 @@ export const en = {
     geolocation_denied: 'Location access denied. Search for a city manually.',
   },
   empty_state: 'Search for a city to see the weather',
+  days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+  today: 'Today',
   weather,
 } as const

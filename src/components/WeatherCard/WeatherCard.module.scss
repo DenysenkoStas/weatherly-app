@@ -3,13 +3,17 @@
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  margin-top: 24px;
+  margin-top: 16px;
   padding: 32px 24px;
   width: 100%;
   max-width: 480px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
+
+  @media (max-width: 400px) {
+    padding: 24px 16px;
+  }
 }
 
 .top {
@@ -61,6 +65,12 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--text-muted);
+  text-align: center;
+
+  @media (max-width: 400px) {
+    font-size: 10px;
+    letter-spacing: 0;
+  }
 }
 
 .value {

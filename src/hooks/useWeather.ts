@@ -1,10 +1,11 @@
 import { useState, useCallback } from 'react'
-import type { WeatherResponse, WeatherCurrent } from '../types'
+import type { WeatherResponse, WeatherCurrent, WeatherDaily } from '../types'
 
 const WEATHER_API = 'https://api.open-meteo.com/v1/forecast'
 
 interface UseWeatherReturn {
   weather: WeatherCurrent | null
+  forecast: WeatherDaily | null
   loading: boolean
   error: string | null
   fetch: (lat: number, lon: number) => Promise<void>
@@ -12,6 +13,7 @@ interface UseWeatherReturn {
 
 export function useWeather(): UseWeatherReturn {
   const [weather, setWeather] = useState<WeatherCurrent | null>(null)
+  const [forecast, setForecast] = useState<WeatherDaily | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -27,14 +29,17 @@ export function useWeather(): UseWeatherReturn {
         'current',
         'temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code',
       )
+      url.searchParams.set('daily', 'weather_code,temperature_2m_max,temperature_2m_min')
       url.searchParams.set('wind_speed_unit', 'ms')
-      url.searchParams.set('forecast_days', '1')
+      url.searchParams.set('timezone', 'auto')
+      url.searchParams.set('forecast_days', '7')
 
       const res = await globalThis.fetch(url)
       if (!res.ok) throw new Error()
 
       const data: WeatherResponse = await res.json()
       setWeather(data.current)
+      setForecast(data.daily)
     } catch {
       setError('fetch_failed')
     } finally {
@@ -42,5 +47,5 @@ export function useWeather(): UseWeatherReturn {
     }
   }, [])
 
-  return { weather, loading, error, fetch }
+  return { weather, forecast, loading, error, fetch }
 }
