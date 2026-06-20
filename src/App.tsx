@@ -22,7 +22,7 @@ function App() {
   const { results, error: geoError, search, reset } = useGeocoding(language)
   const { weather, forecast, updatedAt, loading: weatherLoading, error: weatherError, fetch: fetchWeather } = useWeather()
   const { latitude, longitude, loading: geolocLoading, denied: geolocDenied } = useGeolocation()
-  const { cityName, fetchCityName } = useReverseGeocoding(language)
+  const { cityName, loading: cityLoading, fetchCityName } = useReverseGeocoding(language)
 
   const [selectedCoords, setSelectedCoords] = useState<Coords | null>(null)
 
@@ -86,7 +86,7 @@ function App() {
         onSelect={handleSelectCity}
       />
 
-      {(weatherLoading || geolocLoading) && <WeatherCardSkeleton />}
+      {(weatherLoading || geolocLoading || cityLoading || (!!displayCoords && (!weather || !cityName))) && <WeatherCardSkeleton />}
 
       {geolocDenied && !error && (
         <p className={styles.error}>{t.errors.geolocation_denied}</p>
@@ -111,7 +111,7 @@ function App() {
         <ForecastCard forecast={forecast} t={{ ...t, weather: t.weather as Record<number, string> }} />
       )}
 
-      {!weather && !weatherLoading && !geolocLoading && !geolocDenied && !error && (
+      {!weather && !weatherLoading && !geolocLoading && !geolocDenied && !error && !displayCoords && (
         <p className={styles.emptyState}>{t.empty_state}</p>
       )}
     </div>
