@@ -1,0 +1,95 @@
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 480px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+%bone {
+  background: linear-gradient(90deg, var(--border) 25%, var(--surface-hover, #2a2a2a) 50%, var(--border) 75%);
+  background-size: 400px 100%;
+  border-radius: 6px;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.city {
+  @extend %bone;
+
+  width: 140px;
+  height: 22px;
+}
+
+.description {
+  @extend %bone;
+
+  width: 100px;
+  height: 15px;
+}
+
+.icon {
+  @extend %bone;
+
+  width: 96px;
+  height: 96px;
+  border-radius: 12px;
+}
+
+.temp {
+  @extend %bone;
+
+  width: 120px;
+  height: 72px;
+  border-radius: 8px;
+}
+
+.details {
+  display: flex;
+  padding-top: 16px;
+  width: 100%;
+  border-top: 1px solid var(--border);
+}
+
+.detail {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.label {
+  @extend %bone;
+
+  width: 60px;
+  height: 12px;
+}
+
+.value {
+  @extend %bone;
+
+  width: 48px;
+  height: 16px;
+}

@@ -6,6 +6,7 @@ import { useGeolocation } from './hooks/useGeolocation'
 import { useReverseGeocoding } from './hooks/useReverseGeocoding'
 import { SearchBar } from './components/SearchBar'
 import { WeatherCard } from './components/WeatherCard'
+import { WeatherCardSkeleton } from './components/WeatherCardSkeleton/WeatherCardSkeleton'
 import { getWeatherLabel } from './utils'
 import type { GeoResult } from './types'
 import styles from './App.module.scss'
@@ -17,7 +18,7 @@ interface Coords {
 
 function App() {
   const { language, toggleLanguage, t } = useLanguage()
-  const { results, loading: geoLoading, error: geoError, search, reset } = useGeocoding(language)
+  const { results, error: geoError, search, reset } = useGeocoding(language)
   const { weather, loading: weatherLoading, error: weatherError, fetch: fetchWeather } = useWeather()
   const { latitude, longitude, loading: geolocLoading, denied: geolocDenied } = useGeolocation()
   const { cityName, fetchCityName } = useReverseGeocoding(language)
@@ -79,9 +80,7 @@ function App() {
         onSelect={handleSelectCity}
       />
 
-      {(geoLoading || weatherLoading || geolocLoading) && (
-        <p className={styles.status}>...</p>
-      )}
+      {(weatherLoading || geolocLoading) && <WeatherCardSkeleton />}
 
       {geolocDenied && !error && (
         <p className={styles.error}>{t.errors.geolocation_denied}</p>
