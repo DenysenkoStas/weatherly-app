@@ -6,9 +6,9 @@ import { useGeolocation } from './hooks/useGeolocation'
 import { useReverseGeocoding } from './hooks/useReverseGeocoding'
 import { SearchBar } from './components/SearchBar'
 import { WeatherCard } from './components/WeatherCard'
-import { WeatherCardSkeleton } from './components/WeatherCardSkeleton/WeatherCardSkeleton'
-import { ForecastCard } from './components/ForecastCard/ForecastCard'
-import { FavoritesList } from './components/FavoritesList/FavoritesList'
+import { WeatherCardSkeleton } from './components/WeatherCardSkeleton'
+import { ForecastCard } from './components/ForecastCard'
+import { FavoritesList } from './components/FavoritesList'
 import { useFavorites, makeFavoriteId } from './hooks/useFavorites'
 import type { FavoriteCity } from './types'
 import { getWeatherLabel } from './utils'
@@ -23,7 +23,14 @@ interface Coords {
 function App() {
   const { language, toggleLanguage, t } = useLanguage()
   const { results, error: geoError, search, reset } = useGeocoding(language)
-  const { weather, forecast, updatedAt, loading: weatherLoading, error: weatherError, fetch: fetchWeather } = useWeather()
+  const {
+    weather,
+    forecast,
+    updatedAt,
+    loading: weatherLoading,
+    error: weatherError,
+    fetch: fetchWeather,
+  } = useWeather()
   const { latitude, longitude, loading: geolocLoading, denied: geolocDenied } = useGeolocation()
   const { cityName, loading: cityLoading, fetchCityName } = useReverseGeocoding(language)
   const { favorites, isFavorite, toggleFavorite } = useFavorites()
@@ -35,10 +42,7 @@ function App() {
     [latitude, longitude],
   )
 
-  const displayCoords = useMemo(
-    () => selectedCoords ?? geoCoords,
-    [selectedCoords, geoCoords],
-  )
+  const displayCoords = useMemo(() => selectedCoords ?? geoCoords, [selectedCoords, geoCoords])
 
   useEffect(() => {
     if (!geoCoords) return
@@ -115,15 +119,14 @@ function App() {
 
       <FavoritesList favorites={favorites} onSelect={handleSelectFavorite} />
 
-      {(weatherLoading || geolocLoading || cityLoading || (!!displayCoords && (!weather || !cityName))) && <WeatherCardSkeleton />}
+      {(weatherLoading ||
+        geolocLoading ||
+        cityLoading ||
+        (!!displayCoords && (!weather || !cityName))) && <WeatherCardSkeleton />}
 
-      {geolocDenied && !error && (
-        <p className={styles.error}>{t.errors.geolocation_denied}</p>
-      )}
+      {geolocDenied && !error && <p className={styles.error}>{t.errors.geolocation_denied}</p>}
 
-      {error && (
-        <p className={styles.error}>{t.errors[error as keyof typeof t.errors]}</p>
-      )}
+      {error && <p className={styles.error}>{t.errors[error as keyof typeof t.errors]}</p>}
 
       {weather && cityName && updatedAt && !weatherLoading && (
         <WeatherCard
@@ -139,12 +142,18 @@ function App() {
       )}
 
       {forecast && !weatherLoading && (
-        <ForecastCard forecast={forecast} t={{ ...t, weather: t.weather as Record<number, string> }} />
+        <ForecastCard
+          forecast={forecast}
+          t={{ ...t, weather: t.weather as Record<number, string> }}
+        />
       )}
 
-      {!weather && !weatherLoading && !geolocLoading && !geolocDenied && !error && !displayCoords && (
-        <p className={styles.emptyState}>{t.empty_state}</p>
-      )}
+      {!weather &&
+        !weatherLoading &&
+        !geolocLoading &&
+        !geolocDenied &&
+        !error &&
+        !displayCoords && <p className={styles.emptyState}>{t.empty_state}</p>}
     </div>
   )
 }
