@@ -1,73 +1,67 @@
-# React + TypeScript + Vite
+# Weatherly
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A weather web app built with React and TypeScript. Search for a city, use your current location, view a 7-day forecast, and save favorite cities.
 
-Currently, two official plugins are available:
+**[Live demo](https://denysenkostas.github.io/weatherly-app/)**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- Current weather (temperature, feels like, humidity, wind)
+- 7-day forecast with weather icons
+- City search with debounced autocomplete
+- Geolocation on first load
+- Favorite cities persisted in `localStorage`
+- EN / UA language toggle
+- Skeleton loader while data is fetching
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- React 19
+- TypeScript
+- Vite
+- SCSS Modules
+- [@meteocons/svg](https://github.com/basmilius/weather-icons) for weather icons
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting Started
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Scripts
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Type-check and build for production |
+| `npm run preview` | Preview production build locally |
+| `npm run lint` | Run ESLint |
+| `npm run format` | Format source files with Prettier |
+
+## APIs
+
+No API keys required.
+
+| Service | Purpose |
+|---------|---------|
+| [Open-Meteo Forecast](https://open-meteo.com/) | Current weather and daily forecast |
+| [Open-Meteo Geocoding](https://open-meteo.com/en/docs/geocoding-api) | City search |
+| [Nominatim](https://nominatim.openstreetmap.org/) | Reverse geocoding (city name from coordinates) |
+
+## Project Structure
+
 ```
+src/
+├── components/   # UI components
+├── hooks/        # Data fetching and app state
+├── locales/      # EN / UA translations
+├── types/        # TypeScript interfaces
+└── utils/        # WMO weather codes and icons
+```
+
+## Deployment
+
+The app deploys to GitHub Pages on every push to `master` via GitHub Actions. The base path is configured in `vite.config.ts` as `/weatherly-app/`.
