@@ -37,6 +37,20 @@
   }
 }
 
+.emptyMuted,
+.emptyError {
+  padding: 10px 14px;
+  font-size: 15px;
+}
+
+.emptyMuted {
+  color: var(--text-muted);
+}
+
+.emptyError {
+  color: #ef4444;
+}
+
 .name {
   font-weight: 500;
   color: var(--text-heading);

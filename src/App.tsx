@@ -22,7 +22,13 @@ interface Coords {
 
 function App() {
   const { language, toggleLanguage, t } = useLanguage()
-  const { results, error: geoError, search, reset } = useGeocoding(language)
+  const {
+    results,
+    loading: geoLoading,
+    error: geoError,
+    search,
+    reset,
+  } = useGeocoding(language)
   const {
     weather,
     forecast,
@@ -94,7 +100,10 @@ function App() {
     [fetchWeather],
   )
 
-  const error = geoError || weatherError
+  const error = weatherError || (geoError === 'fetch_failed' ? geoError : null)
+  const searchErrorMessage = geoError
+    ? t.errors[geoError as keyof typeof t.errors]
+    : undefined
 
   const handleRefresh = useCallback(() => {
     if (!displayCoords) return
@@ -113,8 +122,12 @@ function App() {
       <SearchBar
         placeholder={t.searchPlaceholder}
         onSearch={handleSearch}
+        onReset={reset}
         results={results}
         onSelect={handleSelectCity}
+        loading={geoLoading}
+        searchError={geoError}
+        searchErrorMessage={searchErrorMessage}
       />
 
       <FavoritesList favorites={favorites} onSelect={handleSelectFavorite} />

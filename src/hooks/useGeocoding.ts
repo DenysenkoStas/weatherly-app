@@ -34,7 +34,9 @@ export function useGeocoding(language: Language): UseGeocodingReturn {
         if (!res.ok) throw new Error()
 
         const data: GeoResponse = await res.json()
-        setResults(data.results ?? [])
+        const nextResults = data.results ?? []
+        setResults(nextResults)
+        if (nextResults.length === 0) setError('city_not_found')
       } catch {
         setError('fetch_failed')
       } finally {

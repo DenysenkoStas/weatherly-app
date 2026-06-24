@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import type { Language } from '../types'
 
 const NOMINATIM_API = 'https://nominatim.openstreetmap.org/reverse'
+const USER_AGENT = 'Weatherly/1.0 (https://denysenkostas.github.io/weatherly-app)'
 
 interface UseReverseGeocodingReturn {
   cityName: string | null
@@ -25,7 +26,10 @@ export function useReverseGeocoding(language: Language): UseReverseGeocodingRetu
         url.searchParams.set('accept-language', language)
 
         const res = await fetch(url, {
-          headers: { 'Accept-Language': language },
+          headers: {
+            'Accept-Language': language,
+            'User-Agent': USER_AGENT,
+          },
         })
         if (!res.ok) throw new Error()
 
