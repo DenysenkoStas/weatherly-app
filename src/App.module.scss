@@ -19,6 +19,11 @@
   font-weight: 600;
 }
 
+.headerActions {
+  display: flex;
+  gap: 8px;
+}
+
 .error {
   margin-top: 16px;
   font-size: 15px;
@@ -32,23 +37,39 @@
   text-align: center;
 }
 
-.langToggle {
+.headerToggle {
   padding: 4px 10px;
+  min-width: 40px;
   font-size: 14px;
   font-weight: 600;
+  line-height: 1.2;
   color: var(--text);
   background: none;
   border: 1px solid var(--border);
   border-radius: 6px;
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition: color 0.2s, border-color 0.2s;
 
   &:hover {
     color: var(--accent);
+    border-color: var(--accent);
   }
 
   &:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
+}
+
+.headerToggleIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  min-width: 32px;
+}
+
+.toggleIcon {
+  width: 18px;
+  height: 18px;
 }

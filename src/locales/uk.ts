@@ -30,6 +30,8 @@ export const uk = {
   searchPlaceholder: 'Пошук міста...',
   searchButton: 'Пошук',
   language: 'UA',
+  theme_light: 'Увімкнути світлу тему',
+  theme_dark: 'Увімкнути темну тему',
   feels_like: 'Відчувається як',
   humidity: 'Вологість',
   wind: 'Вітер',

@@ -30,7 +30,7 @@
 }
 
 %bone {
-  background: linear-gradient(90deg, var(--border) 25%, var(--surface-hover, #2a2a2a) 50%, var(--border) 75%);
+  background: linear-gradient(90deg, var(--border) 25%, var(--surface-hover) 50%, var(--border) 75%);
   background-size: 400px 100%;
   border-radius: 6px;
   animation: shimmer 1.4s infinite linear;

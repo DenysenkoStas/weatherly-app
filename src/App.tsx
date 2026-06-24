@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from 'react'
 import { useLanguage } from './hooks/useLanguage'
+import { useTheme } from './hooks/useTheme'
 import { useGeocoding } from './hooks/useGeocoding'
 import { useWeather } from './hooks/useWeather'
 import { useGeolocation } from './hooks/useGeolocation'
@@ -9,6 +10,7 @@ import { WeatherCard } from './components/WeatherCard'
 import { WeatherCardSkeleton } from './components/WeatherCardSkeleton'
 import { ForecastCard } from './components/ForecastCard'
 import { FavoritesList } from './components/FavoritesList'
+import { SunIcon, MoonIcon } from './components/ThemeIcons'
 import { useFavorites, makeFavoriteId } from './hooks/useFavorites'
 import type { FavoriteCity } from './types'
 import { getWeatherLabel } from './utils'
@@ -22,13 +24,8 @@ interface Coords {
 
 function App() {
   const { language, toggleLanguage, t } = useLanguage()
-  const {
-    results,
-    loading: geoLoading,
-    error: geoError,
-    search,
-    reset,
-  } = useGeocoding(language)
+  const { theme, toggleTheme } = useTheme()
+  const { results, loading: geoLoading, error: geoError, search, reset } = useGeocoding(language)
   const {
     weather,
     forecast,
@@ -101,9 +98,7 @@ function App() {
   )
 
   const error = weatherError || (geoError === 'fetch_failed' ? geoError : null)
-  const searchErrorMessage = geoError
-    ? t.errors[geoError as keyof typeof t.errors]
-    : undefined
+  const searchErrorMessage = geoError ? t.errors[geoError as keyof typeof t.errors] : undefined
 
   const handleRefresh = useCallback(() => {
     if (!displayCoords) return
@@ -114,9 +109,23 @@ function App() {
     <div className={styles.app}>
       <header className={styles.header}>
         <h1 className={styles.logo}>{t.appName}</h1>
-        <button className={styles.langToggle} onClick={toggleLanguage}>
-          {language === 'en' ? 'EN' : 'UA'}
-        </button>
+        <div className={styles.headerActions}>
+          <button
+            type="button"
+            className={`${styles.headerToggle} ${styles.headerToggleIcon}`}
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? t.theme_light : t.theme_dark}
+          >
+            {theme === 'dark' ? (
+              <SunIcon className={styles.toggleIcon} />
+            ) : (
+              <MoonIcon className={styles.toggleIcon} />
+            )}
+          </button>
+          <button type="button" className={styles.headerToggle} onClick={toggleLanguage}>
+            {language === 'en' ? 'EN' : 'UA'}
+          </button>
+        </div>
       </header>
 
       <SearchBar
