@@ -23,7 +23,6 @@
   font-size: 15px;
   color: var(--text);
   background: none;
-  border: none;
   border-bottom: 1px solid var(--border);
   cursor: pointer;
   transition: background 0.15s;
@@ -32,7 +31,8 @@
     border-bottom: none;
   }
 
-  &:hover {
+  &:hover,
+  &.itemActive {
     background: var(--bg);
   }
 }

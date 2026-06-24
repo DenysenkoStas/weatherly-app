@@ -27,7 +27,11 @@
     color: var(--text-muted);
   }
 
-  &:focus {
+  &:hover {
+    border-color: var(--text-muted);
+  }
+
+  &:focus-visible {
     border-color: var(--accent);
   }
 }
