@@ -35,7 +35,7 @@ function App() {
     fetch: fetchWeather,
   } = useWeather()
   const { latitude, longitude, loading: geolocLoading, denied: geolocDenied } = useGeolocation()
-  const { cityName, loading: cityLoading, fetchCityName } = useReverseGeocoding(language)
+  const { cityName, fetchCityName } = useReverseGeocoding(language)
   const { favorites, isFavorite, toggleFavorite } = useFavorites()
 
   const [selectedCoords, setSelectedCoords] = useState<Coords | null>(null)
@@ -143,7 +143,6 @@ function App() {
 
       {(weatherLoading ||
         geolocLoading ||
-        cityLoading ||
         (!!displayCoords && (!weather || !cityName))) && <WeatherCardSkeleton />}
 
       {geolocDenied && !error && <p className={styles.error}>{t.errors.geolocation_denied}</p>}
