@@ -29,6 +29,8 @@ function App() {
   const {
     weather,
     forecast,
+    hourly,
+    timezone,
     updatedAt,
     loading: weatherLoading,
     error: weatherError,
@@ -46,6 +48,18 @@ function App() {
   )
 
   const displayCoords = useMemo(() => selectedCoords ?? geoCoords, [selectedCoords, geoCoords])
+
+  const locationKey = displayCoords ? `${displayCoords.lat}:${displayCoords.lon}` : ''
+  const [daySelection, setDaySelection] = useState({ locationKey: '', index: 0 })
+
+  if (locationKey !== daySelection.locationKey) {
+    setDaySelection({ locationKey, index: 0 })
+  }
+
+  const selectedDayIndex = daySelection.index
+  const setSelectedDayIndex = useCallback((index: number) => {
+    setDaySelection((prev) => ({ ...prev, index }))
+  }, [])
 
   useEffect(() => {
     if (!geoCoords) return
@@ -141,9 +155,9 @@ function App() {
 
       <FavoritesList favorites={favorites} onSelect={handleSelectFavorite} />
 
-      {(weatherLoading ||
-        geolocLoading ||
-        (!!displayCoords && (!weather || !cityName))) && <WeatherCardSkeleton />}
+      {(weatherLoading || geolocLoading || (!!displayCoords && (!weather || !cityName))) && (
+        <WeatherCardSkeleton />
+      )}
 
       {geolocDenied && !error && <p className={styles.error}>{t.errors.geolocation_denied}</p>}
 
@@ -162,9 +176,13 @@ function App() {
         />
       )}
 
-      {forecast && !weatherLoading && (
+      {forecast && hourly && timezone && !weatherLoading && (
         <ForecastCard
           forecast={forecast}
+          hourly={hourly}
+          timezone={timezone}
+          selectedDayIndex={selectedDayIndex}
+          onSelectDay={setSelectedDayIndex}
           t={{ ...t, weather: t.weather as Record<number, string> }}
         />
       )}

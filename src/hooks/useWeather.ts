@@ -1,11 +1,13 @@
 import { useState, useCallback } from 'react'
-import type { WeatherResponse, WeatherCurrent, WeatherDaily } from '../types'
+import type { WeatherResponse, WeatherCurrent, WeatherDaily, WeatherHourly } from '../types'
 
 const WEATHER_API = 'https://api.open-meteo.com/v1/forecast'
 
 interface UseWeatherReturn {
   weather: WeatherCurrent | null
   forecast: WeatherDaily | null
+  hourly: WeatherHourly | null
+  timezone: string | null
   updatedAt: Date | null
   loading: boolean
   error: string | null
@@ -15,6 +17,8 @@ interface UseWeatherReturn {
 export function useWeather(): UseWeatherReturn {
   const [weather, setWeather] = useState<WeatherCurrent | null>(null)
   const [forecast, setForecast] = useState<WeatherDaily | null>(null)
+  const [hourly, setHourly] = useState<WeatherHourly | null>(null)
+  const [timezone, setTimezone] = useState<string | null>(null)
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -32,6 +36,7 @@ export function useWeather(): UseWeatherReturn {
         'temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code',
       )
       url.searchParams.set('daily', 'weather_code,temperature_2m_max,temperature_2m_min')
+      url.searchParams.set('hourly', 'temperature_2m,weather_code,precipitation_probability')
       url.searchParams.set('wind_speed_unit', 'ms')
       url.searchParams.set('timezone', 'auto')
       url.searchParams.set('forecast_days', '7')
@@ -42,6 +47,8 @@ export function useWeather(): UseWeatherReturn {
       const data: WeatherResponse = await res.json()
       setWeather(data.current)
       setForecast(data.daily)
+      setHourly(data.hourly)
+      setTimezone(data.timezone)
       setUpdatedAt(new Date())
     } catch {
       setError('fetch_failed')
@@ -50,5 +57,5 @@ export function useWeather(): UseWeatherReturn {
     }
   }, [])
 
-  return { weather, forecast, updatedAt, loading, error, fetch }
+  return { weather, forecast, hourly, timezone, updatedAt, loading, error, fetch }
 }

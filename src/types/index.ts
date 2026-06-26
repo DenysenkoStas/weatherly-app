@@ -40,7 +40,16 @@ export interface WeatherDaily {
   temperature_2m_min: number[]
 }
 
+export interface WeatherHourly {
+  time: string[]
+  temperature_2m: number[]
+  weather_code: number[]
+  precipitation_probability: number[]
+}
+
 export interface WeatherResponse {
+  timezone: string
   current: WeatherCurrent
   daily: WeatherDaily
+  hourly: WeatherHourly
 }
