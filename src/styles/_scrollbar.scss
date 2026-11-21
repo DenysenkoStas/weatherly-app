@@ -1,0 +1,28 @@
+// Thin horizontal scrollbar in theme colors.
+// Chrome 121+ and Firefox use the standard properties (they override ::-webkit-scrollbar),
+// Safari falls back to the ::-webkit-scrollbar rules.
+@mixin thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+
+  &:hover {
+    scrollbar-color: var(--scrollbar-thumb-hover) transparent;
+  }
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+  }
+}
