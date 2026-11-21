@@ -15,7 +15,9 @@
   border: 1px solid var(--border);
   border-radius: 20px;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
 
   &:hover {
     color: #f59e0b;

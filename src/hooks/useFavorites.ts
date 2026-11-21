@@ -22,10 +22,7 @@ function save(cities: FavoriteCity[]): void {
 export function useFavorites() {
   const [favorites, setFavorites] = useState<FavoriteCity[]>(load)
 
-  const isFavorite = useCallback(
-    (id: string) => favorites.some((c) => c.id === id),
-    [favorites],
-  )
+  const isFavorite = useCallback((id: string) => favorites.some((c) => c.id === id), [favorites])
 
   const addFavorite = useCallback((city: FavoriteCity) => {
     setFavorites((prev) => {

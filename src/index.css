@@ -52,7 +52,9 @@ body {
   margin: 0;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   color: var(--text-heading);
   margin: 0;
 }
