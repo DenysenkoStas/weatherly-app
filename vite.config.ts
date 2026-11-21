@@ -6,6 +6,8 @@ export default defineConfig({
   plugins: [react()],
   base: '/weatherly-app/',
   test: {
+    environment: 'jsdom',
     include: ['src/**/*.test.{ts,tsx}'],
+    setupFiles: ['src/test/setup.ts'],
   },
 })
