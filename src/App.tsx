@@ -159,7 +159,9 @@ function App() {
         <WeatherCardSkeleton />
       )}
 
-      {geolocDenied && !error && <p className={styles.error}>{t.errors.geolocation_denied}</p>}
+      {geolocDenied && !error && !displayCoords && (
+        <p className={styles.error}>{t.errors.geolocation_denied}</p>
+      )}
 
       {error && <p className={styles.error}>{t.errors[error as keyof typeof t.errors]}</p>}
 

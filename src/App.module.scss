@@ -26,8 +26,11 @@
 
 .error {
   margin-top: 16px;
+  width: 100%;
+  max-width: 480px;
   font-size: 15px;
   color: #ef4444;
+  text-align: center;
 }
 
 .emptyState {
