@@ -11,6 +11,7 @@ import { WeatherCardSkeleton } from './components/WeatherCardSkeleton'
 import { ForecastCard } from './components/ForecastCard'
 import { ForecastCardSkeleton } from './components/ForecastCardSkeleton'
 import { FavoritesList } from './components/FavoritesList'
+import { EmptyState } from './components/EmptyState'
 import { SunIcon, MoonIcon } from './components/ThemeIcons'
 import { useFavorites, makeFavoriteId } from './hooks/useFavorites'
 import type { FavoriteCity } from './types'
@@ -37,7 +38,14 @@ function App() {
     error: weatherError,
     fetch: fetchWeather,
   } = useWeather()
-  const { latitude, longitude, loading: geolocLoading, denied: geolocDenied } = useGeolocation()
+  const {
+    latitude,
+    longitude,
+    loading: geolocLoading,
+    denied: geolocDenied,
+    supported: geolocSupported,
+    request: requestGeolocation,
+  } = useGeolocation()
   const { cityName, fetchCityName } = useReverseGeocoding(language)
   const { favorites, isFavorite, toggleFavorite } = useFavorites()
 
@@ -162,10 +170,6 @@ function App() {
             <WeatherCardSkeleton />
           )}
 
-          {geolocDenied && !error && !displayCoords && (
-            <p className={styles.error}>{t.errors.geolocation_denied}</p>
-          )}
-
           {error && <p className={styles.error}>{t.errors[error as keyof typeof t.errors]}</p>}
 
           {weather && cityName && updatedAt && !weatherLoading && (
@@ -180,16 +184,19 @@ function App() {
               t={t}
             />
           )}
-
-          {!weather &&
-            !weatherLoading &&
-            !geolocLoading &&
-            !geolocDenied &&
-            !error &&
-            !displayCoords && <p className={styles.emptyState}>{t.empty_state}</p>}
         </div>
 
         <div className={styles.aside}>
+          {!displayCoords && !weatherLoading && !geolocLoading && !error && (
+            <EmptyState
+              canLocate={geolocSupported}
+              locationDenied={geolocDenied}
+              onLocate={requestGeolocation}
+              onSelectCity={handleSelectFavorite}
+              t={t}
+            />
+          )}
+
           {(weatherLoading || geolocLoading || (!!displayCoords && !forecast)) && (
             <ForecastCardSkeleton />
           )}

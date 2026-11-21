@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 interface GeolocationState {
   latitude: number | null
@@ -7,9 +7,14 @@ interface GeolocationState {
   denied: boolean
 }
 
+interface UseGeolocationResult extends GeolocationState {
+  supported: boolean
+  request: () => void
+}
+
 const isSupported = typeof navigator !== 'undefined' && !!navigator.geolocation
 
-export function useGeolocation(): GeolocationState {
+export function useGeolocation(): UseGeolocationResult {
   const [state, setState] = useState<GeolocationState>({
     latitude: null,
     longitude: null,
@@ -17,9 +22,8 @@ export function useGeolocation(): GeolocationState {
     denied: false,
   })
 
-  useEffect(() => {
-    if (!isSupported) return
-
+  // Only sets state from async callbacks, so it is safe to call inside an effect
+  const locate = useCallback(() => {
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
         setState({
@@ -36,5 +40,16 @@ export function useGeolocation(): GeolocationState {
     )
   }, [])
 
-  return state
+  useEffect(() => {
+    if (!isSupported) return
+    locate()
+  }, [locate])
+
+  const request = useCallback(() => {
+    if (!isSupported) return
+    setState((prev) => ({ ...prev, loading: true }))
+    locate()
+  }, [locate])
+
+  return { ...state, supported: isSupported, request }
 }

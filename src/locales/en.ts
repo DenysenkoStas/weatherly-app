@@ -40,12 +40,16 @@ export const en = {
   errors: {
     city_not_found: 'City not found',
     fetch_failed: 'Failed to fetch weather data',
-    geolocation_denied: 'Location access denied. Search for a city manually.',
+    geolocation_denied: 'Location access is blocked in your browser',
   },
   updated_at: 'Updated at',
   add_favorite: 'Add to favorites',
   remove_favorite: 'Remove from favorites',
-  empty_state: 'Search for a city to see the weather',
+  empty_title: "What's the weather like?",
+  empty_state: 'Search for a city or pick a popular one',
+  locate_me: 'Use my location',
+  popular_cities: 'Popular cities',
+  cities: { kyiv: 'Kyiv', lviv: 'Lviv', odesa: 'Odesa', kharkiv: 'Kharkiv' },
   days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
   months: [
     'January',
