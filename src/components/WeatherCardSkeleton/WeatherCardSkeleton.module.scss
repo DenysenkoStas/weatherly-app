@@ -1,11 +1,4 @@
-@keyframes shimmer {
-  0% {
-    background-position: -400px 0;
-  }
-  100% {
-    background-position: 400px 0;
-  }
-}
+@use '../../styles/skeleton' as *;
 
 .card {
   position: relative;
@@ -16,7 +9,6 @@
   margin-top: 16px;
   padding: 24px;
   width: 100%;
-  max-width: 480px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -29,15 +21,8 @@
   gap: 8px;
 }
 
-%bone {
-  background: linear-gradient(90deg, var(--border) 25%, var(--surface-hover) 50%, var(--border) 75%);
-  background-size: 400px 100%;
-  border-radius: 6px;
-  animation: shimmer 1.4s infinite linear;
-}
-
 .favorite {
-  @extend %bone;
+  @include bone;
 
   position: absolute;
   top: 12px;
@@ -48,7 +33,7 @@
 }
 
 .refresh {
-  @extend %bone;
+  @include bone;
 
   position: absolute;
   top: 12px;
@@ -59,21 +44,21 @@
 }
 
 .city {
-  @extend %bone;
+  @include bone;
 
   width: 140px;
   height: 22px;
 }
 
 .description {
-  @extend %bone;
+  @include bone;
 
   width: 100px;
   height: 15px;
 }
 
 .icon {
-  @extend %bone;
+  @include bone;
 
   width: 96px;
   height: 96px;
@@ -81,7 +66,7 @@
 }
 
 .temp {
-  @extend %bone;
+  @include bone;
 
   width: 120px;
   height: 72px;
@@ -104,21 +89,21 @@
 }
 
 .label {
-  @extend %bone;
+  @include bone;
 
   width: 60px;
   height: 12px;
 }
 
 .value {
-  @extend %bone;
+  @include bone;
 
   width: 48px;
   height: 16px;
 }
 
 .updatedAt {
-  @extend %bone;
+  @include bone;
 
   width: 120px;
   height: 12px;

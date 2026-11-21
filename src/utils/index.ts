@@ -1,3 +1,5 @@
 export { getWeatherLabel } from './wmo'
 export { getHourlyForDay, formatHour, getCurrentHourIndex } from './hourly'
 export type { HourlyEntry } from './hourly'
+export { getChartPoints, getLinePath, getAreaPath } from './chart'
+export type { ChartPoint } from './chart'

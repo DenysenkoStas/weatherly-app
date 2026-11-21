@@ -1,0 +1,120 @@
+@use '../../styles/breakpoints' as *;
+@use '../../styles/skeleton' as *;
+
+.card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin-top: 16px;
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.days {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  overflow: hidden;
+}
+
+.day {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  min-width: 72px;
+}
+
+.dayLabel {
+  @include bone;
+
+  width: 40px;
+  height: 12px;
+}
+
+.dayIcon {
+  @include bone;
+
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+}
+
+.dayTemps {
+  @include bone;
+
+  width: 48px;
+  height: 13px;
+}
+
+.hourly {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 14px 16px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.heading {
+  @include bone;
+
+  width: 140px;
+  height: 14px;
+}
+
+.chart {
+  @include bone;
+
+  display: none;
+  flex: 1;
+  margin-top: 16px;
+  min-height: 96px;
+  border-radius: 8px;
+
+  @media (min-width: $desktop) {
+    display: block;
+  }
+}
+
+.hours {
+  display: flex;
+  gap: 4px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.hour {
+  display: flex;
+  flex: 0 0 56px;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 0;
+}
+
+.hourTime {
+  @include bone;
+
+  width: 32px;
+  height: 12px;
+}
+
+.hourIcon {
+  @include bone;
+
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+}
+
+.hourTemp {
+  @include bone;
+
+  width: 28px;
+  height: 14px;
+}

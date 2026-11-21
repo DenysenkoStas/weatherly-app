@@ -9,6 +9,7 @@ import { SearchBar } from './components/SearchBar'
 import { WeatherCard } from './components/WeatherCard'
 import { WeatherCardSkeleton } from './components/WeatherCardSkeleton'
 import { ForecastCard } from './components/ForecastCard'
+import { ForecastCardSkeleton } from './components/ForecastCardSkeleton'
 import { FavoritesList } from './components/FavoritesList'
 import { SunIcon, MoonIcon } from './components/ThemeIcons'
 import { useFavorites, makeFavoriteId } from './hooks/useFavorites'
@@ -142,59 +143,69 @@ function App() {
         </div>
       </header>
 
-      <SearchBar
-        placeholder={t.searchPlaceholder}
-        onSearch={handleSearch}
-        onReset={reset}
-        results={results}
-        onSelect={handleSelectCity}
-        loading={geoLoading}
-        searchError={geoError}
-        searchErrorMessage={searchErrorMessage}
-      />
+      <div className={styles.layout}>
+        <div className={styles.main}>
+          <SearchBar
+            placeholder={t.searchPlaceholder}
+            onSearch={handleSearch}
+            onReset={reset}
+            results={results}
+            onSelect={handleSelectCity}
+            loading={geoLoading}
+            searchError={geoError}
+            searchErrorMessage={searchErrorMessage}
+          />
 
-      <FavoritesList favorites={favorites} onSelect={handleSelectFavorite} />
+          <FavoritesList favorites={favorites} onSelect={handleSelectFavorite} />
 
-      {(weatherLoading || geolocLoading || (!!displayCoords && (!weather || !cityName))) && (
-        <WeatherCardSkeleton />
-      )}
+          {(weatherLoading || geolocLoading || (!!displayCoords && (!weather || !cityName))) && (
+            <WeatherCardSkeleton />
+          )}
 
-      {geolocDenied && !error && !displayCoords && (
-        <p className={styles.error}>{t.errors.geolocation_denied}</p>
-      )}
+          {geolocDenied && !error && !displayCoords && (
+            <p className={styles.error}>{t.errors.geolocation_denied}</p>
+          )}
 
-      {error && <p className={styles.error}>{t.errors[error as keyof typeof t.errors]}</p>}
+          {error && <p className={styles.error}>{t.errors[error as keyof typeof t.errors]}</p>}
 
-      {weather && cityName && updatedAt && !weatherLoading && (
-        <WeatherCard
-          city={cityName}
-          weather={weather}
-          description={getWeatherLabel(weather.weather_code, t.weather)}
-          updatedAt={updatedAt}
-          isFavorite={currentFavoriteId ? isFavorite(currentFavoriteId) : false}
-          onRefresh={handleRefresh}
-          onToggleFavorite={handleToggleFavorite}
-          t={t}
-        />
-      )}
+          {weather && cityName && updatedAt && !weatherLoading && (
+            <WeatherCard
+              city={cityName}
+              weather={weather}
+              description={getWeatherLabel(weather.weather_code, t.weather)}
+              updatedAt={updatedAt}
+              isFavorite={currentFavoriteId ? isFavorite(currentFavoriteId) : false}
+              onRefresh={handleRefresh}
+              onToggleFavorite={handleToggleFavorite}
+              t={t}
+            />
+          )}
 
-      {forecast && hourly && timezone && !weatherLoading && (
-        <ForecastCard
-          forecast={forecast}
-          hourly={hourly}
-          timezone={timezone}
-          selectedDayIndex={selectedDayIndex}
-          onSelectDay={setSelectedDayIndex}
-          t={{ ...t, weather: t.weather as Record<number, string> }}
-        />
-      )}
+          {!weather &&
+            !weatherLoading &&
+            !geolocLoading &&
+            !geolocDenied &&
+            !error &&
+            !displayCoords && <p className={styles.emptyState}>{t.empty_state}</p>}
+        </div>
 
-      {!weather &&
-        !weatherLoading &&
-        !geolocLoading &&
-        !geolocDenied &&
-        !error &&
-        !displayCoords && <p className={styles.emptyState}>{t.empty_state}</p>}
+        <div className={styles.aside}>
+          {(weatherLoading || geolocLoading || (!!displayCoords && !forecast)) && (
+            <ForecastCardSkeleton />
+          )}
+
+          {forecast && hourly && timezone && !weatherLoading && (
+            <ForecastCard
+              forecast={forecast}
+              hourly={hourly}
+              timezone={timezone}
+              selectedDayIndex={selectedDayIndex}
+              onSelectDay={setSelectedDayIndex}
+              t={{ ...t, weather: t.weather as Record<number, string> }}
+            />
+          )}
+        </div>
+      </div>
     </div>
   )
 }

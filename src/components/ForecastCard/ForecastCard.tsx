@@ -1,9 +1,21 @@
-import { useLayoutEffect, useMemo, useRef } from 'react'
+import { useId, useLayoutEffect, useMemo, useRef } from 'react'
 import type { WeatherDaily, WeatherHourly } from '../../types'
-import { getHourlyForDay, formatHour, getCurrentHourIndex } from '../../utils'
+import {
+  getHourlyForDay,
+  formatHour,
+  getCurrentHourIndex,
+  getChartPoints,
+  getLinePath,
+  getAreaPath,
+} from '../../utils'
 import { getWeatherIcon } from '../../utils/wmoIcons'
 import { getWeatherLabel } from '../../utils'
 import styles from './ForecastCard.module.scss'
+
+// Keep in sync with .hourlyTrack in ForecastCard.module.scss
+const HOUR_CELL_WIDTH = 56
+const HOUR_CELL_GAP = 4
+const HOUR_STEP = HOUR_CELL_WIDTH + HOUR_CELL_GAP
 
 interface ForecastCardTranslations {
   days: readonly string[]
@@ -33,6 +45,7 @@ export function ForecastCard({
   t,
 }: ForecastCardProps) {
   const hourlyScrollRef = useRef<HTMLDivElement>(null)
+  const gradientId = `chart-fill-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
 
   const selectedDate = forecast.time[selectedDayIndex]
   const hours = useMemo(() => getHourlyForDay(hourly, selectedDate), [hourly, selectedDate])
@@ -40,6 +53,17 @@ export function ForecastCard({
   const dayLabel = selectedDayIndex === 0 ? t.today : t.days[selectedDateObj.getUTCDay()]
   const dateLabel = `${selectedDateObj.getUTCDate()} ${t.months[selectedDateObj.getUTCMonth()]}`
   const currentHourIndex = selectedDayIndex === 0 ? getCurrentHourIndex(hours, timezone) : null
+
+  const trackWidth = hours.length * HOUR_STEP - HOUR_CELL_GAP
+  const chartPoints = useMemo(
+    () =>
+      getChartPoints(
+        hours.map((hour) => hour.temperature),
+        HOUR_STEP,
+        HOUR_CELL_WIDTH / 2,
+      ),
+    [hours],
+  )
 
   useLayoutEffect(() => {
     const container = hourlyScrollRef.current
@@ -117,29 +141,63 @@ export function ForecastCard({
           </h2>
 
           <div ref={hourlyScrollRef} className={styles.hourlyScroll}>
-            {hours.map((hour, i) => (
-              <div
-                key={hour.time}
-                data-hour-index={i}
-                className={`${styles.hourCell} ${currentHourIndex === i ? styles.hourCellCurrent : ''}`}
-              >
-                <span className={styles.hourTime}>{formatHour(hour.time)}</span>
-                <img
-                  className={styles.hourIcon}
-                  src={getWeatherIcon(hour.weatherCode)}
-                  alt={getWeatherLabel(hour.weatherCode, t.weather)}
-                />
-                <span className={styles.hourTemp}>
-                  {Math.round(hour.temperature)}
-                  {t.temp_unit}
-                </span>
-                {hour.precipitationProbability > 0 ? (
-                  <span className={styles.hourPrecip}>{hour.precipitationProbability}%</span>
-                ) : (
-                  <span className={styles.hourPrecipPlaceholder} aria-hidden />
-                )}
+            <div
+              className={styles.hourlyTrack}
+              style={{ gridTemplateColumns: `repeat(${hours.length}, ${HOUR_CELL_WIDTH}px)` }}
+            >
+              <div className={styles.chart} aria-hidden>
+                <svg
+                  className={styles.chartSvg}
+                  width={trackWidth}
+                  viewBox={`0 0 ${trackWidth} 100`}
+                  preserveAspectRatio="none"
+                >
+                  <defs>
+                    <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" className={styles.chartFillTop} />
+                      <stop offset="100%" className={styles.chartFillBottom} />
+                    </linearGradient>
+                  </defs>
+                  <path d={getAreaPath(chartPoints)} fill={`url(#${gradientId})`} />
+                  <path
+                    d={getLinePath(chartPoints)}
+                    className={styles.chartLine}
+                    vectorEffect="non-scaling-stroke"
+                  />
+                </svg>
+                {chartPoints.map((point, i) => (
+                  <span
+                    key={hours[i].time}
+                    className={`${styles.chartDot} ${currentHourIndex === i ? styles.chartDotCurrent : ''}`}
+                    style={{ left: point.x, top: `${point.y}%` }}
+                  />
+                ))}
               </div>
-            ))}
+
+              {hours.map((hour, i) => (
+                <div
+                  key={hour.time}
+                  data-hour-index={i}
+                  className={`${styles.hourCell} ${currentHourIndex === i ? styles.hourCellCurrent : ''}`}
+                >
+                  <span className={styles.hourTime}>{formatHour(hour.time)}</span>
+                  <img
+                    className={styles.hourIcon}
+                    src={getWeatherIcon(hour.weatherCode)}
+                    alt={getWeatherLabel(hour.weatherCode, t.weather)}
+                  />
+                  <span className={styles.hourTemp}>
+                    {Math.round(hour.temperature)}
+                    {t.temp_unit}
+                  </span>
+                  {hour.precipitationProbability > 0 ? (
+                    <span className={styles.hourPrecip}>{hour.precipitationProbability}%</span>
+                  ) : (
+                    <span className={styles.hourPrecipPlaceholder} aria-hidden />
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
