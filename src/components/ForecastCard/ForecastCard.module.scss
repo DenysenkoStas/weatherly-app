@@ -120,6 +120,8 @@
 .hourlyScroll {
   display: flex;
   flex: 1;
+  // The track is capped in height; on tall desktop cards it sits in the middle
+  align-items: center;
   gap: 4px;
   overflow-x: auto;
   @include thin-scrollbar;
@@ -134,6 +136,8 @@
   display: grid;
   flex: 0 0 auto;
   grid-template-rows: 1fr auto;
+  height: 100%;
+  max-height: 400px;
   // Keep in sync with HOUR_CELL_WIDTH / HOUR_CELL_GAP in ForecastCard.tsx
   column-gap: 4px;
 }

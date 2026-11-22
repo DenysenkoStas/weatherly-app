@@ -6,17 +6,27 @@ export interface ChartPoint {
 /**
  * Maps values to chart points: x in pixels, y in percent of the chart height
  * (0 = top). The highest value is drawn at `padding`%, the lowest at `100 - padding`%.
+ * When the values span less than `minRange`, the scale is widened around their middle,
+ * so a change of 1–2 degrees is drawn as a gentle slope rather than a full-height jump.
  */
 export function getChartPoints(
   values: number[],
   step: number,
   offset: number,
   padding = 15,
+  minRange = 0,
 ): ChartPoint[] {
   if (values.length === 0) return []
 
-  const min = Math.min(...values)
-  const max = Math.max(...values)
+  let min = Math.min(...values)
+  let max = Math.max(...values)
+
+  if (max - min < minRange) {
+    const middle = (min + max) / 2
+    min = middle - minRange / 2
+    max = middle + minRange / 2
+  }
+
   const range = max - min
 
   return values.map((value, i) => ({

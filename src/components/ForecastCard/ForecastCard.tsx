@@ -16,6 +16,8 @@ import styles from './ForecastCard.module.scss'
 const HOUR_CELL_WIDTH = 56
 const HOUR_CELL_GAP = 4
 const HOUR_STEP = HOUR_CELL_WIDTH + HOUR_CELL_GAP
+// Minimum temperature span of the chart scale, in degrees
+const CHART_MIN_RANGE = 8
 
 interface ForecastCardTranslations {
   days: readonly string[]
@@ -61,6 +63,8 @@ export function ForecastCard({
         hours.map((hour) => hour.temperature),
         HOUR_STEP,
         HOUR_CELL_WIDTH / 2,
+        15,
+        CHART_MIN_RANGE,
       ),
     [hours],
   )

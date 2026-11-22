@@ -22,6 +22,21 @@ describe('getChartPoints', () => {
     expect(points[1].y).toBe(15)
   })
 
+  it('widens the scale to minRange around the middle of the values', () => {
+    // 4..6 spans 2 degrees; with minRange 10 the scale becomes 0..10
+    const points = getChartPoints([4, 6], 60, 0, 0, 10)
+    expect(points.map((p) => p.y)).toEqual([60, 40])
+  })
+
+  it('keeps the full scale when the values already span more than minRange', () => {
+    const points = getChartPoints([0, 20], 60, 0, 15, 10)
+    expect(points.map((p) => p.y)).toEqual([85, 15])
+  })
+
+  it('draws equal values in the middle with minRange', () => {
+    expect(getChartPoints([3, 3], 60, 0, 15, 8).map((p) => p.y)).toEqual([50, 50])
+  })
+
   it('returns an empty array for no values', () => {
     expect(getChartPoints([], 60, 0)).toEqual([])
   })
