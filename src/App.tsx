@@ -176,6 +176,15 @@ function App() {
             <WeatherCard
               city={cityName}
               weather={weather}
+              sun={
+                forecast
+                  ? {
+                      sunrise: forecast.sunrise[0],
+                      sunset: forecast.sunset[0],
+                      daylightDuration: forecast.daylight_duration[0],
+                    }
+                  : null
+              }
               description={getWeatherLabel(weather.weather_code, t.weather)}
               updatedAt={updatedAt}
               isFavorite={currentFavoriteId ? isFavorite(currentFavoriteId) : false}

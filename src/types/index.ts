@@ -26,10 +26,15 @@ export interface GeoResponse {
 }
 
 export interface WeatherCurrent {
+  time: string
   temperature_2m: number
   apparent_temperature: number
   relative_humidity_2m: number
   wind_speed_10m: number
+  wind_direction_10m: number
+  pressure_msl: number
+  precipitation: number
+  uv_index: number
   weather_code: number
 }
 
@@ -38,6 +43,9 @@ export interface WeatherDaily {
   weather_code: number[]
   temperature_2m_max: number[]
   temperature_2m_min: number[]
+  sunrise: string[]
+  sunset: string[]
+  daylight_duration: number[]
 }
 
 export interface WeatherHourly {

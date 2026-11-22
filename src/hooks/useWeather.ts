@@ -33,9 +33,22 @@ export function useWeather(): UseWeatherReturn {
       url.searchParams.set('longitude', String(lon))
       url.searchParams.set(
         'current',
-        'temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code',
+        [
+          'temperature_2m',
+          'apparent_temperature',
+          'relative_humidity_2m',
+          'wind_speed_10m',
+          'wind_direction_10m',
+          'pressure_msl',
+          'precipitation',
+          'uv_index',
+          'weather_code',
+        ].join(','),
       )
-      url.searchParams.set('daily', 'weather_code,temperature_2m_max,temperature_2m_min')
+      url.searchParams.set(
+        'daily',
+        'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,daylight_duration',
+      )
       url.searchParams.set('hourly', 'temperature_2m,weather_code,precipitation_probability')
       url.searchParams.set('wind_speed_unit', 'ms')
       url.searchParams.set('timezone', 'auto')

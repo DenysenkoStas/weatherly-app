@@ -14,19 +14,16 @@ export function WeatherCardSkeleton() {
       <div className={styles.temp} />
 
       <div className={styles.details}>
-        <div className={styles.detail}>
-          <div className={styles.label} />
-          <div className={styles.value} />
-        </div>
-        <div className={styles.detail}>
-          <div className={styles.label} />
-          <div className={styles.value} />
-        </div>
-        <div className={styles.detail}>
-          <div className={styles.label} />
-          <div className={styles.value} />
-        </div>
+        {Array.from({ length: 6 }, (_, i) => (
+          <div key={i} className={styles.detail}>
+            <div className={styles.detailIcon} />
+            <div className={styles.label} />
+            <div className={styles.value} />
+          </div>
+        ))}
       </div>
+
+      <div className={styles.sun} />
 
       <div className={styles.updatedAt} />
     </div>
