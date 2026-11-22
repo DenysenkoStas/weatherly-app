@@ -10,6 +10,7 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
+  box-shadow: var(--card-shadow);
 
   @media (max-width: 400px) {
     padding: 24px 16px;
@@ -96,8 +97,9 @@
 }
 
 .icon {
-  width: 96px;
-  height: 96px;
+  width: 128px;
+  height: 128px;
+  margin-block: -16px;
   filter: var(--icon-filter);
 }
 

@@ -11,6 +11,7 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
+  box-shadow: var(--card-shadow);
   overflow: hidden;
 }
 
@@ -69,8 +70,9 @@
 }
 
 .dayTabIcon {
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
+  margin-block: -4px;
   filter: var(--icon-filter);
 }
 
@@ -221,8 +223,9 @@
 }
 
 .hourIcon {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
+  margin-block: -4px;
   filter: var(--icon-filter);
 }
 

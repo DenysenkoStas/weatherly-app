@@ -15,7 +15,7 @@ import { EmptyState } from './components/EmptyState'
 import { SunIcon, MoonIcon } from './components/ThemeIcons'
 import { useFavorites, makeFavoriteId } from './hooks/useFavorites'
 import type { FavoriteCity } from './types'
-import { getWeatherLabel } from './utils'
+import { getSky, getWeatherLabel } from './utils'
 import type { GeoResult } from './types'
 import styles from './App.module.scss'
 
@@ -128,8 +128,10 @@ function App() {
     void fetchWeather(displayCoords.lat, displayCoords.lon)
   }, [displayCoords, fetchWeather])
 
+  const sky = weather && displayCoords ? getSky(weather.weather_code, weather.is_day === 1) : null
+
   return (
-    <div className={styles.app}>
+    <div className={styles.app} data-sky={sky ?? undefined}>
       <header className={styles.header}>
         <h1 className={styles.logo}>{t.appName}</h1>
         <div className={styles.headerActions}>

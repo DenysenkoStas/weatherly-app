@@ -1,11 +1,82 @@
 @use './styles/breakpoints' as *;
 
 .app {
+  --sky-glow: transparent;
+  --sky-accent: transparent;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 24px 16px;
   min-height: 100vh;
+  // A soft glow at the top of the page tinted by the current weather (data-sky)
+  background:
+    radial-gradient(60% 420px at 85% 0, var(--sky-accent), transparent),
+    radial-gradient(120% 560px at 50% 0, var(--sky-glow), transparent);
+  background-repeat: no-repeat;
+}
+
+[data-theme='dark'] .app {
+  &[data-sky='clear-day'] {
+    --sky-glow: rgba(56, 189, 248, 0.2);
+    --sky-accent: rgba(251, 191, 36, 0.14);
+  }
+
+  &[data-sky='clear-night'] {
+    --sky-glow: rgba(99, 102, 241, 0.24);
+    --sky-accent: rgba(196, 181, 253, 0.08);
+  }
+
+  &[data-sky='cloudy'] {
+    --sky-glow: rgba(148, 163, 184, 0.16);
+  }
+
+  &[data-sky='fog'] {
+    --sky-glow: rgba(203, 213, 225, 0.14);
+  }
+
+  &[data-sky='rain'] {
+    --sky-glow: rgba(59, 130, 246, 0.2);
+  }
+
+  &[data-sky='snow'] {
+    --sky-glow: rgba(186, 230, 253, 0.18);
+  }
+
+  &[data-sky='storm'] {
+    --sky-glow: rgba(139, 92, 246, 0.24);
+  }
+}
+
+[data-theme='light'] .app {
+  &[data-sky='clear-day'] {
+    --sky-glow: rgba(56, 189, 248, 0.32);
+    --sky-accent: rgba(251, 191, 36, 0.28);
+  }
+
+  &[data-sky='clear-night'] {
+    --sky-glow: rgba(99, 102, 241, 0.26);
+  }
+
+  &[data-sky='cloudy'] {
+    --sky-glow: rgba(100, 116, 139, 0.2);
+  }
+
+  &[data-sky='fog'] {
+    --sky-glow: rgba(148, 163, 184, 0.24);
+  }
+
+  &[data-sky='rain'] {
+    --sky-glow: rgba(37, 99, 235, 0.22);
+  }
+
+  &[data-sky='snow'] {
+    --sky-glow: rgba(125, 211, 252, 0.3);
+  }
+
+  &[data-sky='storm'] {
+    --sky-glow: rgba(124, 58, 237, 0.24);
+  }
 }
 
 .header {
