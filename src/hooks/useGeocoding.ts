@@ -31,7 +31,10 @@ export function useGeocoding(language: Language): UseGeocodingReturn {
         url.searchParams.set('format', 'json')
 
         const res = await fetch(url)
-        if (!res.ok) throw new Error()
+        if (!res.ok) {
+          setError('fetch_failed')
+          return
+        }
 
         const data: GeoResponse = await res.json()
         const nextResults = data.results ?? []

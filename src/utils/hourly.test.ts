@@ -9,6 +9,7 @@ function makeDayHours(date: string): HourlyEntry[] {
     temperature: 20,
     weatherCode: 0,
     precipitationProbability: 0,
+    isDay: hour >= 7 && hour < 17,
   }))
 }
 
@@ -18,14 +19,27 @@ describe('getHourlyForDay', () => {
     temperature_2m: [18, 17, 16, 15],
     weather_code: [0, 1, 2, 3],
     precipitation_probability: [0, 10, 20, 30],
+    is_day: [0, 0, 0, 1],
   }
 
   it('returns only entries for the given date', () => {
     const result = getHourlyForDay(hourly, '2026-06-27')
 
     expect(result).toEqual([
-      { time: '2026-06-27T00:00', temperature: 17, weatherCode: 1, precipitationProbability: 10 },
-      { time: '2026-06-27T01:00', temperature: 16, weatherCode: 2, precipitationProbability: 20 },
+      {
+        time: '2026-06-27T00:00',
+        temperature: 17,
+        weatherCode: 1,
+        precipitationProbability: 10,
+        isDay: false,
+      },
+      {
+        time: '2026-06-27T01:00',
+        temperature: 16,
+        weatherCode: 2,
+        precipitationProbability: 20,
+        isDay: false,
+      },
     ])
   })
 

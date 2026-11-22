@@ -183,7 +183,7 @@ export function ForecastCard({
                   <span className={styles.hourTime}>{formatHour(hour.time)}</span>
                   <img
                     className={styles.hourIcon}
-                    src={getWeatherIcon(hour.weatherCode)}
+                    src={getWeatherIcon(hour.weatherCode, hour.isDay)}
                     alt={getWeatherLabel(hour.weatherCode, t.weather)}
                   />
                   <span className={styles.hourTemp}>

@@ -42,6 +42,7 @@ export function useWeather(): UseWeatherReturn {
           'pressure_msl',
           'precipitation',
           'uv_index',
+          'is_day',
           'weather_code',
         ].join(','),
       )
@@ -49,13 +50,16 @@ export function useWeather(): UseWeatherReturn {
         'daily',
         'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,daylight_duration',
       )
-      url.searchParams.set('hourly', 'temperature_2m,weather_code,precipitation_probability')
+      url.searchParams.set('hourly', 'temperature_2m,weather_code,precipitation_probability,is_day')
       url.searchParams.set('wind_speed_unit', 'ms')
       url.searchParams.set('timezone', 'auto')
       url.searchParams.set('forecast_days', '7')
 
       const res = await globalThis.fetch(url)
-      if (!res.ok) throw new Error()
+      if (!res.ok) {
+        setError('fetch_failed')
+        return
+      }
 
       const data: WeatherResponse = await res.json()
       setWeather(data.current)

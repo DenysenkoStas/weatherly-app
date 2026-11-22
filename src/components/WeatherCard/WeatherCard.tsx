@@ -112,7 +112,11 @@ export function WeatherCard({
         <p className={styles.description}>{description}</p>
       </div>
 
-      <img className={styles.icon} src={getWeatherIcon(weather.weather_code)} alt={description} />
+      <img
+        className={styles.icon}
+        src={getWeatherIcon(weather.weather_code, weather.is_day === 1)}
+        alt={description}
+      />
 
       <div className={styles.temp}>
         {Math.round(weather.temperature_2m)}

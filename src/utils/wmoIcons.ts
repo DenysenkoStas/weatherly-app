@@ -13,6 +13,14 @@ import thunderstorms from '@meteocons/svg/fill/thunderstorms.svg?url'
 import thunderstormsDayHail from '@meteocons/svg/fill/thunderstorms-day-hail.svg?url'
 import notAvailable from '@meteocons/svg/fill/not-available.svg?url'
 
+import clearNight from '@meteocons/svg/fill/clear-night.svg?url'
+import mostlyClearNight from '@meteocons/svg/fill/mostly-clear-night.svg?url'
+import partlyCloudyNight from '@meteocons/svg/fill/partly-cloudy-night.svg?url'
+import fogNight from '@meteocons/svg/fill/fog-night.svg?url'
+import overcastNightRain from '@meteocons/svg/fill/overcast-night-rain.svg?url'
+import overcastNightSnow from '@meteocons/svg/fill/overcast-night-snow.svg?url'
+import thunderstormsNightHail from '@meteocons/svg/fill/thunderstorms-night-hail.svg?url'
+
 export const wmoIcons: Record<number, string> = {
   0: clearDay,
   1: mostlyClearDay,
@@ -40,6 +48,23 @@ export const wmoIcons: Record<number, string> = {
   99: thunderstormsDayHail,
 }
 
-export function getWeatherIcon(code: number): string {
+// Codes whose icon shows the sun; the rest (overcast, rain, snow…) look the same at night
+const nightIcons: Record<number, string> = {
+  0: clearNight,
+  1: mostlyClearNight,
+  2: partlyCloudyNight,
+  45: fogNight,
+  48: fogNight,
+  80: overcastNightRain,
+  81: overcastNightRain,
+  82: overcastNightRain,
+  85: overcastNightSnow,
+  86: overcastNightSnow,
+  96: thunderstormsNightHail,
+  99: thunderstormsNightHail,
+}
+
+export function getWeatherIcon(code: number, isDay = true): string {
+  if (!isDay && nightIcons[code]) return nightIcons[code]
   return wmoIcons[code] ?? notAvailable
 }

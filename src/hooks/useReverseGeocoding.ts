@@ -31,7 +31,10 @@ export function useReverseGeocoding(language: Language): UseReverseGeocodingRetu
             'User-Agent': USER_AGENT,
           },
         })
-        if (!res.ok) throw new Error()
+        if (!res.ok) {
+          setCityName(null)
+          return
+        }
 
         const data = await res.json()
         const name =

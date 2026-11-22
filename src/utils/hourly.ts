@@ -5,6 +5,7 @@ export interface HourlyEntry {
   temperature: number
   weatherCode: number
   precipitationProbability: number
+  isDay: boolean
 }
 
 export function getHourlyForDay(hourly: WeatherHourly, dateStr: string): HourlyEntry[] {
@@ -14,6 +15,7 @@ export function getHourlyForDay(hourly: WeatherHourly, dateStr: string): HourlyE
       temperature: hourly.temperature_2m[i],
       weatherCode: hourly.weather_code[i],
       precipitationProbability: hourly.precipitation_probability[i] ?? 0,
+      isDay: (hourly.is_day[i] ?? 1) === 1,
     }))
     .filter((entry) => entry.time.startsWith(dateStr))
 }

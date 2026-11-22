@@ -35,6 +35,7 @@ export interface WeatherCurrent {
   pressure_msl: number
   precipitation: number
   uv_index: number
+  is_day: number
   weather_code: number
 }
 
@@ -53,6 +54,7 @@ export interface WeatherHourly {
   temperature_2m: number[]
   weather_code: number[]
   precipitation_probability: number[]
+  is_day: number[]
 }
 
 export interface WeatherResponse {
