@@ -128,12 +128,33 @@ function App() {
     void fetchWeather(displayCoords.lat, displayCoords.lon)
   }, [displayCoords, fetchWeather])
 
+  const showEmptyState = !displayCoords && !weatherLoading && !geolocLoading && !error
+
   const sky = weather && displayCoords ? getSky(weather.weather_code, weather.is_day === 1) : null
 
   return (
     <div className={styles.app} data-sky={sky ?? undefined}>
       <header className={styles.header}>
         <h1 className={styles.logo}>{t.appName}</h1>
+        <div className={styles.headerSearch}>
+          <SearchBar
+            placeholder={t.searchPlaceholder}
+            onSearch={handleSearch}
+            onReset={reset}
+            results={results}
+            onSelect={handleSelectCity}
+            loading={geoLoading}
+            searchError={geoError}
+            searchErrorMessage={searchErrorMessage}
+          />
+        </div>
+        <div className={styles.headerFavorites}>
+          <FavoritesList
+            favorites={favorites}
+            activeId={currentFavoriteId}
+            onSelect={handleSelectFavorite}
+          />
+        </div>
         <div className={styles.headerActions}>
           <button
             type="button"
@@ -153,21 +174,8 @@ function App() {
         </div>
       </header>
 
-      <div className={styles.layout}>
+      <div className={`${styles.layout}${showEmptyState ? ` ${styles.layoutEmpty}` : ''}`}>
         <div className={styles.main}>
-          <SearchBar
-            placeholder={t.searchPlaceholder}
-            onSearch={handleSearch}
-            onReset={reset}
-            results={results}
-            onSelect={handleSelectCity}
-            loading={geoLoading}
-            searchError={geoError}
-            searchErrorMessage={searchErrorMessage}
-          />
-
-          <FavoritesList favorites={favorites} onSelect={handleSelectFavorite} />
-
           {(weatherLoading || geolocLoading || (!!displayCoords && (!weather || !cityName))) && (
             <WeatherCardSkeleton />
           )}
@@ -198,7 +206,7 @@ function App() {
         </div>
 
         <div className={styles.aside}>
-          {!displayCoords && !weatherLoading && !geolocLoading && !error && (
+          {showEmptyState && (
             <EmptyState
               canLocate={geolocSupported}
               locationDenied={geolocDenied}

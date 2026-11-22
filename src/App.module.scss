@@ -79,15 +79,47 @@
   }
 }
 
+// Mobile: logo and toggles on top, search and favorites below.
+// Desktop: everything in one row so both columns start right under the header.
 .header {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-areas:
+    'logo actions'
+    'search search'
+    'favorites favorites';
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   width: 100%;
   max-width: 480px;
 
   @media (min-width: $desktop) {
+    grid-template-areas: 'logo search favorites actions';
+    grid-template-columns: auto 300px minmax(0, 1fr) auto;
+    column-gap: 24px;
     max-width: 1040px;
+  }
+}
+
+.headerSearch {
+  grid-area: search;
+  margin-top: 32px;
+
+  @media (min-width: $desktop) {
+    margin-top: 0;
+  }
+}
+
+.headerFavorites {
+  grid-area: favorites;
+  min-width: 0;
+  margin-top: 12px;
+
+  &:empty {
+    display: none;
+  }
+
+  @media (min-width: $desktop) {
+    margin-top: 0;
   }
 }
 
@@ -100,6 +132,7 @@
   @media (min-width: $desktop) {
     display: grid;
     grid-template-columns: 400px minmax(0, 1fr);
+    margin-top: 8px;
     column-gap: 24px;
     max-width: 1040px;
   }
@@ -113,18 +146,26 @@
   min-width: 0;
 }
 
-.aside {
+// Nothing to show on the left yet (search lives in the header): centre the empty state
+.layoutEmpty {
   @media (min-width: $desktop) {
-    padding-top: 16px;
+    grid-template-columns: minmax(0, 640px);
+    justify-content: center;
+
+    .main {
+      display: none;
+    }
   }
 }
 
 .logo {
+  grid-area: logo;
   font-size: 20px;
   font-weight: 600;
 }
 
 .headerActions {
+  grid-area: actions;
   display: flex;
   gap: 8px;
 }
