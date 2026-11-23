@@ -20,6 +20,7 @@ import { ForecastCardSkeleton } from './components/ForecastCardSkeleton'
 import { FavoritesList } from './components/FavoritesList'
 import { EmptyState } from './components/EmptyState'
 import { AirQualityCard } from './components/AirQualityCard'
+import { AirQualityCardSkeleton } from './components/AirQualityCardSkeleton'
 import { UnitsMenu } from './components/UnitsMenu'
 import { SunIcon, MoonIcon, LocationIcon } from './components/ThemeIcons'
 import { useFavorites, makeFavoriteId } from './hooks/useFavorites'
@@ -57,7 +58,7 @@ function App() {
     request: requestGeolocation,
   } = useGeolocation({ auto: !initialLocation })
   const { cityName, fetchCityName } = useReverseGeocoding(language)
-  const { airQuality, fetch: fetchAirQuality } = useAirQuality()
+  const { airQuality, loading: airQualityLoading, fetch: fetchAirQuality } = useAirQuality()
   const { favorites, isFavorite, toggleFavorite } = useFavorites()
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
 
@@ -320,6 +321,12 @@ function App() {
             {showWeather && (
               <WeatherDetails weather={weather} sun={sun} variant="card" t={tWithUnits} />
             )}
+          </div>
+        )}
+
+        {(showWeatherSkeleton || (showWeather && airQualityLoading)) && (
+          <div className={styles.wide}>
+            <AirQualityCardSkeleton />
           </div>
         )}
 

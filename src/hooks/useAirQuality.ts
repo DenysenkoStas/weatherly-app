@@ -23,6 +23,8 @@ interface FetchOptions {
 // Air quality is extra information: on failure the card is simply hidden, no error message
 export function useAirQuality() {
   const [airQuality, setAirQuality] = useState<AirQualityCurrent | null>(null)
+  // Only a new place shows a skeleton; a silent refresh keeps the card
+  const [loading, setLoading] = useState(false)
   const requestIdRef = useRef(0)
 
   const fetch = useCallback(
@@ -31,7 +33,10 @@ export function useAirQuality() {
       const isLatest = () => requestId === requestIdRef.current
 
       // A new place must not show the previous city's air
-      if (!silent) setAirQuality(null)
+      if (!silent) {
+        setAirQuality(null)
+        setLoading(true)
+      }
 
       try {
         const url = new URL(AIR_QUALITY_API)
@@ -51,10 +56,12 @@ export function useAirQuality() {
         if (isLatest()) setAirQuality(data.current)
       } catch {
         // Keep whatever is on screen; nothing to report
+      } finally {
+        if (isLatest()) setLoading(false)
       }
     },
     [],
   )
 
-  return { airQuality, fetch }
+  return { airQuality, loading, fetch }
 }
