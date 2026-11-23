@@ -1,0 +1,1 @@
+export { AirQualityCard } from './AirQualityCard'

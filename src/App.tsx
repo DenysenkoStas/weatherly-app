@@ -8,6 +8,7 @@ import { useReverseGeocoding } from './hooks/useReverseGeocoding'
 import { DESKTOP_QUERY, useMediaQuery } from './hooks/useMediaQuery'
 import { loadLastLocation, saveLastLocation } from './hooks/useLastLocation'
 import { useRefreshWhenStale } from './hooks/useRefreshWhenStale'
+import { useAirQuality } from './hooks/useAirQuality'
 import { SearchBar } from './components/SearchBar'
 import { WeatherCard } from './components/WeatherCard'
 import { WeatherCardSkeleton } from './components/WeatherCardSkeleton'
@@ -17,6 +18,7 @@ import { ForecastCard } from './components/ForecastCard'
 import { ForecastCardSkeleton } from './components/ForecastCardSkeleton'
 import { FavoritesList } from './components/FavoritesList'
 import { EmptyState } from './components/EmptyState'
+import { AirQualityCard } from './components/AirQualityCard'
 import { SunIcon, MoonIcon, LocationIcon } from './components/ThemeIcons'
 import { useFavorites, makeFavoriteId } from './hooks/useFavorites'
 import type { Coords, FavoriteCity, GeoResult } from './types'
@@ -51,6 +53,7 @@ function App() {
     request: requestGeolocation,
   } = useGeolocation({ auto: !initialLocation })
   const { cityName, fetchCityName } = useReverseGeocoding(language)
+  const { airQuality, fetch: fetchAirQuality } = useAirQuality()
   const { favorites, isFavorite, toggleFavorite } = useFavorites()
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
 
@@ -78,8 +81,9 @@ function App() {
   useEffect(() => {
     if (!displayCoords) return
     void fetchWeather(displayCoords.lat, displayCoords.lon)
+    void fetchAirQuality(displayCoords.lat, displayCoords.lon)
     saveLastLocation(displayCoords)
-  }, [displayCoords, fetchWeather])
+  }, [displayCoords, fetchWeather, fetchAirQuality])
 
   // Keep the address bar shareable; replaceState, so city changes don't flood the history
   useEffect(() => {
@@ -146,7 +150,8 @@ function App() {
   const handleRefresh = useCallback(() => {
     if (!displayCoords || weatherLoading) return
     void fetchWeather(displayCoords.lat, displayCoords.lon, { silent: true })
-  }, [displayCoords, weatherLoading, fetchWeather])
+    void fetchAirQuality(displayCoords.lat, displayCoords.lon, { silent: true })
+  }, [displayCoords, weatherLoading, fetchWeather, fetchAirQuality])
 
   useRefreshWhenStale(updatedAt, handleRefresh)
 
@@ -279,6 +284,12 @@ function App() {
           <div className={styles.wide}>
             {showWeatherSkeleton && <WeatherDetailsSkeleton variant="card" />}
             {showWeather && <WeatherDetails weather={weather} sun={sun} variant="card" t={t} />}
+          </div>
+        )}
+
+        {showWeather && airQuality && (
+          <div className={styles.wide}>
+            <AirQualityCard airQuality={airQuality} t={t} />
           </div>
         )}
       </div>

@@ -9,6 +9,23 @@ export interface Coords {
   lon: number
 }
 
+export interface AirQualityCurrent {
+  european_aqi: number | null
+  pm2_5: number | null
+  pm10: number | null
+  // Pollen is only modelled for Europe and is null elsewhere
+  alder_pollen: number | null
+  birch_pollen: number | null
+  grass_pollen: number | null
+  mugwort_pollen: number | null
+  olive_pollen: number | null
+  ragweed_pollen: number | null
+}
+
+export interface AirQualityResponse {
+  current: AirQualityCurrent
+}
+
 export interface FavoriteCity {
   id: string
   name: string
