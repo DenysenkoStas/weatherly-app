@@ -1,0 +1,91 @@
+.root {
+  position: relative;
+  display: flex;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  min-width: 200px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.legend {
+  padding: 0;
+  margin-bottom: 6px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+// Two-option segmented control built on real radio buttons
+.segmented {
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  gap: 4px;
+  padding: 3px;
+  background: var(--surface-hover);
+  border-radius: 8px;
+}
+
+.option {
+  position: relative;
+  display: flex;
+}
+
+.input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.optionLabel {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  text-align: center;
+  color: var(--text-muted);
+  border-radius: 6px;
+  transition:
+    color 0.2s,
+    background 0.2s;
+}
+
+.input:hover + .optionLabel {
+  color: var(--text-heading);
+}
+
+.input:checked + .optionLabel {
+  color: var(--text-heading);
+  background: var(--surface);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 15%);
+}
+
+.input:focus-visible + .optionLabel {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}

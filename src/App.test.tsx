@@ -110,4 +110,22 @@ describe('App', () => {
     expect(weatherUrl).toContain('latitude=50.4501')
     expect(window.location.search).toBe('?lat=50.45&lon=30.52')
   })
+
+  it('refetches the weather in the chosen units', () => {
+    const fetchMock = vi.fn<typeof fetch>(() => new Promise<Response>(() => {}))
+    vi.stubGlobal('fetch', fetchMock)
+    localStorage.setItem('weatherly_last_location', JSON.stringify({ lat: 49.59, lon: 34.55 }))
+
+    render(<App />)
+    fireEvent.click(screen.getByRole('button', { name: `${en.units}: °C, m/s` }))
+    fireEvent.click(screen.getByRole('radio', { name: '°F' }))
+    fireEvent.click(screen.getByRole('radio', { name: 'km/h' }))
+
+    const weatherUrls = fetchMock.mock.calls
+      .map(([url]) => String(url))
+      .filter((url) => url.startsWith('https://api.open-meteo.com/'))
+    expect(weatherUrls.at(-1)).toContain('temperature_unit=fahrenheit')
+    expect(weatherUrls.at(-1)).toContain('wind_speed_unit=kmh')
+    expect(screen.getByRole('button', { name: `${en.units}: °F, km/h` })).toBeTruthy()
+  })
 })

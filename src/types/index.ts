@@ -2,6 +2,13 @@ import type { en, uk } from '../locales'
 
 export type Language = 'en' | 'uk'
 export type Theme = 'light' | 'dark'
+export type TemperatureUnit = 'celsius' | 'fahrenheit'
+export type WindUnit = 'ms' | 'kmh'
+
+export interface Units {
+  temperature: TemperatureUnit
+  wind: WindUnit
+}
 export type Translations = typeof en | typeof uk
 
 export interface Coords {

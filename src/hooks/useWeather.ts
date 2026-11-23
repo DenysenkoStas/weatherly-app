@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react'
-import type { WeatherResponse, WeatherCurrent, WeatherDaily, WeatherHourly } from '../types'
+import type { Units, WeatherResponse, WeatherCurrent, WeatherDaily, WeatherHourly } from '../types'
 
 const WEATHER_API = 'https://api.open-meteo.com/v1/forecast'
 
@@ -9,6 +9,8 @@ interface UseWeatherReturn {
   hourly: WeatherHourly | null
   timezone: string | null
   updatedAt: Date | null
+  /** Units of the data on screen (may lag behind the chosen ones until the refetch arrives) */
+  units: Units | null
   loading: boolean
   /** A silent refresh is running: the current data stays on screen */
   refreshing: boolean
@@ -19,7 +21,10 @@ interface UseWeatherReturn {
 interface FetchOptions {
   /** Keep showing the current data instead of a skeleton (refresh of the same place) */
   silent?: boolean
+  units?: Units
 }
+
+const DEFAULT_UNITS: Units = { temperature: 'celsius', wind: 'ms' }
 
 export function useWeather(): UseWeatherReturn {
   const [weather, setWeather] = useState<WeatherCurrent | null>(null)
@@ -27,6 +32,7 @@ export function useWeather(): UseWeatherReturn {
   const [hourly, setHourly] = useState<WeatherHourly | null>(null)
   const [timezone, setTimezone] = useState<string | null>(null)
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null)
+  const [units, setUnits] = useState<Units | null>(null)
   const [loading, setLoading] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -34,7 +40,11 @@ export function useWeather(): UseWeatherReturn {
   const requestIdRef = useRef(0)
 
   const fetch = useCallback(
-    async (lat: number, lon: number, { silent = false }: FetchOptions = {}) => {
+    async (
+      lat: number,
+      lon: number,
+      { silent = false, units: requestedUnits = DEFAULT_UNITS }: FetchOptions = {},
+    ) => {
       const requestId = ++requestIdRef.current
       const isLatest = () => requestId === requestIdRef.current
 
@@ -69,7 +79,8 @@ export function useWeather(): UseWeatherReturn {
           'hourly',
           'temperature_2m,weather_code,precipitation_probability,is_day',
         )
-        url.searchParams.set('wind_speed_unit', 'ms')
+        url.searchParams.set('temperature_unit', requestedUnits.temperature)
+        url.searchParams.set('wind_speed_unit', requestedUnits.wind)
         url.searchParams.set('timezone', 'auto')
         url.searchParams.set('forecast_days', '7')
 
@@ -87,6 +98,7 @@ export function useWeather(): UseWeatherReturn {
         setHourly(data.hourly)
         setTimezone(data.timezone)
         setUpdatedAt(new Date())
+        setUnits(requestedUnits)
       } catch {
         if (isLatest()) setError('fetch_failed')
       } finally {
@@ -99,5 +111,16 @@ export function useWeather(): UseWeatherReturn {
     [],
   )
 
-  return { weather, forecast, hourly, timezone, updatedAt, loading, refreshing, error, fetch }
+  return {
+    weather,
+    forecast,
+    hourly,
+    timezone,
+    updatedAt,
+    units,
+    loading,
+    refreshing,
+    error,
+    fetch,
+  }
 }

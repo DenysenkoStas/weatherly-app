@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from 'react'
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useLanguage } from './hooks/useLanguage'
 import { useTheme } from './hooks/useTheme'
 import { useGeocoding } from './hooks/useGeocoding'
@@ -9,6 +9,7 @@ import { DESKTOP_QUERY, useMediaQuery } from './hooks/useMediaQuery'
 import { loadLastLocation, saveLastLocation } from './hooks/useLastLocation'
 import { useRefreshWhenStale } from './hooks/useRefreshWhenStale'
 import { useAirQuality } from './hooks/useAirQuality'
+import { useUnits } from './hooks/useUnits'
 import { SearchBar } from './components/SearchBar'
 import { WeatherCard } from './components/WeatherCard'
 import { WeatherCardSkeleton } from './components/WeatherCardSkeleton'
@@ -19,6 +20,7 @@ import { ForecastCardSkeleton } from './components/ForecastCardSkeleton'
 import { FavoritesList } from './components/FavoritesList'
 import { EmptyState } from './components/EmptyState'
 import { AirQualityCard } from './components/AirQualityCard'
+import { UnitsMenu } from './components/UnitsMenu'
 import { SunIcon, MoonIcon, LocationIcon } from './components/ThemeIcons'
 import { useFavorites, makeFavoriteId } from './hooks/useFavorites'
 import type { Coords, FavoriteCity, GeoResult } from './types'
@@ -32,6 +34,7 @@ function App() {
   )
   const { language, toggleLanguage, t } = useLanguage()
   const { theme, toggleTheme } = useTheme()
+  const { units, setTemperatureUnit, setWindUnit } = useUnits()
   const { results, loading: geoLoading, error: geoError, search, reset } = useGeocoding(language)
   const {
     weather,
@@ -39,6 +42,7 @@ function App() {
     hourly,
     timezone,
     updatedAt,
+    units: weatherUnits,
     loading: weatherLoading,
     refreshing: weatherRefreshing,
     error: weatherError,
@@ -78,9 +82,21 @@ function App() {
     setDaySelection((prev) => ({ ...prev, index }))
   }, [])
 
+  // Units the weather was last requested in: a city change reads them without refetching on unit changes
+  const unitsRef = useRef(units)
+
+  // New units: refetch the same place in the background, the open-meteo API converts for us
+  useEffect(() => {
+    if (unitsRef.current === units) return
+    unitsRef.current = units
+    if (!displayCoords) return
+    // While a new city is still loading, keep its skeleton instead of the previous city's data
+    void fetchWeather(displayCoords.lat, displayCoords.lon, { silent: !weatherLoading, units })
+  }, [units, displayCoords, weatherLoading, fetchWeather])
+
   useEffect(() => {
     if (!displayCoords) return
-    void fetchWeather(displayCoords.lat, displayCoords.lon)
+    void fetchWeather(displayCoords.lat, displayCoords.lon, { units: unitsRef.current })
     void fetchAirQuality(displayCoords.lat, displayCoords.lon)
     saveLastLocation(displayCoords)
   }, [displayCoords, fetchWeather, fetchAirQuality])
@@ -149,14 +165,25 @@ function App() {
   // Same place: keep the data on screen and refresh in the background
   const handleRefresh = useCallback(() => {
     if (!displayCoords || weatherLoading) return
-    void fetchWeather(displayCoords.lat, displayCoords.lon, { silent: true })
+    void fetchWeather(displayCoords.lat, displayCoords.lon, { silent: true, units })
     void fetchAirQuality(displayCoords.lat, displayCoords.lon, { silent: true })
-  }, [displayCoords, weatherLoading, fetchWeather, fetchAirQuality])
+  }, [displayCoords, weatherLoading, units, fetchWeather, fetchAirQuality])
 
   useRefreshWhenStale(updatedAt, handleRefresh)
 
   // While re-locating from the header the current city stays visible
   const locatingFromScratch = geolocLoading && !displayCoords
+  // Labels follow the data on screen, so a pending refetch never shows °F next to °C values
+  const shownUnits = weatherUnits ?? units
+  const tWithUnits = useMemo(
+    () => ({
+      ...t,
+      temp_unit: t.temp_units[shownUnits.temperature],
+      wind_unit: t.wind_units[shownUnits.wind],
+    }),
+    [t, shownUnits],
+  )
+
   const showWeatherSkeleton =
     weatherLoading || locatingFromScratch || (!!displayCoords && (!weather || !cityName))
   const showWeather = !!weather && !!cityName && !!updatedAt && !weatherLoading
@@ -212,6 +239,13 @@ function App() {
               />
             </button>
           )}
+          <UnitsMenu
+            units={units}
+            onTemperatureChange={setTemperatureUnit}
+            onWindChange={setWindUnit}
+            buttonClassName={styles.headerToggle}
+            t={t}
+          />
           <button
             type="button"
             className={`${styles.headerToggle} ${styles.headerToggleIcon}`}
@@ -248,7 +282,7 @@ function App() {
               onRefresh={handleRefresh}
               onToggleFavorite={handleToggleFavorite}
               showDetails={!isDesktop}
-              t={t}
+              t={tWithUnits}
             />
           )}
         </div>
@@ -275,7 +309,7 @@ function App() {
               timezone={timezone}
               selectedDayIndex={selectedDayIndex}
               onSelectDay={setSelectedDayIndex}
-              t={{ ...t, weather: t.weather as Record<number, string> }}
+              t={{ ...tWithUnits, weather: t.weather as Record<number, string> }}
             />
           )}
         </div>
@@ -283,7 +317,9 @@ function App() {
         {isDesktop && (showWeatherSkeleton || showWeather) && (
           <div className={styles.wide}>
             {showWeatherSkeleton && <WeatherDetailsSkeleton variant="card" />}
-            {showWeather && <WeatherDetails weather={weather} sun={sun} variant="card" t={t} />}
+            {showWeather && (
+              <WeatherDetails weather={weather} sun={sun} variant="card" t={tWithUnits} />
+            )}
           </div>
         )}
 
