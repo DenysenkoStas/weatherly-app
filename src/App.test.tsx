@@ -46,4 +46,19 @@ describe('App', () => {
     expect(document.documentElement.dataset.theme).toBe('light')
     expect(localStorage.getItem('weatherly-theme')).toBe('light')
   })
+
+  it('opens the last viewed city instead of the empty state', () => {
+    const fetchMock = vi.fn<typeof fetch>(() => new Promise<Response>(() => {}))
+    vi.stubGlobal('fetch', fetchMock)
+    localStorage.setItem('weatherly_last_location', JSON.stringify({ lat: 49.59, lon: 34.55 }))
+
+    render(<App />)
+
+    expect(screen.queryByText(en.empty_state)).toBeNull()
+    const weatherUrl = fetchMock.mock.calls
+      .map(([url]) => String(url))
+      .find((url) => url.startsWith('https://api.open-meteo.com/'))
+    expect(weatherUrl).toContain('latitude=49.59')
+    expect(weatherUrl).toContain('longitude=34.55')
+  })
 })

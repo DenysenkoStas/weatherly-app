@@ -14,11 +14,18 @@ interface UseGeolocationResult extends GeolocationState {
 
 const isSupported = typeof navigator !== 'undefined' && !!navigator.geolocation
 
-export function useGeolocation(): UseGeolocationResult {
+interface UseGeolocationOptions {
+  /** Locate on mount; pass false to wait for an explicit request() */
+  auto?: boolean
+}
+
+export function useGeolocation({ auto = true }: UseGeolocationOptions = {}): UseGeolocationResult {
+  // Read once: changing it later must not start or cancel a lookup
+  const [autoLocate] = useState(auto)
   const [state, setState] = useState<GeolocationState>({
     latitude: null,
     longitude: null,
-    loading: isSupported,
+    loading: isSupported && autoLocate,
     denied: false,
   })
 
@@ -41,9 +48,9 @@ export function useGeolocation(): UseGeolocationResult {
   }, [])
 
   useEffect(() => {
-    if (!isSupported) return
+    if (!isSupported || !autoLocate) return
     locate()
-  }, [locate])
+  }, [locate, autoLocate])
 
   const request = useCallback(() => {
     if (!isSupported) return

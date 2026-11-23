@@ -6,6 +6,8 @@ import { useWeather } from './hooks/useWeather'
 import { useGeolocation } from './hooks/useGeolocation'
 import { useReverseGeocoding } from './hooks/useReverseGeocoding'
 import { DESKTOP_QUERY, useMediaQuery } from './hooks/useMediaQuery'
+import { loadLastLocation, saveLastLocation } from './hooks/useLastLocation'
+import type { Coords } from './hooks/useLastLocation'
 import { SearchBar } from './components/SearchBar'
 import { WeatherCard } from './components/WeatherCard'
 import { WeatherCardSkeleton } from './components/WeatherCardSkeleton'
@@ -22,12 +24,9 @@ import { getSky, getWeatherLabel } from './utils'
 import type { GeoResult } from './types'
 import styles from './App.module.scss'
 
-interface Coords {
-  lat: number
-  lon: number
-}
-
 function App() {
+  // The last viewed city wins over geolocation on start
+  const [lastLocation] = useState(loadLastLocation)
   const { language, toggleLanguage, t } = useLanguage()
   const { theme, toggleTheme } = useTheme()
   const { results, loading: geoLoading, error: geoError, search, reset } = useGeocoding(language)
@@ -48,12 +47,12 @@ function App() {
     denied: geolocDenied,
     supported: geolocSupported,
     request: requestGeolocation,
-  } = useGeolocation()
+  } = useGeolocation({ auto: !lastLocation })
   const { cityName, fetchCityName } = useReverseGeocoding(language)
   const { favorites, isFavorite, toggleFavorite } = useFavorites()
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
 
-  const [selectedCoords, setSelectedCoords] = useState<Coords | null>(null)
+  const [selectedCoords, setSelectedCoords] = useState<Coords | null>(lastLocation)
 
   const geoCoords = useMemo<Coords | null>(
     () => (latitude !== null && longitude !== null ? { lat: latitude, lon: longitude } : null),
@@ -75,9 +74,10 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if (!geoCoords) return
-    void fetchWeather(geoCoords.lat, geoCoords.lon)
-  }, [geoCoords, fetchWeather])
+    if (!displayCoords) return
+    void fetchWeather(displayCoords.lat, displayCoords.lon)
+    saveLastLocation(displayCoords)
+  }, [displayCoords, fetchWeather])
 
   useEffect(() => {
     if (!displayCoords) return
@@ -86,7 +86,6 @@ function App() {
 
   const handleSearch = useCallback(
     (query: string) => {
-      setSelectedCoords(null)
       void search(query)
     },
     [search],
@@ -96,9 +95,8 @@ function App() {
     (city: GeoResult) => {
       reset()
       setSelectedCoords({ lat: city.latitude, lon: city.longitude })
-      void fetchWeather(city.latitude, city.longitude)
     },
-    [reset, fetchWeather],
+    [reset],
   )
 
   const currentFavoriteId = displayCoords
@@ -116,13 +114,9 @@ function App() {
     toggleFavorite(city)
   }, [displayCoords, cityName, toggleFavorite])
 
-  const handleSelectFavorite = useCallback(
-    (city: FavoriteCity) => {
-      setSelectedCoords({ lat: city.latitude, lon: city.longitude })
-      void fetchWeather(city.latitude, city.longitude)
-    },
-    [fetchWeather],
-  )
+  const handleSelectFavorite = useCallback((city: FavoriteCity) => {
+    setSelectedCoords({ lat: city.latitude, lon: city.longitude })
+  }, [])
 
   const error = weatherError || (geoError === 'fetch_failed' ? geoError : null)
   const searchErrorMessage = geoError ? t.errors[geoError as keyof typeof t.errors] : undefined
