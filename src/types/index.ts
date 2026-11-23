@@ -88,6 +88,9 @@ export interface WeatherHourly {
   is_day: number[]
 }
 
+/** Hourly temperatures of the day before today (from `past_days=1`) */
+export type YesterdayHourly = Pick<WeatherHourly, 'time' | 'temperature_2m'>
+
 export interface WeatherResponse {
   timezone: string
   current: WeatherCurrent

@@ -25,7 +25,13 @@ import { UnitsMenu } from './components/UnitsMenu'
 import { SunIcon, MoonIcon, LocationIcon } from './components/ThemeIcons'
 import { useFavorites, makeFavoriteId } from './hooks/useFavorites'
 import type { Coords, FavoriteCity, GeoResult } from './types'
-import { getSky, getWeatherLabel, parseLocationParams, withLocationParams } from './utils'
+import {
+  compareWithYesterday,
+  getSky,
+  getWeatherLabel,
+  parseLocationParams,
+  withLocationParams,
+} from './utils'
 import styles from './App.module.scss'
 
 function App() {
@@ -45,6 +51,7 @@ function App() {
     updatedAt,
     units: weatherUnits,
     fromCache: weatherFromCache,
+    yesterday,
     loading: weatherLoading,
     refreshing: weatherRefreshing,
     error: weatherError,
@@ -291,6 +298,7 @@ function App() {
               updatedAt={updatedAt}
               isFavorite={currentFavoriteId ? isFavorite(currentFavoriteId) : false}
               offline={weatherFromCache}
+              comparison={compareWithYesterday(weather.time, weather.temperature_2m, yesterday)}
               refreshing={weatherRefreshing}
               onRefresh={handleRefresh}
               onToggleFavorite={handleToggleFavorite}

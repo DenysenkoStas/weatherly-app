@@ -9,5 +9,7 @@ export { isValidCoords, parseLocationParams, withLocationParams } from './coords
 export { AQI_LEVELS, getAqiLevel, getAqiScalePosition, getPollenReadings } from './airQuality'
 export type { AqiLevel, PollenLevel, PollenReading, PollenType } from './airQuality'
 export { moveItem } from './moveItem'
+export { compareWithYesterday, splitPastDay } from './yesterday'
+export type { YesterdayComparison } from './yesterday'
 export { getSky } from './sky'
 export type { Sky } from './sky'

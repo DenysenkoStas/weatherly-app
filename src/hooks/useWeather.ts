@@ -1,6 +1,14 @@
 import { useState, useCallback, useRef } from 'react'
 import { makeFavoriteId } from './useFavorites'
-import type { Units, WeatherResponse, WeatherCurrent, WeatherDaily, WeatherHourly } from '../types'
+import type {
+  Units,
+  WeatherResponse,
+  WeatherCurrent,
+  WeatherDaily,
+  WeatherHourly,
+  YesterdayHourly,
+} from '../types'
+import { splitPastDay } from '../utils'
 
 const WEATHER_API = 'https://api.open-meteo.com/v1/forecast'
 
@@ -12,6 +20,8 @@ interface UseWeatherReturn {
   updatedAt: Date | null
   /** Units of the data on screen (may lag behind the chosen ones until the refetch arrives) */
   units: Units | null
+  /** Yesterday's hourly temperatures, to compare the current one with */
+  yesterday: YesterdayHourly | null
   /** The data is the saved copy from an earlier visit: the network request failed */
   fromCache: boolean
   loading: boolean
@@ -70,6 +80,7 @@ export function useWeather(): UseWeatherReturn {
   const [timezone, setTimezone] = useState<string | null>(null)
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null)
   const [units, setUnits] = useState<Units | null>(null)
+  const [yesterday, setYesterday] = useState<YesterdayHourly | null>(null)
   const [fromCache, setFromCache] = useState(false)
   const [loading, setLoading] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
@@ -87,7 +98,10 @@ export function useWeather(): UseWeatherReturn {
       const isLatest = () => requestId === requestIdRef.current
       const key = snapshotKey(lat, lon, requestedUnits)
 
-      const show = (data: WeatherResponse, at: Date, cached: boolean) => {
+      // The response (and its saved copy) includes yesterday: split it off the forecast
+      const show = (raw: WeatherResponse, at: Date, cached: boolean) => {
+        const { data, yesterday: pastDay } = splitPastDay(raw)
+        setYesterday(pastDay)
         setWeather(data.current)
         setForecast(data.daily)
         setHourly(data.hourly)
@@ -132,6 +146,7 @@ export function useWeather(): UseWeatherReturn {
         url.searchParams.set('wind_speed_unit', requestedUnits.wind)
         url.searchParams.set('timezone', 'auto')
         url.searchParams.set('forecast_days', '7')
+        url.searchParams.set('past_days', '1')
 
         const res = await globalThis.fetch(url)
         if (!isLatest()) return
@@ -168,6 +183,7 @@ export function useWeather(): UseWeatherReturn {
     timezone,
     updatedAt,
     units,
+    yesterday,
     fromCache,
     loading,
     refreshing,

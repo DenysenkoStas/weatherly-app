@@ -16,7 +16,10 @@ export function WeatherCardSkeleton({ showDetails = true }: WeatherCardSkeletonP
       </div>
 
       <div className={styles.icon} />
-      <div className={styles.temp} />
+      <div className={styles.tempBlock}>
+        <div className={styles.temp} />
+        <div className={styles.comparison} />
+      </div>
 
       {showDetails && <WeatherDetailsSkeleton />}
 

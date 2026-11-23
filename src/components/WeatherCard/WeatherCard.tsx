@@ -1,4 +1,5 @@
 import type { WeatherCurrent } from '../../types'
+import type { YesterdayComparison } from '../../utils'
 import { WeatherDetails } from '../WeatherDetails'
 import type { SunTimes, WeatherDetailsTranslations } from '../WeatherDetails'
 import { getWeatherIcon } from '../../utils/wmoIcons'
@@ -8,6 +9,10 @@ interface WeatherCardTranslations extends WeatherDetailsTranslations {
   updated_at: string
   updated_on: string
   offline: string
+  colder_than_yesterday: string
+  warmer_than_yesterday: string
+  same_as_yesterday: string
+  yesterday_at: string
   refresh: string
   add_favorite: string
   remove_favorite: string
@@ -22,6 +27,8 @@ interface WeatherCardProps {
   isFavorite: boolean
   // The data is a saved copy shown without network
   offline?: boolean
+  // Current temperature against the same hour yesterday
+  comparison?: YesterdayComparison | null
   // A silent refresh is running
   refreshing?: boolean
   onRefresh: () => void
@@ -39,6 +46,7 @@ export function WeatherCard({
   updatedAt,
   isFavorite,
   offline = false,
+  comparison = null,
   refreshing = false,
   onRefresh,
   onToggleFavorite,
@@ -85,9 +93,26 @@ export function WeatherCard({
         alt={description}
       />
 
-      <div className={styles.temp}>
-        {Math.round(weather.temperature_2m)}
-        {t.temp_unit}
+      <div className={styles.tempBlock}>
+        <div className={styles.temp}>
+          {Math.round(weather.temperature_2m)}
+          {t.temp_unit}
+        </div>
+        {comparison && (
+          <p
+            className={styles.comparison}
+            title={t.yesterday_at
+              .replace('{time}', comparison.hour)
+              .replace('{temp}', `${comparison.yesterdayTemperature}${t.temp_unit}`)}
+          >
+            {comparison.difference === 0
+              ? t.same_as_yesterday
+              : (comparison.difference < 0
+                  ? t.colder_than_yesterday
+                  : t.warmer_than_yesterday
+                ).replace('{n}', String(Math.abs(comparison.difference)))}
+          </p>
+        )}
       </div>
 
       {showDetails && <WeatherDetails weather={weather} sun={sun} t={t} />}
