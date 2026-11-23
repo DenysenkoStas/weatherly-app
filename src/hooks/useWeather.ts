@@ -63,7 +63,7 @@ export function useWeather(): UseWeatherReturn {
         )
         url.searchParams.set(
           'daily',
-          'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,daylight_duration',
+          'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,daylight_duration,precipitation_probability_max',
         )
         url.searchParams.set(
           'hourly',

@@ -53,6 +53,13 @@
   height: 13px;
 }
 
+.dayPrecip {
+  @include bone;
+
+  width: 28px;
+  height: 11px;
+}
+
 .hourly {
   display: flex;
   flex: 1;

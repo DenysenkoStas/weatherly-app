@@ -26,6 +26,7 @@ interface ForecastCardTranslations {
   temp_unit: string
   hourly_forecast: string
   precipitation: string
+  precipitation_chance: string
   weather: Record<number, string>
 }
 
@@ -99,6 +100,7 @@ export function ForecastCard({
           const date = new Date(dateStr)
           const label = i === 0 ? t.today : t.days[date.getUTCDay()]
           const isSelected = selectedDayIndex === i
+          const precipChance = forecast.precipitation_probability_max[i] ?? 0
           return (
             <button
               key={dateStr}
@@ -127,6 +129,14 @@ export function ForecastCard({
                   {t.temp_unit}
                 </span>
               </span>
+              {precipChance > 0 ? (
+                <span className={styles.dayTabPrecip} title={t.precipitation_chance}>
+                  <span className={styles.visuallyHidden}>{t.precipitation_chance}: </span>
+                  {precipChance}%
+                </span>
+              ) : (
+                <span className={styles.dayTabPrecipPlaceholder} aria-hidden />
+              )}
             </button>
           )
         })}

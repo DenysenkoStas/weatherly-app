@@ -12,6 +12,7 @@ export function ForecastCardSkeleton() {
             <div className={styles.dayLabel} />
             <div className={styles.dayIcon} />
             <div className={styles.dayTemps} />
+            <div className={styles.dayPrecip} />
           </div>
         ))}
       </div>

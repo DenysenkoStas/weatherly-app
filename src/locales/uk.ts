@@ -49,6 +49,7 @@ export const uk = {
   },
   precipitation_amount: 'Опади',
   precipitation_unit: 'мм',
+  precipitation_chance: 'Імовірність опадів',
   directions: ['Пн', 'Пн-Сх', 'Сх', 'Пд-Сх', 'Пд', 'Пд-Зх', 'Зх', 'Пн-Зх'],
   sunrise: 'Схід',
   sunset: 'Захід',

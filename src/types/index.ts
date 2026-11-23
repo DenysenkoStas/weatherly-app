@@ -52,6 +52,8 @@ export interface WeatherDaily {
   sunrise: string[]
   sunset: string[]
   daylight_duration: number[]
+  // null when the model has no probability for that day
+  precipitation_probability_max: (number | null)[]
 }
 
 export interface WeatherHourly {

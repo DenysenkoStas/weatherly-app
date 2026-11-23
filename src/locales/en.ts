@@ -49,6 +49,7 @@ export const en = {
   },
   precipitation_amount: 'Precipitation',
   precipitation_unit: 'mm',
+  precipitation_chance: 'Chance of precipitation',
   directions: ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'],
   sunrise: 'Sunrise',
   sunset: 'Sunset',
