@@ -87,6 +87,7 @@ export const en = {
   pollen_levels: { low: 'low', moderate: 'moderate', high: 'high' },
   add_favorite: 'Add to favorites',
   remove_favorite: 'Remove from favorites',
+  reorder_hint: 'Drag or press Alt+←/→ to reorder',
   empty_title: "What's the weather like?",
   empty_state: 'Search for a city or pick a popular one',
   locate_me: 'Use my location',

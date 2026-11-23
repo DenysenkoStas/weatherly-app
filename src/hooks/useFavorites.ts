@@ -41,6 +41,19 @@ export function useFavorites() {
     })
   }, [])
 
+  /** Puts the favorites in the order of `ids`; unknown ids are ignored, missing cities keep their place at the end */
+  const reorderFavorites = useCallback((ids: string[]) => {
+    setFavorites((prev) => {
+      const byId = new Map(prev.map((city) => [city.id, city]))
+      const ordered = ids.flatMap((id) => byId.get(id) ?? [])
+      const rest = prev.filter((city) => !ids.includes(city.id))
+      const next = [...ordered, ...rest]
+      if (next.every((city, i) => city === prev[i])) return prev
+      save(next)
+      return next
+    })
+  }, [])
+
   const toggleFavorite = useCallback(
     (city: FavoriteCity) => {
       if (isFavorite(city.id)) {
@@ -52,5 +65,5 @@ export function useFavorites() {
     [isFavorite, addFavorite, removeFavorite],
   )
 
-  return { favorites, isFavorite, toggleFavorite, removeFavorite }
+  return { favorites, isFavorite, toggleFavorite, removeFavorite, reorderFavorites }
 }

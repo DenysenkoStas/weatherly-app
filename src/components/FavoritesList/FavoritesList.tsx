@@ -1,5 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import type { KeyboardEvent } from 'react'
 import type { FavoriteCity } from '../../types'
+import { moveItem } from '../../utils'
+import { useDragReorder } from './useDragReorder'
 import styles from './FavoritesList.module.scss'
 
 interface FavoritesListProps {
@@ -7,7 +10,8 @@ interface FavoritesListProps {
   activeId?: string | null
   onSelect: (city: FavoriteCity) => void
   onRemove: (city: FavoriteCity) => void
-  t: { remove_favorite: string }
+  onReorder: (ids: string[]) => void
+  t: { remove_favorite: string; reorder_hint: string }
 }
 
 interface Overflow {
@@ -15,7 +19,14 @@ interface Overflow {
   end: boolean
 }
 
-export function FavoritesList({ favorites, activeId, onSelect, onRemove, t }: FavoritesListProps) {
+export function FavoritesList({
+  favorites,
+  activeId,
+  onSelect,
+  onRemove,
+  onReorder,
+  t,
+}: FavoritesListProps) {
   const listRef = useRef<HTMLDivElement>(null)
   const [overflow, setOverflow] = useState<Overflow>({ start: false, end: false })
 
@@ -54,6 +65,26 @@ export function FavoritesList({ favorites, activeId, onSelect, onRemove, t }: Fa
     }
   }, [favorites.length])
 
+  const ids = useMemo(() => favorites.map((city) => city.id), [favorites])
+  const byId = useMemo(() => new Map(favorites.map((city) => [city.id, city])), [favorites])
+  const { order, draggingId, handlePointerDown, consumeDragClick } = useDragReorder(ids, onReorder)
+
+  // Alt + ←/→ moves the focused chip, for keyboard users
+  const handleKeyDown = (event: KeyboardEvent, id: string) => {
+    if (!event.altKey || (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight')) return
+    event.preventDefault()
+    const from = ids.indexOf(id)
+    const to = from + (event.key === 'ArrowLeft' ? -1 : 1)
+    if (to < 0 || to >= ids.length) return
+    onReorder(moveItem(ids, from, to))
+    // The chip's DOM node moves, which drops the focus: put it back
+    requestAnimationFrame(() => {
+      listRef.current
+        ?.querySelector<HTMLButtonElement>(`[data-reorder-id="${id}"] [data-role="select"]`)
+        ?.focus()
+    })
+  }
+
   if (favorites.length === 0) return null
 
   return (
@@ -62,17 +93,34 @@ export function FavoritesList({ favorites, activeId, onSelect, onRemove, t }: Fa
       className={styles.list}
       data-fade-start={overflow.start || undefined}
       data-fade-end={overflow.end || undefined}
+      data-dragging={draggingId ? true : undefined}
     >
-      {favorites.map((city) => {
+      {order.map((id) => {
+        const city = byId.get(id)
+        if (!city) return null
         const isActive = city.id === activeId
+        const isDragging = city.id === draggingId
         const removeLabel = `${t.remove_favorite}: ${city.name}`
         return (
-          <div key={city.id} className={`${styles.item}${isActive ? ` ${styles.itemActive}` : ''}`}>
+          <div
+            key={city.id}
+            className={[
+              styles.item,
+              isActive && styles.itemActive,
+              isDragging && styles.itemDragging,
+            ]
+              .filter(Boolean)
+              .join(' ')}
+            data-reorder-id={city.id}
+            onPointerDown={(event) => handlePointerDown(event, city.id)}
+          >
             {/* The star turns into × while the chip is hovered (always × on touch screens) */}
             <button
               type="button"
               className={styles.remove}
-              onClick={() => onRemove(city)}
+              onClick={() => {
+                if (!consumeDragClick()) onRemove(city)
+              }}
               aria-label={removeLabel}
               title={removeLabel}
             >
@@ -86,8 +134,14 @@ export function FavoritesList({ favorites, activeId, onSelect, onRemove, t }: Fa
             <button
               type="button"
               className={styles.select}
+              data-role="select"
               aria-current={isActive || undefined}
-              onClick={() => onSelect(city)}
+              aria-keyshortcuts="Alt+ArrowLeft Alt+ArrowRight"
+              title={t.reorder_hint}
+              onClick={() => {
+                if (!consumeDragClick()) onSelect(city)
+              }}
+              onKeyDown={(event) => handleKeyDown(event, city.id)}
             >
               {city.name}
             </button>

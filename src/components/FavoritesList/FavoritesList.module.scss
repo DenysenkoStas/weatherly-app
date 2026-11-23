@@ -49,6 +49,9 @@ $fade: 24px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 20px;
+  // Chips can be dragged: no text selection or long-press menu on touch screens
+  user-select: none;
+  -webkit-touch-callout: none;
   transition:
     border-color 0.2s,
     color 0.2s;
@@ -62,6 +65,18 @@ $fade: 24px;
 .itemActive {
   color: #f59e0b;
   border-color: #f59e0b;
+}
+
+.itemDragging {
+  color: var(--accent);
+  border-color: var(--accent);
+  box-shadow: var(--card-shadow);
+  opacity: 0.85;
+}
+
+.list[data-dragging],
+.list[data-dragging] * {
+  cursor: grabbing;
 }
 
 // Both halves of the chip: reset to plain text, the chip draws the pill

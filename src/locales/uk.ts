@@ -87,6 +87,7 @@ export const uk = {
   pollen_levels: { low: 'низький', moderate: 'помірний', high: 'високий' },
   add_favorite: 'Додати до обраного',
   remove_favorite: 'Видалити з обраного',
+  reorder_hint: 'Перетягніть або натисніть Alt+←/→, щоб змінити порядок',
   empty_title: 'Яка погода сьогодні?',
   empty_state: 'Знайдіть місто через пошук або оберіть одне з популярних',
   locate_me: 'Моє місцезнаходження',

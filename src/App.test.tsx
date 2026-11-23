@@ -146,4 +146,23 @@ describe('App', () => {
     expect(screen.getByRole('button', { name: 'Uzhhorod' })).toBeTruthy()
     expect(JSON.parse(localStorage.getItem('weatherly_favorites') ?? '[]')).toHaveLength(1)
   })
+
+  it('moves a favorites chip with Alt + arrow keys', () => {
+    localStorage.setItem(
+      'weatherly_favorites',
+      JSON.stringify([
+        { id: '49.59,34.55', name: 'Poltava', latitude: 49.59, longitude: 34.55 },
+        { id: '48.62,22.29', name: 'Uzhhorod', latitude: 48.62, longitude: 22.29 },
+      ]),
+    )
+
+    render(<App />)
+    fireEvent.keyDown(screen.getByRole('button', { name: 'Poltava' }), {
+      key: 'ArrowRight',
+      altKey: true,
+    })
+
+    const stored = JSON.parse(localStorage.getItem('weatherly_favorites') ?? '[]')
+    expect(stored.map((city: { name: string }) => city.name)).toEqual(['Uzhhorod', 'Poltava'])
+  })
 })

@@ -59,7 +59,7 @@ function App() {
   } = useGeolocation({ auto: !initialLocation })
   const { cityName, fetchCityName } = useReverseGeocoding(language)
   const { airQuality, loading: airQualityLoading, fetch: fetchAirQuality } = useAirQuality()
-  const { favorites, isFavorite, toggleFavorite, removeFavorite } = useFavorites()
+  const { favorites, isFavorite, toggleFavorite, removeFavorite, reorderFavorites } = useFavorites()
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
 
   const [selectedCoords, setSelectedCoords] = useState<Coords | null>(initialLocation)
@@ -222,6 +222,7 @@ function App() {
             activeId={currentFavoriteId}
             onSelect={handleSelectFavorite}
             onRemove={(city) => removeFavorite(city.id)}
+            onReorder={reorderFavorites}
             t={t}
           />
         </div>
