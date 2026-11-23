@@ -17,7 +17,7 @@ import { ForecastCard } from './components/ForecastCard'
 import { ForecastCardSkeleton } from './components/ForecastCardSkeleton'
 import { FavoritesList } from './components/FavoritesList'
 import { EmptyState } from './components/EmptyState'
-import { SunIcon, MoonIcon } from './components/ThemeIcons'
+import { SunIcon, MoonIcon, LocationIcon } from './components/ThemeIcons'
 import { useFavorites, makeFavoriteId } from './hooks/useFavorites'
 import type { FavoriteCity } from './types'
 import { getSky, getWeatherLabel } from './utils'
@@ -114,6 +114,13 @@ function App() {
     toggleFavorite(city)
   }, [displayCoords, cityName, toggleFavorite])
 
+  // Keep the current city on screen until the new position arrives
+  const handleLocate = useCallback(() => {
+    requestGeolocation(() => setSelectedCoords(null))
+  }, [requestGeolocation])
+
+  const isViewingLocation = !selectedCoords && !!geoCoords
+
   const handleSelectFavorite = useCallback((city: FavoriteCity) => {
     setSelectedCoords({ lat: city.latitude, lon: city.longitude })
   }, [])
@@ -126,8 +133,10 @@ function App() {
     void fetchWeather(displayCoords.lat, displayCoords.lon)
   }, [displayCoords, fetchWeather])
 
+  // While re-locating from the header the current city stays visible
+  const locatingFromScratch = geolocLoading && !displayCoords
   const showWeatherSkeleton =
-    weatherLoading || geolocLoading || (!!displayCoords && (!weather || !cityName))
+    weatherLoading || locatingFromScratch || (!!displayCoords && (!weather || !cityName))
   const showWeather = !!weather && !!cityName && !!updatedAt && !weatherLoading
   const sun = forecast
     ? {
@@ -165,6 +174,22 @@ function App() {
           />
         </div>
         <div className={styles.headerActions}>
+          {geolocSupported && (
+            <button
+              type="button"
+              className={`${styles.headerToggle} ${styles.headerToggleIcon}`}
+              onClick={handleLocate}
+              disabled={geolocDenied}
+              aria-label={t.locate_me}
+              aria-pressed={isViewingLocation}
+              aria-busy={geolocLoading}
+              title={geolocDenied ? t.errors.geolocation_denied : t.locate_me}
+            >
+              <LocationIcon
+                className={`${styles.toggleIcon}${geolocLoading ? ` ${styles.locating}` : ''}`}
+              />
+            </button>
+          )}
           <button
             type="button"
             className={`${styles.headerToggle} ${styles.headerToggleIcon}`}
@@ -210,13 +235,13 @@ function App() {
             <EmptyState
               canLocate={geolocSupported}
               locationDenied={geolocDenied}
-              onLocate={requestGeolocation}
+              onLocate={handleLocate}
               onSelectCity={handleSelectFavorite}
               t={t}
             />
           )}
 
-          {(weatherLoading || geolocLoading || (!!displayCoords && !forecast)) && (
+          {(weatherLoading || locatingFromScratch || (!!displayCoords && !forecast)) && (
             <ForecastCardSkeleton />
           )}
 

@@ -61,4 +61,38 @@ describe('App', () => {
     expect(weatherUrl).toContain('latitude=49.59')
     expect(weatherUrl).toContain('longitude=34.55')
   })
+
+  it('switches back to the current location from the header', () => {
+    const fetchMock = vi.fn<typeof fetch>(() => new Promise<Response>(() => {}))
+    vi.stubGlobal('fetch', fetchMock)
+    localStorage.setItem('weatherly_last_location', JSON.stringify({ lat: 49.59, lon: 34.55 }))
+    Object.defineProperty(navigator, 'geolocation', {
+      configurable: true,
+      value: {
+        getCurrentPosition: (success: PositionCallback) =>
+          success({ coords: { latitude: 50.45, longitude: 30.52 } } as GeolocationPosition),
+      },
+    })
+
+    try {
+      render(<App />)
+      const locateButton = screen.getByRole('button', { name: en.locate_me })
+      expect(locateButton.getAttribute('aria-pressed')).toBe('false')
+
+      fireEvent.click(locateButton)
+
+      expect(locateButton.getAttribute('aria-pressed')).toBe('true')
+      const weatherUrls = fetchMock.mock.calls
+        .map(([url]) => String(url))
+        .filter((url) => url.startsWith('https://api.open-meteo.com/'))
+      expect(weatherUrls.at(-1)).toContain('latitude=50.45')
+      expect(JSON.parse(localStorage.getItem('weatherly_last_location') ?? '')).toEqual({
+        lat: 50.45,
+        lon: 30.52,
+      })
+    } finally {
+      // @ts-expect-error -- jsdom has no geolocation; remove the stub again
+      delete navigator.geolocation
+    }
+  })
 })

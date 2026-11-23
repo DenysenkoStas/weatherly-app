@@ -9,10 +9,11 @@ interface GeolocationState {
 
 interface UseGeolocationResult extends GeolocationState {
   supported: boolean
-  request: () => void
+  /** Asks for the position again; onLocated runs once it arrives */
+  request: (onLocated?: () => void) => void
 }
 
-const isSupported = typeof navigator !== 'undefined' && !!navigator.geolocation
+const checkSupported = () => typeof navigator !== 'undefined' && !!navigator.geolocation
 
 interface UseGeolocationOptions {
   /** Locate on mount; pass false to wait for an explicit request() */
@@ -22,6 +23,7 @@ interface UseGeolocationOptions {
 export function useGeolocation({ auto = true }: UseGeolocationOptions = {}): UseGeolocationResult {
   // Read once: changing it later must not start or cancel a lookup
   const [autoLocate] = useState(auto)
+  const [isSupported] = useState(checkSupported)
   const [state, setState] = useState<GeolocationState>({
     latitude: null,
     longitude: null,
@@ -30,7 +32,7 @@ export function useGeolocation({ auto = true }: UseGeolocationOptions = {}): Use
   })
 
   // Only sets state from async callbacks, so it is safe to call inside an effect
-  const locate = useCallback(() => {
+  const locate = useCallback((onLocated?: () => void) => {
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
         setState({
@@ -39,6 +41,7 @@ export function useGeolocation({ auto = true }: UseGeolocationOptions = {}): Use
           loading: false,
           denied: false,
         })
+        onLocated?.()
       },
       (err) => {
         const denied = err.code === err.PERMISSION_DENIED
@@ -50,13 +53,16 @@ export function useGeolocation({ auto = true }: UseGeolocationOptions = {}): Use
   useEffect(() => {
     if (!isSupported || !autoLocate) return
     locate()
-  }, [locate, autoLocate])
+  }, [locate, autoLocate, isSupported])
 
-  const request = useCallback(() => {
-    if (!isSupported) return
-    setState((prev) => ({ ...prev, loading: true }))
-    locate()
-  }, [locate])
+  const request = useCallback(
+    (onLocated?: () => void) => {
+      if (!isSupported) return
+      setState((prev) => ({ ...prev, loading: true }))
+      locate(onLocated)
+    },
+    [locate, isSupported],
+  )
 
   return { ...state, supported: isSupported, request }
 }
