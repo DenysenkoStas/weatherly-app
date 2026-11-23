@@ -7,6 +7,7 @@ import { useGeolocation } from './hooks/useGeolocation'
 import { useReverseGeocoding } from './hooks/useReverseGeocoding'
 import { DESKTOP_QUERY, useMediaQuery } from './hooks/useMediaQuery'
 import { loadLastLocation, saveLastLocation } from './hooks/useLastLocation'
+import { useRefreshWhenStale } from './hooks/useRefreshWhenStale'
 import { SearchBar } from './components/SearchBar'
 import { WeatherCard } from './components/WeatherCard'
 import { WeatherCardSkeleton } from './components/WeatherCardSkeleton'
@@ -37,6 +38,7 @@ function App() {
     timezone,
     updatedAt,
     loading: weatherLoading,
+    refreshing: weatherRefreshing,
     error: weatherError,
     fetch: fetchWeather,
   } = useWeather()
@@ -140,10 +142,13 @@ function App() {
   const error = weatherError || (geoError === 'fetch_failed' ? geoError : null)
   const searchErrorMessage = geoError ? t.errors[geoError as keyof typeof t.errors] : undefined
 
+  // Same place: keep the data on screen and refresh in the background
   const handleRefresh = useCallback(() => {
-    if (!displayCoords) return
-    void fetchWeather(displayCoords.lat, displayCoords.lon)
-  }, [displayCoords, fetchWeather])
+    if (!displayCoords || weatherLoading) return
+    void fetchWeather(displayCoords.lat, displayCoords.lon, { silent: true })
+  }, [displayCoords, weatherLoading, fetchWeather])
+
+  useRefreshWhenStale(updatedAt, handleRefresh)
 
   // While re-locating from the header the current city stays visible
   const locatingFromScratch = geolocLoading && !displayCoords
@@ -234,6 +239,7 @@ function App() {
               description={getWeatherLabel(weather.weather_code, t.weather)}
               updatedAt={updatedAt}
               isFavorite={currentFavoriteId ? isFavorite(currentFavoriteId) : false}
+              refreshing={weatherRefreshing}
               onRefresh={handleRefresh}
               onToggleFavorite={handleToggleFavorite}
               showDetails={!isDesktop}

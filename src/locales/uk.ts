@@ -61,6 +61,7 @@ export const uk = {
     geolocation_denied: 'Доступ до геолокації вимкнено в браузері',
   },
   updated_at: 'Оновлено о',
+  refresh: 'Оновити',
   add_favorite: 'Додати до обраного',
   remove_favorite: 'Видалити з обраного',
   empty_title: 'Яка погода сьогодні?',

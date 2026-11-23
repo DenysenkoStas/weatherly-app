@@ -6,6 +6,7 @@ import styles from './WeatherCard.module.scss'
 
 interface WeatherCardTranslations extends WeatherDetailsTranslations {
   updated_at: string
+  refresh: string
   add_favorite: string
   remove_favorite: string
 }
@@ -17,6 +18,8 @@ interface WeatherCardProps {
   description: string
   updatedAt: Date
   isFavorite: boolean
+  // A silent refresh is running
+  refreshing?: boolean
   onRefresh: () => void
   onToggleFavorite: () => void
   // On desktop the details live in a card of their own next to the forecast
@@ -31,6 +34,7 @@ export function WeatherCard({
   description,
   updatedAt,
   isFavorite,
+  refreshing = false,
   onRefresh,
   onToggleFavorite,
   showDetails = true,
@@ -40,8 +44,17 @@ export function WeatherCard({
 
   return (
     <div className={`${styles.card}${showDetails ? '' : ` ${styles.cardCompact}`}`}>
-      <button className={styles.refresh} onClick={onRefresh} aria-label="Refresh">
-        ↻
+      <button
+        className={styles.refresh}
+        onClick={onRefresh}
+        disabled={refreshing}
+        aria-label={t.refresh}
+        aria-busy={refreshing}
+        title={t.refresh}
+      >
+        <span className={refreshing ? styles.refreshSpinning : undefined} aria-hidden="true">
+          ↻
+        </span>
       </button>
       <button
         className={`${styles.favorite}${isFavorite ? ` ${styles.favoriteActive}` : ''}`}

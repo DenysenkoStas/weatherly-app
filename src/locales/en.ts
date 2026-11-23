@@ -61,6 +61,7 @@ export const en = {
     geolocation_denied: 'Location access is blocked in your browser',
   },
   updated_at: 'Updated at',
+  refresh: 'Refresh',
   add_favorite: 'Add to favorites',
   remove_favorite: 'Remove from favorites',
   empty_title: "What's the weather like?",

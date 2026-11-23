@@ -50,6 +50,26 @@
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.refreshSpinning {
+  display: inline-block;
+  animation: refresh-spin 0.9s linear infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 0.5;
+  }
+}
+
+@keyframes refresh-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .favorite {
