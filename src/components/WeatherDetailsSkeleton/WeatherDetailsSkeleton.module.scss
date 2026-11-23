@@ -23,19 +23,29 @@
     border-top: none;
   }
 
+  // Hints sit next to the values here: three rows per tile
+  .detail {
+    gap: 4px;
+  }
+
+  .hint {
+    display: none;
+  }
+
   // Sunrise and sunset sit to the right of the details, split by a vertical line
   .sun {
     flex: 0 0 320px;
     align-self: stretch;
-    padding-top: 0;
+    margin-top: 0;
     width: auto;
+    height: auto;
   }
 }
 
 .details {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  row-gap: 20px;
+  row-gap: 18px;
   column-gap: 8px;
   padding-top: 16px;
   width: 100%;
@@ -46,35 +56,49 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 2px;
 }
 
 .detailIcon {
   @include bone;
 
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
 }
 
+// Room for the hint under the value ("NE", "low"); the real tiles keep that row in every tile
+.hint {
+  height: 18px;
+}
+
+// Same height as the real sunrise/sunset block (its padding and border included)
 .sun {
   @include bone;
 
+  margin-top: 17px;
   width: 100%;
-  height: 56px;
+  height: 71px;
   border-radius: 8px;
 }
 
 .label {
   @include bone;
 
+  // The real label is 12px (18px line), 10px (15px line) on narrow screens
+  margin-block: 3px;
   width: 60px;
   height: 12px;
+
+  @media (max-width: 400px) {
+    margin-block: 1.5px;
+  }
 }
 
 .value {
   @include bone;
 
+  margin-block: 4px;
   width: 48px;
   height: 16px;
 }

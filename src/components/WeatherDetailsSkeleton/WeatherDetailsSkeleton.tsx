@@ -13,6 +13,7 @@ export function WeatherDetailsSkeleton({ variant = 'inline' }: WeatherDetailsSke
             <div className={styles.detailIcon} />
             <div className={styles.label} />
             <div className={styles.value} />
+            <div className={styles.hint} />
           </div>
         ))}
       </div>

@@ -26,6 +26,7 @@ export function ForecastCardSkeleton() {
               <div className={styles.hourTime} />
               <div className={styles.hourIcon} />
               <div className={styles.hourTemp} />
+              <div className={styles.hourPrecip} />
             </div>
           ))}
         </div>
