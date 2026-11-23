@@ -44,6 +44,7 @@ function App() {
     timezone,
     updatedAt,
     units: weatherUnits,
+    fromCache: weatherFromCache,
     loading: weatherLoading,
     refreshing: weatherRefreshing,
     error: weatherError,
@@ -172,6 +173,13 @@ function App() {
 
   useRefreshWhenStale(updatedAt, handleRefresh)
 
+  // Showing the offline copy: refresh as soon as the network is back
+  useEffect(() => {
+    if (!weatherFromCache) return
+    window.addEventListener('online', handleRefresh)
+    return () => window.removeEventListener('online', handleRefresh)
+  }, [weatherFromCache, handleRefresh])
+
   // While re-locating from the header the current city stays visible
   const locatingFromScratch = geolocLoading && !displayCoords
   // Labels follow the data on screen, so a pending refetch never shows °F next to °C values
@@ -282,6 +290,7 @@ function App() {
               description={getWeatherLabel(weather.weather_code, t.weather)}
               updatedAt={updatedAt}
               isFavorite={currentFavoriteId ? isFavorite(currentFavoriteId) : false}
+              offline={weatherFromCache}
               refreshing={weatherRefreshing}
               onRefresh={handleRefresh}
               onToggleFavorite={handleToggleFavorite}

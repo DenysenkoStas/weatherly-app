@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from 'react'
+import { makeFavoriteId } from './useFavorites'
 import type { Units, WeatherResponse, WeatherCurrent, WeatherDaily, WeatherHourly } from '../types'
 
 const WEATHER_API = 'https://api.open-meteo.com/v1/forecast'
@@ -11,6 +12,8 @@ interface UseWeatherReturn {
   updatedAt: Date | null
   /** Units of the data on screen (may lag behind the chosen ones until the refetch arrives) */
   units: Units | null
+  /** The data is the saved copy from an earlier visit: the network request failed */
+  fromCache: boolean
   loading: boolean
   /** A silent refresh is running: the current data stays on screen */
   refreshing: boolean
@@ -26,6 +29,40 @@ interface FetchOptions {
 
 const DEFAULT_UNITS: Units = { temperature: 'celsius', wind: 'ms' }
 
+// The last successful forecast, shown when the network is gone (offline start of the installed app)
+const SNAPSHOT_KEY = 'weatherly_last_weather'
+
+interface WeatherSnapshot {
+  key: string
+  savedAt: string
+  data: WeatherResponse
+}
+
+// Rounded like the page link (?lat=…&lon=…): a city opened from search and the same city
+// reopened from the rounded link must find the same copy
+function snapshotKey(lat: number, lon: number, units: Units): string {
+  return `${makeFavoriteId(lat, lon)},${units.temperature},${units.wind}`
+}
+
+function saveSnapshot(snapshot: WeatherSnapshot): void {
+  try {
+    localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(snapshot))
+  } catch {
+    // Storage full or disabled: there is just no offline copy
+  }
+}
+
+function loadSnapshot(key: string): WeatherSnapshot | null {
+  try {
+    const snapshot: WeatherSnapshot | null = JSON.parse(
+      localStorage.getItem(SNAPSHOT_KEY) ?? 'null',
+    )
+    return snapshot?.key === key && snapshot.data?.current ? snapshot : null
+  } catch {
+    return null
+  }
+}
+
 export function useWeather(): UseWeatherReturn {
   const [weather, setWeather] = useState<WeatherCurrent | null>(null)
   const [forecast, setForecast] = useState<WeatherDaily | null>(null)
@@ -33,6 +70,7 @@ export function useWeather(): UseWeatherReturn {
   const [timezone, setTimezone] = useState<string | null>(null)
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null)
   const [units, setUnits] = useState<Units | null>(null)
+  const [fromCache, setFromCache] = useState(false)
   const [loading, setLoading] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -47,6 +85,17 @@ export function useWeather(): UseWeatherReturn {
     ) => {
       const requestId = ++requestIdRef.current
       const isLatest = () => requestId === requestIdRef.current
+      const key = snapshotKey(lat, lon, requestedUnits)
+
+      const show = (data: WeatherResponse, at: Date, cached: boolean) => {
+        setWeather(data.current)
+        setForecast(data.daily)
+        setHourly(data.hourly)
+        setTimezone(data.timezone)
+        setUpdatedAt(at)
+        setUnits(requestedUnits)
+        setFromCache(cached)
+      }
 
       setLoading(!silent)
       setRefreshing(silent)
@@ -93,14 +142,15 @@ export function useWeather(): UseWeatherReturn {
 
         const data: WeatherResponse = await res.json()
         if (!isLatest()) return
-        setWeather(data.current)
-        setForecast(data.daily)
-        setHourly(data.hourly)
-        setTimezone(data.timezone)
-        setUpdatedAt(new Date())
-        setUnits(requestedUnits)
+        const now = new Date()
+        show(data, now, false)
+        saveSnapshot({ key, savedAt: now.toISOString(), data })
       } catch {
-        if (isLatest()) setError('fetch_failed')
+        if (!isLatest()) return
+        // No network: fall back to the saved forecast of the same place, if there is one
+        const snapshot = loadSnapshot(key)
+        if (snapshot) show(snapshot.data, new Date(snapshot.savedAt), true)
+        else setError('fetch_failed')
       } finally {
         if (isLatest()) {
           setLoading(false)
@@ -118,6 +168,7 @@ export function useWeather(): UseWeatherReturn {
     timezone,
     updatedAt,
     units,
+    fromCache,
     loading,
     refreshing,
     error,

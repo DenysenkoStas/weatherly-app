@@ -64,6 +64,8 @@ export const en = {
     geolocation_denied: 'Location access is blocked in your browser',
   },
   updated_at: 'Updated at',
+  updated_on: 'Updated',
+  offline: 'offline',
   refresh: 'Refresh',
   air_quality: 'Air quality',
   aqi_levels: {

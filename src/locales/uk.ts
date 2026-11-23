@@ -64,6 +64,8 @@ export const uk = {
     geolocation_denied: 'Доступ до геолокації вимкнено в браузері',
   },
   updated_at: 'Оновлено о',
+  updated_on: 'Оновлено',
+  offline: 'офлайн',
   refresh: 'Оновити',
   air_quality: 'Якість повітря',
   aqi_levels: {

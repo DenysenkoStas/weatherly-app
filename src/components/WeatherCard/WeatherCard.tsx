@@ -6,6 +6,8 @@ import styles from './WeatherCard.module.scss'
 
 interface WeatherCardTranslations extends WeatherDetailsTranslations {
   updated_at: string
+  updated_on: string
+  offline: string
   refresh: string
   add_favorite: string
   remove_favorite: string
@@ -18,6 +20,8 @@ interface WeatherCardProps {
   description: string
   updatedAt: Date
   isFavorite: boolean
+  // The data is a saved copy shown without network
+  offline?: boolean
   // A silent refresh is running
   refreshing?: boolean
   onRefresh: () => void
@@ -34,6 +38,7 @@ export function WeatherCard({
   description,
   updatedAt,
   isFavorite,
+  offline = false,
   refreshing = false,
   onRefresh,
   onToggleFavorite,
@@ -41,6 +46,11 @@ export function WeatherCard({
   t,
 }: WeatherCardProps) {
   const time = updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  // An offline copy can be from another day: then show the date too
+  const isToday = updatedAt.toDateString() === new Date().toDateString()
+  const stamp = isToday
+    ? `${t.updated_at} ${time}`
+    : `${t.updated_on} ${updatedAt.toLocaleDateString([], { day: 'numeric', month: 'short' })}, ${time}`
 
   return (
     <div className={`${styles.card}${showDetails ? '' : ` ${styles.cardCompact}`}`}>
@@ -83,7 +93,8 @@ export function WeatherCard({
       {showDetails && <WeatherDetails weather={weather} sun={sun} t={t} />}
 
       <p className={styles.updatedAt}>
-        {t.updated_at} {time}
+        {stamp}
+        {offline && <span className={styles.offline}> · {t.offline}</span>}
       </p>
     </div>
   )
