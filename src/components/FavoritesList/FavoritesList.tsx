@@ -6,6 +6,8 @@ interface FavoritesListProps {
   favorites: FavoriteCity[]
   activeId?: string | null
   onSelect: (city: FavoriteCity) => void
+  onRemove: (city: FavoriteCity) => void
+  t: { remove_favorite: string }
 }
 
 interface Overflow {
@@ -13,7 +15,7 @@ interface Overflow {
   end: boolean
 }
 
-export function FavoritesList({ favorites, activeId, onSelect }: FavoritesListProps) {
+export function FavoritesList({ favorites, activeId, onSelect, onRemove, t }: FavoritesListProps) {
   const listRef = useRef<HTMLDivElement>(null)
   const [overflow, setOverflow] = useState<Overflow>({ start: false, end: false })
 
@@ -63,16 +65,33 @@ export function FavoritesList({ favorites, activeId, onSelect }: FavoritesListPr
     >
       {favorites.map((city) => {
         const isActive = city.id === activeId
+        const removeLabel = `${t.remove_favorite}: ${city.name}`
         return (
-          <button
-            key={city.id}
-            type="button"
-            className={`${styles.item}${isActive ? ` ${styles.itemActive}` : ''}`}
-            aria-current={isActive || undefined}
-            onClick={() => onSelect(city)}
-          >
-            ★ {city.name}
-          </button>
+          <div key={city.id} className={`${styles.item}${isActive ? ` ${styles.itemActive}` : ''}`}>
+            {/* The star turns into × while the chip is hovered (always × on touch screens) */}
+            <button
+              type="button"
+              className={styles.remove}
+              onClick={() => onRemove(city)}
+              aria-label={removeLabel}
+              title={removeLabel}
+            >
+              <span className={styles.star} aria-hidden>
+                ★
+              </span>
+              <span className={styles.cross} aria-hidden>
+                ×
+              </span>
+            </button>
+            <button
+              type="button"
+              className={styles.select}
+              aria-current={isActive || undefined}
+              onClick={() => onSelect(city)}
+            >
+              {city.name}
+            </button>
+          </div>
         )
       })}
     </div>

@@ -128,4 +128,22 @@ describe('App', () => {
     expect(weatherUrls.at(-1)).toContain('wind_speed_unit=kmh')
     expect(screen.getByRole('button', { name: `${en.units}: °F, km/h` })).toBeTruthy()
   })
+
+  it('removes a city from the favorites chips', () => {
+    localStorage.setItem(
+      'weatherly_favorites',
+      JSON.stringify([
+        { id: '49.59,34.55', name: 'Poltava', latitude: 49.59, longitude: 34.55 },
+        { id: '48.62,22.29', name: 'Uzhhorod', latitude: 48.62, longitude: 22.29 },
+      ]),
+    )
+
+    render(<App />)
+    // Not the popular cities of the empty state, so only the favorites chips match
+    fireEvent.click(screen.getByRole('button', { name: `${en.remove_favorite}: Poltava` }))
+
+    expect(screen.queryByRole('button', { name: 'Poltava' })).toBeNull()
+    expect(screen.getByRole('button', { name: 'Uzhhorod' })).toBeTruthy()
+    expect(JSON.parse(localStorage.getItem('weatherly_favorites') ?? '[]')).toHaveLength(1)
+  })
 })

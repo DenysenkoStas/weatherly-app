@@ -39,8 +39,9 @@ $fade: 24px;
 }
 
 .item {
+  display: flex;
   flex-shrink: 0;
-  padding: 2px 8px;
+  align-items: center;
   font-size: 13px;
   font-weight: 500;
   white-space: nowrap;
@@ -48,7 +49,6 @@ $fade: 24px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 20px;
-  cursor: pointer;
   transition:
     border-color 0.2s,
     color 0.2s;
@@ -57,14 +57,76 @@ $fade: 24px;
     color: #f59e0b;
     border-color: #f59e0b;
   }
-
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: -2px;
-  }
 }
 
 .itemActive {
   color: #f59e0b;
   border-color: #f59e0b;
+}
+
+// Both halves of the chip: reset to plain text, the chip draws the pill
+.remove,
+.select {
+  padding: 2px 0;
+  font: inherit;
+  line-height: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -1px;
+    border-radius: 20px;
+  }
+}
+
+.remove {
+  display: inline-grid;
+  place-items: center;
+  // Star and cross share one cell, so the chip keeps its width when they swap
+  grid-template-areas: 'icon';
+  padding-inline: 6px 3px;
+  min-width: 22px;
+
+  > span {
+    grid-area: icon;
+  }
+
+  &:hover {
+    color: #ef4444;
+  }
+}
+
+.select {
+  padding-right: 8px;
+}
+
+.cross {
+  visibility: hidden;
+  font-size: 15px;
+  line-height: 1;
+}
+
+// Hover the chip (or focus the button with the keyboard) to reveal the cross
+.item:hover .star,
+.remove:focus-visible .star {
+  visibility: hidden;
+}
+
+.item:hover .cross,
+.remove:focus-visible .cross {
+  visibility: visible;
+}
+
+// No hover on touch screens: show the cross right away
+@media (hover: none) {
+  .star {
+    visibility: hidden;
+  }
+
+  .cross {
+    visibility: visible;
+  }
 }

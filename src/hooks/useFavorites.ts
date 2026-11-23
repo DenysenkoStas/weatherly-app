@@ -52,5 +52,5 @@ export function useFavorites() {
     [isFavorite, addFavorite, removeFavorite],
   )
 
-  return { favorites, isFavorite, toggleFavorite }
+  return { favorites, isFavorite, toggleFavorite, removeFavorite }
 }
