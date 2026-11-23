@@ -7,7 +7,6 @@ import { useGeolocation } from './hooks/useGeolocation'
 import { useReverseGeocoding } from './hooks/useReverseGeocoding'
 import { DESKTOP_QUERY, useMediaQuery } from './hooks/useMediaQuery'
 import { loadLastLocation, saveLastLocation } from './hooks/useLastLocation'
-import type { Coords } from './hooks/useLastLocation'
 import { SearchBar } from './components/SearchBar'
 import { WeatherCard } from './components/WeatherCard'
 import { WeatherCardSkeleton } from './components/WeatherCardSkeleton'
@@ -19,14 +18,15 @@ import { FavoritesList } from './components/FavoritesList'
 import { EmptyState } from './components/EmptyState'
 import { SunIcon, MoonIcon, LocationIcon } from './components/ThemeIcons'
 import { useFavorites, makeFavoriteId } from './hooks/useFavorites'
-import type { FavoriteCity } from './types'
-import { getSky, getWeatherLabel } from './utils'
-import type { GeoResult } from './types'
+import type { Coords, FavoriteCity, GeoResult } from './types'
+import { getSky, getWeatherLabel, parseLocationParams, withLocationParams } from './utils'
 import styles from './App.module.scss'
 
 function App() {
-  // The last viewed city wins over geolocation on start
-  const [lastLocation] = useState(loadLastLocation)
+  // On start: a city from the link, then the last viewed city, then geolocation
+  const [initialLocation] = useState(
+    () => parseLocationParams(window.location.search) ?? loadLastLocation(),
+  )
   const { language, toggleLanguage, t } = useLanguage()
   const { theme, toggleTheme } = useTheme()
   const { results, loading: geoLoading, error: geoError, search, reset } = useGeocoding(language)
@@ -47,12 +47,12 @@ function App() {
     denied: geolocDenied,
     supported: geolocSupported,
     request: requestGeolocation,
-  } = useGeolocation({ auto: !lastLocation })
+  } = useGeolocation({ auto: !initialLocation })
   const { cityName, fetchCityName } = useReverseGeocoding(language)
   const { favorites, isFavorite, toggleFavorite } = useFavorites()
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
 
-  const [selectedCoords, setSelectedCoords] = useState<Coords | null>(lastLocation)
+  const [selectedCoords, setSelectedCoords] = useState<Coords | null>(initialLocation)
 
   const geoCoords = useMemo<Coords | null>(
     () => (latitude !== null && longitude !== null ? { lat: latitude, lon: longitude } : null),
@@ -78,6 +78,18 @@ function App() {
     void fetchWeather(displayCoords.lat, displayCoords.lon)
     saveLastLocation(displayCoords)
   }, [displayCoords, fetchWeather])
+
+  // Keep the address bar shareable; replaceState, so city changes don't flood the history
+  useEffect(() => {
+    const href = withLocationParams(window.location.href, displayCoords)
+    if (href !== window.location.href) {
+      window.history.replaceState(window.history.state, '', href)
+    }
+  }, [displayCoords])
+
+  useEffect(() => {
+    document.title = displayCoords && cityName ? `${cityName} — ${t.appName}` : t.appName
+  }, [displayCoords, cityName, t.appName])
 
   useEffect(() => {
     if (!displayCoords) return

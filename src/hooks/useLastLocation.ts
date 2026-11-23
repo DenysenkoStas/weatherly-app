@@ -1,25 +1,14 @@
+import type { Coords } from '../types'
+import { isValidCoords } from '../utils'
+
 const STORAGE_KEY = 'weatherly_last_location'
-
-export interface Coords {
-  lat: number
-  lon: number
-}
-
-function isValidCoords(value: unknown): value is Coords {
-  if (typeof value !== 'object' || value === null) return false
-  const { lat, lon } = value as Record<string, unknown>
-  return (
-    typeof lat === 'number' &&
-    typeof lon === 'number' &&
-    Math.abs(lat) <= 90 &&
-    Math.abs(lon) <= 180
-  )
-}
 
 export function loadLastLocation(): Coords | null {
   try {
     const value: unknown = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null')
-    return isValidCoords(value) ? { lat: value.lat, lon: value.lon } : null
+    if (typeof value !== 'object' || value === null) return null
+    const { lat, lon } = value as Record<string, unknown>
+    return isValidCoords(lat, lon) ? { lat: lat as number, lon: lon as number } : null
   } catch {
     return null
   }

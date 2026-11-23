@@ -4,6 +4,11 @@ export type Language = 'en' | 'uk'
 export type Theme = 'light' | 'dark'
 export type Translations = typeof en | typeof uk
 
+export interface Coords {
+  lat: number
+  lon: number
+}
+
 export interface FavoriteCity {
   id: string
   name: string

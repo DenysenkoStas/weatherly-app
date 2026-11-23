@@ -95,4 +95,19 @@ describe('App', () => {
       delete navigator.geolocation
     }
   })
+
+  it('opens the city from the link and keeps the address in sync', () => {
+    const fetchMock = vi.fn<typeof fetch>(() => new Promise<Response>(() => {}))
+    vi.stubGlobal('fetch', fetchMock)
+    localStorage.setItem('weatherly_last_location', JSON.stringify({ lat: 49.59, lon: 34.55 }))
+    window.history.replaceState(null, '', '/?lat=50.4501&lon=30.5234')
+
+    render(<App />)
+
+    const weatherUrl = fetchMock.mock.calls
+      .map(([url]) => String(url))
+      .find((url) => url.startsWith('https://api.open-meteo.com/'))
+    expect(weatherUrl).toContain('latitude=50.4501')
+    expect(window.location.search).toBe('?lat=50.45&lon=30.52')
+  })
 })
