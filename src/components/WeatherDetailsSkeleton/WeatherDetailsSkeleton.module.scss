@@ -1,0 +1,80 @@
+@use '../../styles/skeleton' as *;
+
+.inline {
+  display: contents;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-top: 16px;
+  padding: 20px 24px;
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+
+  .details {
+    flex: 1;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    padding-top: 0;
+    border-top: none;
+  }
+
+  // Sunrise and sunset sit to the right of the details, split by a vertical line
+  .sun {
+    flex: 0 0 320px;
+    align-self: stretch;
+    padding-top: 0;
+    width: auto;
+  }
+}
+
+.details {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  row-gap: 20px;
+  column-gap: 8px;
+  padding-top: 16px;
+  width: 100%;
+  border-top: 1px solid var(--border);
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.detailIcon {
+  @include bone;
+
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.sun {
+  @include bone;
+
+  width: 100%;
+  height: 56px;
+  border-radius: 8px;
+}
+
+.label {
+  @include bone;
+
+  width: 60px;
+  height: 12px;
+}
+
+.value {
+  @include bone;
+
+  width: 48px;
+  height: 16px;
+}

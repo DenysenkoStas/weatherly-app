@@ -5,9 +5,12 @@ import { useGeocoding } from './hooks/useGeocoding'
 import { useWeather } from './hooks/useWeather'
 import { useGeolocation } from './hooks/useGeolocation'
 import { useReverseGeocoding } from './hooks/useReverseGeocoding'
+import { DESKTOP_QUERY, useMediaQuery } from './hooks/useMediaQuery'
 import { SearchBar } from './components/SearchBar'
 import { WeatherCard } from './components/WeatherCard'
 import { WeatherCardSkeleton } from './components/WeatherCardSkeleton'
+import { WeatherDetails } from './components/WeatherDetails'
+import { WeatherDetailsSkeleton } from './components/WeatherDetailsSkeleton'
 import { ForecastCard } from './components/ForecastCard'
 import { ForecastCardSkeleton } from './components/ForecastCardSkeleton'
 import { FavoritesList } from './components/FavoritesList'
@@ -48,6 +51,7 @@ function App() {
   } = useGeolocation()
   const { cityName, fetchCityName } = useReverseGeocoding(language)
   const { favorites, isFavorite, toggleFavorite } = useFavorites()
+  const isDesktop = useMediaQuery(DESKTOP_QUERY)
 
   const [selectedCoords, setSelectedCoords] = useState<Coords | null>(null)
 
@@ -128,6 +132,17 @@ function App() {
     void fetchWeather(displayCoords.lat, displayCoords.lon)
   }, [displayCoords, fetchWeather])
 
+  const showWeatherSkeleton =
+    weatherLoading || geolocLoading || (!!displayCoords && (!weather || !cityName))
+  const showWeather = !!weather && !!cityName && !!updatedAt && !weatherLoading
+  const sun = forecast
+    ? {
+        sunrise: forecast.sunrise[0],
+        sunset: forecast.sunset[0],
+        daylightDuration: forecast.daylight_duration[0],
+      }
+    : null
+
   const showEmptyState = !displayCoords && !weatherLoading && !geolocLoading && !error
 
   const sky = weather && displayCoords ? getSky(weather.weather_code, weather.is_day === 1) : null
@@ -176,30 +191,21 @@ function App() {
 
       <div className={`${styles.layout}${showEmptyState ? ` ${styles.layoutEmpty}` : ''}`}>
         <div className={styles.main}>
-          {(weatherLoading || geolocLoading || (!!displayCoords && (!weather || !cityName))) && (
-            <WeatherCardSkeleton />
-          )}
+          {showWeatherSkeleton && <WeatherCardSkeleton showDetails={!isDesktop} />}
 
           {error && <p className={styles.error}>{t.errors[error as keyof typeof t.errors]}</p>}
 
-          {weather && cityName && updatedAt && !weatherLoading && (
+          {showWeather && (
             <WeatherCard
               city={cityName}
               weather={weather}
-              sun={
-                forecast
-                  ? {
-                      sunrise: forecast.sunrise[0],
-                      sunset: forecast.sunset[0],
-                      daylightDuration: forecast.daylight_duration[0],
-                    }
-                  : null
-              }
+              sun={sun}
               description={getWeatherLabel(weather.weather_code, t.weather)}
               updatedAt={updatedAt}
               isFavorite={currentFavoriteId ? isFavorite(currentFavoriteId) : false}
               onRefresh={handleRefresh}
               onToggleFavorite={handleToggleFavorite}
+              showDetails={!isDesktop}
               t={t}
             />
           )}
@@ -231,6 +237,13 @@ function App() {
             />
           )}
         </div>
+
+        {isDesktop && (showWeatherSkeleton || showWeather) && (
+          <div className={styles.wide}>
+            {showWeatherSkeleton && <WeatherDetailsSkeleton variant="card" />}
+            {showWeather && <WeatherDetails weather={weather} sun={sun} variant="card" t={t} />}
+          </div>
+        )}
       </div>
     </div>
   )

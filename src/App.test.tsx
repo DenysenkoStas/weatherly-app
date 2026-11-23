@@ -5,10 +5,15 @@ import { en, uk } from './locales'
 
 describe('App', () => {
   beforeEach(() => {
-    // jsdom has no matchMedia; useTheme reads it on the first visit
+    // jsdom has no matchMedia; useTheme and useMediaQuery read it
     vi.stubGlobal(
       'matchMedia',
-      vi.fn((query: string) => ({ matches: true, media: query, addEventListener: vi.fn() })),
+      vi.fn((query: string) => ({
+        matches: true,
+        media: query,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      })),
     )
     localStorage.setItem('weatherly-lang', 'en')
   })

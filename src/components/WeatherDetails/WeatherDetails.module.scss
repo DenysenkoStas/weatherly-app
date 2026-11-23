@@ -1,0 +1,193 @@
+// Part of the weather card: the card's own flex gap spaces the sections
+.inline {
+  display: contents;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-top: 16px;
+  padding: 20px 24px;
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+
+  // Columns as wide as their content, so labels stay on one line; hints sit next to values,
+  // so every tile is three rows (icon, label, value) and the block is centred evenly
+  .details {
+    flex: 1;
+    grid-template-columns: repeat(6, auto);
+    justify-content: space-between;
+    column-gap: 16px;
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .detail {
+    grid-row: span 3;
+    row-gap: 4px;
+
+    &:nth-child(n + 4) {
+      margin-top: 0;
+    }
+  }
+
+  .label {
+    white-space: nowrap;
+  }
+
+  // Sunrise and sunset sit to the right of the details, split by a vertical line
+  .sun {
+    flex: 0 0 320px;
+    align-self: stretch;
+    padding-top: 0;
+    padding-left: 24px;
+    width: auto;
+    border-top: none;
+    border-left: 1px solid var(--border);
+  }
+}
+
+.details {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  row-gap: 0;
+  column-gap: 8px;
+  padding-top: 16px;
+  width: 100%;
+  border-top: 1px solid var(--border);
+}
+
+// Rows of the tile (icon, label, value, hint) line up across the row
+// even when a label wraps onto two lines
+.detail {
+  display: grid;
+  grid-row: span 4;
+  grid-template-rows: subgrid;
+  row-gap: 2px;
+  justify-items: center;
+  align-items: center;
+  min-width: 0;
+
+  &:nth-child(n + 4) {
+    margin-top: 18px;
+  }
+}
+
+.detailIcon {
+  width: 36px;
+  height: 36px;
+  filter: var(--icon-filter);
+}
+
+.label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  text-align: center;
+
+  @media (max-width: 400px) {
+    font-size: 10px;
+    letter-spacing: 0;
+  }
+}
+
+.value {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--text-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.hintInline {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.windArrow {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  color: var(--accent);
+}
+
+.sun {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 16px;
+  width: 100%;
+  border-top: 1px solid var(--border);
+}
+
+.sunEnd {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.sunIcon {
+  width: 40px;
+  height: 40px;
+  margin-block: -6px -2px;
+  filter: var(--icon-filter);
+}
+
+.sunTime {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+.sunMiddle {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.sunTrack {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+}
+
+.sunFill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  border-radius: 2px;
+}
+
+.sunDot {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  background: #fbbf24;
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.6);
+  transform: translate(-50%, -50%);
+}
