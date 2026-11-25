@@ -94,7 +94,7 @@
   transition: color 0.2s;
 
   &:hover {
-    color: #f59e0b;
+    color: var(--amber);
   }
 
   &:focus-visible {
@@ -104,7 +104,7 @@
 }
 
 .favoriteActive {
-  color: #f59e0b;
+  color: var(--amber);
 }
 
 .top {
@@ -159,7 +159,7 @@
 }
 
 .offline {
-  color: #f59e0b;
+  color: var(--amber);
 }
 
 .visuallyHidden {

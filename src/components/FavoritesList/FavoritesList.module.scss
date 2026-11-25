@@ -61,14 +61,14 @@ $fade: 24px;
     color 0.2s;
 
   &:hover {
-    color: #f59e0b;
-    border-color: #f59e0b;
+    color: var(--amber);
+    border-color: var(--amber);
   }
 }
 
 .itemActive {
-  color: #f59e0b;
-  border-color: #f59e0b;
+  color: var(--amber);
+  border-color: var(--amber);
 }
 
 .itemDragging {
@@ -114,7 +114,7 @@ $fade: 24px;
   }
 
   &:hover {
-    color: #ef4444;
+    color: var(--danger);
   }
 }
 

@@ -180,7 +180,7 @@
   margin-top: 16px;
   width: 100%;
   font-size: 15px;
-  color: #ef4444;
+  color: var(--danger);
   text-align: center;
 }
 
@@ -191,7 +191,8 @@
   font-weight: 600;
   line-height: 1.2;
   color: var(--text);
-  background: none;
+  // Like the search field and the chips next to them, so the buttons stand out on the light page
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 6px;
   cursor: pointer;

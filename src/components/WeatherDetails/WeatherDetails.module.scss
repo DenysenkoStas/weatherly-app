@@ -83,6 +83,11 @@
   filter: var(--icon-filter);
 }
 
+// The wind lines are near-white: darken them on the white card of the light theme
+:global([data-theme='light']) .windIcon {
+  filter: var(--icon-filter) brightness(0.5);
+}
+
 .label {
   font-size: 12px;
   text-transform: uppercase;

@@ -2,10 +2,10 @@ import thermometerIcon from '@meteocons/svg/fill/thermometer.svg?url'
 import humidityIcon from '@meteocons/svg/fill/humidity.svg?url'
 import windIcon from '@meteocons/svg/fill/wind.svg?url'
 import barometerIcon from '@meteocons/svg/fill/barometer.svg?url'
-import uvIndexIcon from '@meteocons/svg/fill/uv-index.svg?url'
+import uvIndexSvg from '@meteocons/svg/fill/uv-index.svg?raw'
 import raindropIcon from '@meteocons/svg/fill/raindrop.svg?url'
-import sunriseIcon from '@meteocons/svg/fill/sunrise.svg?url'
-import sunsetIcon from '@meteocons/svg/fill/sunset.svg?url'
+import sunriseSvg from '@meteocons/svg/fill/sunrise.svg?raw'
+import sunsetSvg from '@meteocons/svg/fill/sunset.svg?raw'
 import type { ReactNode } from 'react'
 import type { WeatherCurrent } from '../../types'
 import {
@@ -17,6 +17,16 @@ import {
 } from '../../utils'
 import type { UvLevel } from '../../utils'
 import styles from './WeatherDetails.module.scss'
+
+// These icons draw details (the "UV" text, the horizon line) in near-black, which disappears
+// on the dark card: a mid gray reads in both themes
+function withVisibleDetails(svg: string): string {
+  return `data:image/svg+xml,${encodeURIComponent(svg.replace('#202939', '#64748b'))}`
+}
+
+const uvIndexIcon = withVisibleDetails(uvIndexSvg)
+const sunriseIcon = withVisibleDetails(sunriseSvg)
+const sunsetIcon = withVisibleDetails(sunsetSvg)
 
 export interface WeatherDetailsTranslations {
   weather_details: string
@@ -55,6 +65,7 @@ interface WeatherDetailsProps {
 
 interface DetailProps {
   icon: string
+  iconClassName?: string
   label: string
   value: ReactNode
   hint?: string
@@ -62,10 +73,16 @@ interface DetailProps {
   inlineHint?: boolean
 }
 
-function Detail({ icon, label, value, hint, inlineHint = false }: DetailProps) {
+function Detail({ icon, iconClassName, label, value, hint, inlineHint = false }: DetailProps) {
   return (
     <div className={styles.detail}>
-      <img className={styles.detailIcon} src={icon} alt="" width={36} height={36} />
+      <img
+        className={`${styles.detailIcon}${iconClassName ? ` ${iconClassName}` : ''}`}
+        src={icon}
+        alt=""
+        width={36}
+        height={36}
+      />
       <span className={styles.label}>{label}</span>
       <span className={styles.value}>
         {value}
@@ -106,6 +123,7 @@ export function WeatherDetails({ weather, sun, variant = 'inline', t }: WeatherD
         <Detail
           inlineHint={isCard}
           icon={windIcon}
+          iconClassName={styles.windIcon}
           label={t.wind}
           value={
             <>

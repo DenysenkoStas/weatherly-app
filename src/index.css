@@ -13,6 +13,10 @@
   --accent-hover: #1d4ed8;
   --accent-strong: #2563eb;
   --accent-strong-hover: #1d4ed8;
+  /* Favorites and the offline mark: darker than in the dark theme to stay readable on white */
+  --amber: #b45309;
+  --danger: #b91c1c;
+  --input-border: #6b7280;
   --shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
   --card-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 16px rgba(15, 23, 42, 0.06);
   --scrollbar-thumb: #cbd5e1;
@@ -41,6 +45,9 @@
   --accent-hover: #93c5fd;
   --accent-strong: #2563eb;
   --accent-strong-hover: #3b82f6;
+  --amber: #f59e0b;
+  --danger: #f87171;
+  --input-border: #6b7280;
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
   --scrollbar-thumb: #374151;
