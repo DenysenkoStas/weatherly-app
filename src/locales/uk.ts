@@ -122,6 +122,7 @@ export const uk = {
   today: 'Сьогодні',
   forecast_days: 'Дні прогнозу',
   forecast: 'Прогноз',
-  precipitation: 'дощ',
+  hourly_forecast: 'Погодинний прогноз',
+  now: 'зараз',
   weather,
 } as const

@@ -144,6 +144,12 @@
   overflow-x: auto;
   @include thin-scrollbar;
 
+  // Inside the box: the card would cut an outer ring off
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+
   &::before,
   &::after {
     content: '';

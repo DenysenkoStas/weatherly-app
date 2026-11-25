@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import type { WeatherDaily, WeatherHourly } from '../../types'
 import { en } from '../../locales'
 import { ForecastCard } from './ForecastCard'
@@ -80,5 +80,16 @@ describe('ForecastCard day tabs', () => {
     fireEvent.keyDown(tabs[2], { key: 'Home' })
     expect(tabs[0].getAttribute('aria-selected')).toBe('true')
     expect(document.activeElement).toBe(tabs[0])
+  })
+
+  it('makes the hours a focusable list with the current hour marked', () => {
+    render(<Forecast />)
+
+    const hours = screen.getByRole('region', { name: en.hourly_forecast })
+    expect(hours.tabIndex).toBe(0)
+
+    const items = within(hours).getAllByRole('listitem')
+    expect(items).toHaveLength(2)
+    expect(items.filter((item) => item.getAttribute('aria-current') === 'time')).toHaveLength(1)
   })
 })

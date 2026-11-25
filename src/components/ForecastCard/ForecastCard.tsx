@@ -27,7 +27,8 @@ interface ForecastCardTranslations {
   temp_unit: string
   forecast: string
   forecast_days: string
-  precipitation: string
+  hourly_forecast: string
+  now: string
   precipitation_chance: string
   weather: Record<number, string>
 }
@@ -180,8 +181,16 @@ export function ForecastCard({
             <span className={styles.hourlyDate}>{dateLabel}</span>
           </h2>
 
-          <div ref={hourlyScrollRef} className={styles.hourlyScroll}>
+          {/* Focusable, so the keyboard can scroll the hours with the arrow keys */}
+          <div
+            ref={hourlyScrollRef}
+            className={styles.hourlyScroll}
+            tabIndex={0}
+            role="region"
+            aria-label={t.hourly_forecast}
+          >
             <div
+              role="list"
               className={styles.hourlyTrack}
               style={{ gridTemplateColumns: `repeat(${hours.length}, ${HOUR_CELL_WIDTH}px)` }}
             >
@@ -217,10 +226,17 @@ export function ForecastCard({
               {hours.map((hour, i) => (
                 <div
                   key={hour.time}
+                  role="listitem"
+                  aria-current={currentHourIndex === i ? 'time' : undefined}
                   data-hour-index={i}
                   className={`${styles.hourCell} ${currentHourIndex === i ? styles.hourCellCurrent : ''}`}
                 >
-                  <span className={styles.hourTime}>{formatHour(hour.time)}</span>
+                  <span className={styles.hourTime}>
+                    {currentHourIndex === i && (
+                      <span className={styles.visuallyHidden}>{t.now}, </span>
+                    )}
+                    {formatHour(hour.time)}
+                  </span>
                   <img
                     className={styles.hourIcon}
                     src={getWeatherIcon(hour.weatherCode, hour.isDay)}
@@ -231,7 +247,10 @@ export function ForecastCard({
                     {t.temp_unit}
                   </span>
                   {hour.precipitationProbability > 0 ? (
-                    <span className={styles.hourPrecip}>{hour.precipitationProbability}%</span>
+                    <span className={styles.hourPrecip}>
+                      <span className={styles.visuallyHidden}>{t.precipitation_chance}: </span>
+                      {hour.precipitationProbability}%
+                    </span>
                   ) : (
                     <span className={styles.hourPrecipPlaceholder} aria-hidden />
                   )}

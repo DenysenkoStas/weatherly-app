@@ -122,6 +122,7 @@ export const en = {
   today: 'Today',
   forecast_days: 'Forecast days',
   forecast: 'Forecast',
-  precipitation: 'rain',
+  hourly_forecast: 'Hourly forecast',
+  now: 'now',
   weather,
 } as const
