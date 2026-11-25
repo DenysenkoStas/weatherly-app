@@ -65,6 +65,18 @@
   background: var(--surface-hover);
 }
 
+// The muted min and the blue chance fall short of 4.5:1 on the lighter hover/selected background
+.dayTab:hover,
+.dayTabSelected {
+  .dayTabMin {
+    color: var(--text);
+  }
+
+  .dayTabPrecip {
+    color: var(--accent-hover);
+  }
+}
+
 .dayTabLabel {
   font-size: 12px;
   font-weight: 500;
