@@ -1,3 +1,5 @@
+@use '../../styles/a11y' as *;
+
 .card {
   position: relative;
   display: flex;
@@ -158,4 +160,8 @@
 
 .offline {
   color: #f59e0b;
+}
+
+.visuallyHidden {
+  @include visually-hidden;
 }

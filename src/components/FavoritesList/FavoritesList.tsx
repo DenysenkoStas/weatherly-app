@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import type { FavoriteCity } from '../../types'
 import { moveItem } from '../../utils'
@@ -33,6 +33,7 @@ export function FavoritesList({
   t,
 }: FavoritesListProps) {
   const listRef = useRef<HTMLUListElement>(null)
+  const hintId = useId()
   const [overflow, setOverflow] = useState<Overflow>({ start: false, end: false })
   // A keyboard move is read out by screen readers: the chip keeps focus, so nothing else is
   const [announcement, setAnnouncement] = useState('')
@@ -152,6 +153,7 @@ export function FavoritesList({
                 aria-current={isActive || undefined}
                 aria-keyshortcuts="Alt+ArrowLeft Alt+ArrowRight"
                 title={t.reorder_hint}
+                aria-describedby={hintId}
                 onClick={() => {
                   if (!consumeDragClick()) onSelect(city)
                 }}
@@ -163,6 +165,10 @@ export function FavoritesList({
           )
         })}
       </ul>
+      {/* The tooltip only shows on hover, screen readers read the hint with each chip */}
+      <p id={hintId} className={styles.visuallyHidden}>
+        {t.reorder_hint}
+      </p>
       <p className={styles.visuallyHidden} role="status">
         {announcement}
       </p>

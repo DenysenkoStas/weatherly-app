@@ -62,6 +62,12 @@ export function WeatherCard({
     ? `${t.updated_at} ${time}`
     : `${t.updated_on} ${updatedAt.toLocaleDateString([], { day: 'numeric', month: 'short' })}, ${time}`
 
+  const yesterdayDetail = comparison
+    ? t.yesterday_at
+        .replace('{time}', comparison.hour)
+        .replace('{temp}', `${comparison.yesterdayTemperature}${t.temp_unit}`)
+    : undefined
+
   return (
     <section
       className={`${styles.card}${showDetails ? '' : ` ${styles.cardCompact}`}`}
@@ -106,18 +112,15 @@ export function WeatherCard({
           {t.temp_unit}
         </div>
         {comparison && (
-          <p
-            className={styles.comparison}
-            title={t.yesterday_at
-              .replace('{time}', comparison.hour)
-              .replace('{temp}', `${comparison.yesterdayTemperature}${t.temp_unit}`)}
-          >
+          <p className={styles.comparison} title={yesterdayDetail}>
             {comparison.difference === 0
               ? t.same_as_yesterday
               : (comparison.difference < 0
                   ? t.colder_than_yesterday
                   : t.warmer_than_yesterday
                 ).replace('{n}', String(Math.abs(comparison.difference)))}
+            {/* The tooltip only shows on hover, screen readers get the detail as text */}
+            <span className={styles.visuallyHidden}>. {yesterdayDetail}</span>
           </p>
         )}
       </div>

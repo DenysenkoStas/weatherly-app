@@ -161,6 +161,8 @@ describe('App', () => {
     render(<App />)
     const nav = screen.getByRole('navigation', { name: en.favorites })
     expect(within(nav).getAllByRole('listitem')).toHaveLength(2)
+    const hintId = screen.getByRole('button', { name: 'Poltava' }).getAttribute('aria-describedby')
+    expect(document.getElementById(hintId ?? '')?.textContent).toBe(en.reorder_hint)
 
     fireEvent.keyDown(screen.getByRole('button', { name: 'Poltava' }), {
       key: 'ArrowRight',
