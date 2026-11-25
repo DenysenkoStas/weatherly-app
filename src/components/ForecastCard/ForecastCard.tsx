@@ -1,4 +1,5 @@
 import { useId, useLayoutEffect, useMemo, useRef } from 'react'
+import type { KeyboardEvent } from 'react'
 import type { WeatherDaily, WeatherHourly } from '../../types'
 import {
   getHourlyForDay,
@@ -49,6 +50,7 @@ export function ForecastCard({
   t,
 }: ForecastCardProps) {
   const hourlyScrollRef = useRef<HTMLDivElement>(null)
+  const dayPickerRef = useRef<HTMLDivElement>(null)
   const gradientId = `chart-fill-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
 
   const selectedDate = forecast.time[selectedDayIndex]
@@ -94,9 +96,29 @@ export function ForecastCard({
     container.scrollTo({ left: Math.max(0, target), behavior: 'auto' })
   }, [selectedDayIndex, selectedDate, timezone, hours])
 
+  // Tabs pattern: one Tab stop for the whole row, arrows and Home/End pick the day
+  const handleDayKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    const last = forecast.time.length - 1
+    const next = {
+      ArrowLeft: selectedDayIndex > 0 ? selectedDayIndex - 1 : last,
+      ArrowRight: selectedDayIndex < last ? selectedDayIndex + 1 : 0,
+      Home: 0,
+      End: last,
+    }[event.key]
+    if (next === undefined) return
+    event.preventDefault()
+    onSelectDay(next)
+    dayPickerRef.current?.querySelector<HTMLButtonElement>(`[data-day-index="${next}"]`)?.focus()
+  }
+
   return (
     <section className={styles.card} aria-label={t.forecast}>
-      <div className={styles.dayPicker} role="tablist" aria-label={t.forecast_days}>
+      <div
+        ref={dayPickerRef}
+        className={styles.dayPicker}
+        role="tablist"
+        aria-label={t.forecast_days}
+      >
         {forecast.time.map((dateStr, i) => {
           const date = new Date(dateStr)
           const label = i === 0 ? t.today : t.days[date.getUTCDay()]
@@ -110,8 +132,11 @@ export function ForecastCard({
               id={`forecast-day-${i}`}
               aria-selected={isSelected}
               aria-controls="forecast-hourly-panel"
+              tabIndex={isSelected ? 0 : -1}
+              data-day-index={i}
               className={`${styles.dayTab} ${isSelected ? styles.dayTabSelected : ''}`}
               onClick={() => onSelectDay(i)}
+              onKeyDown={handleDayKeyDown}
             >
               <span className={styles.dayTabLabel}>{label}</span>
               <img
