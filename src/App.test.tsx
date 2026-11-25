@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import App from './App'
 import { en, uk } from './locales'
 
@@ -24,6 +24,7 @@ describe('App', () => {
     expect(screen.getByRole('heading', { name: 'Weatherly' })).toBeTruthy()
     expect(screen.getByRole('combobox', { name: en.searchPlaceholder })).toBeTruthy()
     expect(screen.getByText(en.empty_state)).toBeTruthy()
+    expect(screen.getByRole('main')).toBeTruthy()
   })
 
   it('switches the language', () => {
@@ -158,6 +159,9 @@ describe('App', () => {
     )
 
     render(<App />)
+    const nav = screen.getByRole('navigation', { name: en.favorites })
+    expect(within(nav).getAllByRole('listitem')).toHaveLength(2)
+
     fireEvent.keyDown(screen.getByRole('button', { name: 'Poltava' }), {
       key: 'ArrowRight',
       altKey: true,

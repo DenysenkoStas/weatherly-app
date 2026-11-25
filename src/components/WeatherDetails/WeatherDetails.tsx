@@ -19,6 +19,7 @@ import type { UvLevel } from '../../utils'
 import styles from './WeatherDetails.module.scss'
 
 export interface WeatherDetailsTranslations {
+  weather_details: string
   feels_like: string
   humidity: string
   wind: string
@@ -81,8 +82,14 @@ export function WeatherDetails({ weather, sun, variant = 'inline', t }: WeatherD
   const uvLevel = getUvLevel(weather.uv_index)
   const daylightProgress = sun ? getDaylightProgress(sun.sunrise, sun.sunset, weather.time) : null
 
+  // On desktop the details are a card of their own, so they get a region name
+  const Root = isCard ? 'section' : 'div'
+
   return (
-    <div className={isCard ? styles.card : styles.inline}>
+    <Root
+      className={isCard ? styles.card : styles.inline}
+      aria-label={isCard ? t.weather_details : undefined}
+    >
       <div className={styles.details}>
         <Detail
           inlineHint={isCard}
@@ -170,6 +177,6 @@ export function WeatherDetails({ weather, sun, variant = 'inline', t }: WeatherD
           </div>
         </div>
       )}
-    </div>
+    </Root>
   )
 }

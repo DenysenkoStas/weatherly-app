@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import type { WeatherCurrent } from '../../types'
 import type { YesterdayComparison } from '../../utils'
 import { WeatherDetails } from '../WeatherDetails'
@@ -53,6 +54,7 @@ export function WeatherCard({
   showDetails = true,
   t,
 }: WeatherCardProps) {
+  const cityId = useId()
   const time = updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   // An offline copy can be from another day: then show the date too
   const isToday = updatedAt.toDateString() === new Date().toDateString()
@@ -61,7 +63,10 @@ export function WeatherCard({
     : `${t.updated_on} ${updatedAt.toLocaleDateString([], { day: 'numeric', month: 'short' })}, ${time}`
 
   return (
-    <div className={`${styles.card}${showDetails ? '' : ` ${styles.cardCompact}`}`}>
+    <section
+      className={`${styles.card}${showDetails ? '' : ` ${styles.cardCompact}`}`}
+      aria-labelledby={cityId}
+    >
       <button
         className={styles.refresh}
         onClick={onRefresh}
@@ -83,7 +88,9 @@ export function WeatherCard({
       </button>
 
       <div className={styles.top}>
-        <h2 className={styles.city}>{city}</h2>
+        <h2 id={cityId} className={styles.city}>
+          {city}
+        </h2>
         <p className={styles.description}>{description}</p>
       </div>
 
@@ -121,6 +128,6 @@ export function WeatherCard({
         {stamp}
         {offline && <span className={styles.offline}> · {t.offline}</span>}
       </p>
-    </div>
+    </section>
   )
 }

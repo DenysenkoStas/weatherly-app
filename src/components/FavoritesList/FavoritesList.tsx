@@ -11,7 +11,7 @@ interface FavoritesListProps {
   onSelect: (city: FavoriteCity) => void
   onRemove: (city: FavoriteCity) => void
   onReorder: (ids: string[]) => void
-  t: { remove_favorite: string; reorder_hint: string }
+  t: { favorites: string; remove_favorite: string; reorder_hint: string }
 }
 
 interface Overflow {
@@ -27,7 +27,7 @@ export function FavoritesList({
   onReorder,
   t,
 }: FavoritesListProps) {
-  const listRef = useRef<HTMLDivElement>(null)
+  const listRef = useRef<HTMLUListElement>(null)
   const [overflow, setOverflow] = useState<Overflow>({ start: false, end: false })
 
   // On desktop the chips sit in one scrollable row in the header:
@@ -88,66 +88,68 @@ export function FavoritesList({
   if (favorites.length === 0) return null
 
   return (
-    <div
-      ref={listRef}
-      className={styles.list}
-      data-fade-start={overflow.start || undefined}
-      data-fade-end={overflow.end || undefined}
-      data-dragging={draggingId ? true : undefined}
-    >
-      {order.map((id) => {
-        const city = byId.get(id)
-        if (!city) return null
-        const isActive = city.id === activeId
-        const isDragging = city.id === draggingId
-        const removeLabel = `${t.remove_favorite}: ${city.name}`
-        return (
-          <div
-            key={city.id}
-            className={[
-              styles.item,
-              isActive && styles.itemActive,
-              isDragging && styles.itemDragging,
-            ]
-              .filter(Boolean)
-              .join(' ')}
-            data-reorder-id={city.id}
-            onPointerDown={(event) => handlePointerDown(event, city.id)}
-          >
-            {/* The star turns into × while the chip is hovered (always × on touch screens) */}
-            <button
-              type="button"
-              className={styles.remove}
-              onClick={() => {
-                if (!consumeDragClick()) onRemove(city)
-              }}
-              aria-label={removeLabel}
-              title={removeLabel}
+    <nav aria-label={t.favorites}>
+      <ul
+        ref={listRef}
+        className={styles.list}
+        data-fade-start={overflow.start || undefined}
+        data-fade-end={overflow.end || undefined}
+        data-dragging={draggingId ? true : undefined}
+      >
+        {order.map((id) => {
+          const city = byId.get(id)
+          if (!city) return null
+          const isActive = city.id === activeId
+          const isDragging = city.id === draggingId
+          const removeLabel = `${t.remove_favorite}: ${city.name}`
+          return (
+            <li
+              key={city.id}
+              className={[
+                styles.item,
+                isActive && styles.itemActive,
+                isDragging && styles.itemDragging,
+              ]
+                .filter(Boolean)
+                .join(' ')}
+              data-reorder-id={city.id}
+              onPointerDown={(event) => handlePointerDown(event, city.id)}
             >
-              <span className={styles.star} aria-hidden>
-                ★
-              </span>
-              <span className={styles.cross} aria-hidden>
-                ×
-              </span>
-            </button>
-            <button
-              type="button"
-              className={styles.select}
-              data-role="select"
-              aria-current={isActive || undefined}
-              aria-keyshortcuts="Alt+ArrowLeft Alt+ArrowRight"
-              title={t.reorder_hint}
-              onClick={() => {
-                if (!consumeDragClick()) onSelect(city)
-              }}
-              onKeyDown={(event) => handleKeyDown(event, city.id)}
-            >
-              {city.name}
-            </button>
-          </div>
-        )
-      })}
-    </div>
+              {/* The star turns into × while the chip is hovered (always × on touch screens) */}
+              <button
+                type="button"
+                className={styles.remove}
+                onClick={() => {
+                  if (!consumeDragClick()) onRemove(city)
+                }}
+                aria-label={removeLabel}
+                title={removeLabel}
+              >
+                <span className={styles.star} aria-hidden>
+                  ★
+                </span>
+                <span className={styles.cross} aria-hidden>
+                  ×
+                </span>
+              </button>
+              <button
+                type="button"
+                className={styles.select}
+                data-role="select"
+                aria-current={isActive || undefined}
+                aria-keyshortcuts="Alt+ArrowLeft Alt+ArrowRight"
+                title={t.reorder_hint}
+                onClick={() => {
+                  if (!consumeDragClick()) onSelect(city)
+                }}
+                onKeyDown={(event) => handleKeyDown(event, city.id)}
+              >
+                {city.name}
+              </button>
+            </li>
+          )
+        })}
+      </ul>
+    </nav>
   )
 }

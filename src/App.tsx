@@ -289,7 +289,7 @@ function App() {
         </div>
       </header>
 
-      <div className={`${styles.layout}${showEmptyState ? ` ${styles.layoutEmpty}` : ''}`}>
+      <main className={`${styles.layout}${showEmptyState ? ` ${styles.layoutEmpty}` : ''}`}>
         <div className={styles.main}>
           {showWeatherSkeleton && <WeatherCardSkeleton showDetails={!isDesktop} />}
 
@@ -361,7 +361,7 @@ function App() {
             <AirQualityCard airQuality={airQuality} t={t} />
           </div>
         )}
-      </div>
+      </main>
     </div>
   )
 }

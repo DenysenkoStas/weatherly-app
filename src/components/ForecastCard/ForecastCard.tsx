@@ -24,7 +24,8 @@ interface ForecastCardTranslations {
   months: readonly string[]
   today: string
   temp_unit: string
-  hourly_forecast: string
+  forecast: string
+  forecast_days: string
   precipitation: string
   precipitation_chance: string
   weather: Record<number, string>
@@ -94,8 +95,8 @@ export function ForecastCard({
   }, [selectedDayIndex, selectedDate, timezone, hours])
 
   return (
-    <div className={styles.card}>
-      <div className={styles.dayPicker} role="tablist" aria-label={t.hourly_forecast}>
+    <section className={styles.card} aria-label={t.forecast}>
+      <div className={styles.dayPicker} role="tablist" aria-label={t.forecast_days}>
         {forecast.time.map((dateStr, i) => {
           const date = new Date(dateStr)
           const label = i === 0 ? t.today : t.days[date.getUTCDay()]
@@ -215,6 +216,6 @@ export function ForecastCard({
           </div>
         </div>
       )}
-    </div>
+    </section>
   )
 }
