@@ -40,7 +40,7 @@ A weather web app built with React and TypeScript. Search for a city or use your
 - Vite
 - SCSS Modules
 - [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) (Workbox) for the service worker and manifest
-- [@meteocons/svg](https://github.com/basmilius/weather-icons) for weather icons
+- [@meteocons/svg](https://github.com/basmilius/meteocons) and [@meteocons/svg-static](https://github.com/basmilius/meteocons) for weather icons (still copies when the system asks for reduced motion)
 - Vitest and Testing Library for tests
 
 ## Getting Started

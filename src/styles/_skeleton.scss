@@ -17,4 +17,9 @@
   background-size: 400px 100%;
   border-radius: 6px;
   animation: shimmer 1.4s infinite linear;
+
+  // The bones still mark the loading layout, just without the moving shine
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
 }

@@ -4,6 +4,7 @@ import type { YesterdayComparison } from '../../utils'
 import { WeatherDetails } from '../WeatherDetails'
 import type { SunTimes, WeatherDetailsTranslations } from '../WeatherDetails'
 import { getWeatherIcon } from '../../utils/wmoIcons'
+import { MeteoIcon } from '../MeteoIcon'
 import styles from './WeatherCard.module.scss'
 
 interface WeatherCardTranslations extends WeatherDetailsTranslations {
@@ -100,9 +101,9 @@ export function WeatherCard({
         <p className={styles.description}>{description}</p>
       </div>
 
-      <img
+      <MeteoIcon
         className={styles.icon}
-        src={getWeatherIcon(weather.weather_code, weather.is_day === 1)}
+        icon={getWeatherIcon(weather.weather_code, weather.is_day === 1)}
         alt={description}
       />
 

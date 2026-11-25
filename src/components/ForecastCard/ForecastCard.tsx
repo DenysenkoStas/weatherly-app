@@ -10,6 +10,7 @@ import {
   getAreaPath,
 } from '../../utils'
 import { getWeatherIcon } from '../../utils/wmoIcons'
+import { MeteoIcon } from '../MeteoIcon'
 import { getWeatherLabel } from '../../utils'
 import styles from './ForecastCard.module.scss'
 
@@ -140,9 +141,9 @@ export function ForecastCard({
               onKeyDown={handleDayKeyDown}
             >
               <span className={styles.dayTabLabel}>{label}</span>
-              <img
+              <MeteoIcon
                 className={styles.dayTabIcon}
-                src={getWeatherIcon(forecast.weather_code[i])}
+                icon={getWeatherIcon(forecast.weather_code[i])}
                 alt=""
                 aria-hidden
               />
@@ -237,9 +238,9 @@ export function ForecastCard({
                     )}
                     {formatHour(hour.time)}
                   </span>
-                  <img
+                  <MeteoIcon
                     className={styles.hourIcon}
-                    src={getWeatherIcon(hour.weatherCode, hour.isDay)}
+                    icon={getWeatherIcon(hour.weatherCode, hour.isDay)}
                     alt={getWeatherLabel(hour.weatherCode, t.weather)}
                   />
                   <span className={styles.hourTemp}>

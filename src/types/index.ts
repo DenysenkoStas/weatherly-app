@@ -97,3 +97,9 @@ export interface WeatherResponse {
   daily: WeatherDaily
   hourly: WeatherHourly
 }
+
+/** A Meteocons icon: animated, and a still copy for `prefers-reduced-motion` */
+export interface IconSources {
+  animated: string
+  still: string
+}

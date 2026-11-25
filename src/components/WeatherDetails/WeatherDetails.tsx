@@ -1,13 +1,21 @@
-import thermometerIcon from '@meteocons/svg/fill/thermometer.svg?url'
-import humidityIcon from '@meteocons/svg/fill/humidity.svg?url'
-import windIcon from '@meteocons/svg/fill/wind.svg?url'
-import barometerIcon from '@meteocons/svg/fill/barometer.svg?url'
-import uvIndexSvg from '@meteocons/svg/fill/uv-index.svg?raw'
-import raindropIcon from '@meteocons/svg/fill/raindrop.svg?url'
-import sunriseSvg from '@meteocons/svg/fill/sunrise.svg?raw'
-import sunsetSvg from '@meteocons/svg/fill/sunset.svg?raw'
+import thermometerAnimated from '@meteocons/svg/fill/thermometer.svg?url'
+import thermometerStill from '@meteocons/svg-static/fill/thermometer.svg?url'
+import humidityAnimated from '@meteocons/svg/fill/humidity.svg?url'
+import humidityStill from '@meteocons/svg-static/fill/humidity.svg?url'
+import windAnimated from '@meteocons/svg/fill/wind.svg?url'
+import windStill from '@meteocons/svg-static/fill/wind.svg?url'
+import barometerAnimated from '@meteocons/svg/fill/barometer.svg?url'
+import barometerStill from '@meteocons/svg-static/fill/barometer.svg?url'
+import uvIndexAnimated from '@meteocons/svg/fill/uv-index.svg?raw'
+import uvIndexStill from '@meteocons/svg-static/fill/uv-index.svg?raw'
+import raindropAnimated from '@meteocons/svg/fill/raindrop.svg?url'
+import raindropStill from '@meteocons/svg-static/fill/raindrop.svg?url'
+import sunriseAnimated from '@meteocons/svg/fill/sunrise.svg?raw'
+import sunriseStill from '@meteocons/svg-static/fill/sunrise.svg?raw'
+import sunsetAnimated from '@meteocons/svg/fill/sunset.svg?raw'
+import sunsetStill from '@meteocons/svg-static/fill/sunset.svg?raw'
 import type { ReactNode } from 'react'
-import type { WeatherCurrent } from '../../types'
+import type { IconSources, WeatherCurrent } from '../../types'
 import {
   formatDuration,
   formatHour,
@@ -16,6 +24,7 @@ import {
   getUvLevel,
 } from '../../utils'
 import type { UvLevel } from '../../utils'
+import { MeteoIcon } from '../MeteoIcon'
 import styles from './WeatherDetails.module.scss'
 
 // These icons draw details (the "UV" text, the horizon line) in near-black, which disappears
@@ -24,9 +33,23 @@ function withVisibleDetails(svg: string): string {
   return `data:image/svg+xml,${encodeURIComponent(svg.replace('#202939', '#64748b'))}`
 }
 
-const uvIndexIcon = withVisibleDetails(uvIndexSvg)
-const sunriseIcon = withVisibleDetails(sunriseSvg)
-const sunsetIcon = withVisibleDetails(sunsetSvg)
+const thermometerIcon: IconSources = { animated: thermometerAnimated, still: thermometerStill }
+const humidityIcon: IconSources = { animated: humidityAnimated, still: humidityStill }
+const windIcon: IconSources = { animated: windAnimated, still: windStill }
+const barometerIcon: IconSources = { animated: barometerAnimated, still: barometerStill }
+const raindropIcon: IconSources = { animated: raindropAnimated, still: raindropStill }
+const uvIndexIcon: IconSources = {
+  animated: withVisibleDetails(uvIndexAnimated),
+  still: withVisibleDetails(uvIndexStill),
+}
+const sunriseIcon: IconSources = {
+  animated: withVisibleDetails(sunriseAnimated),
+  still: withVisibleDetails(sunriseStill),
+}
+const sunsetIcon: IconSources = {
+  animated: withVisibleDetails(sunsetAnimated),
+  still: withVisibleDetails(sunsetStill),
+}
 
 export interface WeatherDetailsTranslations {
   weather_details: string
@@ -64,7 +87,7 @@ interface WeatherDetailsProps {
 }
 
 interface DetailProps {
-  icon: string
+  icon: IconSources
   iconClassName?: string
   label: string
   value: ReactNode
@@ -76,9 +99,9 @@ interface DetailProps {
 function Detail({ icon, iconClassName, label, value, hint, inlineHint = false }: DetailProps) {
   return (
     <div className={styles.detail}>
-      <img
+      <MeteoIcon
         className={`${styles.detailIcon}${iconClassName ? ` ${iconClassName}` : ''}`}
-        src={icon}
+        icon={icon}
         alt=""
         width={36}
         height={36}
@@ -169,7 +192,7 @@ export function WeatherDetails({ weather, sun, variant = 'inline', t }: WeatherD
       {sun && (
         <div className={styles.sun}>
           <div className={styles.sunEnd}>
-            <img className={styles.sunIcon} src={sunriseIcon} alt="" width={40} height={40} />
+            <MeteoIcon className={styles.sunIcon} icon={sunriseIcon} width={40} height={40} />
             <span className={styles.sunTime}>{formatHour(sun.sunrise)}</span>
             <span className={styles.label}>{t.sunrise}</span>
           </div>
@@ -189,7 +212,7 @@ export function WeatherDetails({ weather, sun, variant = 'inline', t }: WeatherD
           </div>
 
           <div className={styles.sunEnd}>
-            <img className={styles.sunIcon} src={sunsetIcon} alt="" width={40} height={40} />
+            <MeteoIcon className={styles.sunIcon} icon={sunsetIcon} width={40} height={40} />
             <span className={styles.sunTime}>{formatHour(sun.sunset)}</span>
             <span className={styles.label}>{t.sunset}</span>
           </div>

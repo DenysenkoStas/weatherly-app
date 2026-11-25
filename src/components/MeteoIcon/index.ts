@@ -1,0 +1,1 @@
+export { MeteoIcon } from './MeteoIcon'

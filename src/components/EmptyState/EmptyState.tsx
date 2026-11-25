@@ -1,5 +1,7 @@
-import partlyCloudyDay from '@meteocons/svg/fill/partly-cloudy-day.svg?url'
+import partlyCloudyDayAnimated from '@meteocons/svg/fill/partly-cloudy-day.svg?url'
+import partlyCloudyDayStill from '@meteocons/svg-static/fill/partly-cloudy-day.svg?url'
 import { LocationIcon } from '../ThemeIcons'
+import { MeteoIcon } from '../MeteoIcon'
 import { makeFavoriteId } from '../../hooks/useFavorites'
 import type { FavoriteCity, Translations } from '../../types'
 import styles from './EmptyState.module.scss'
@@ -28,7 +30,12 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <section className={styles.card} aria-labelledby="empty-state-title">
-      <img className={styles.icon} src={partlyCloudyDay} alt="" width={112} height={112} />
+      <MeteoIcon
+        className={styles.icon}
+        icon={{ animated: partlyCloudyDayAnimated, still: partlyCloudyDayStill }}
+        width={112}
+        height={112}
+      />
       <h2 id="empty-state-title" className={styles.title}>
         {t.empty_title}
       </h2>
