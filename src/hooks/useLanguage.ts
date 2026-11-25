@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { en, uk } from '../locales'
 import type { Language } from '../types'
 
@@ -12,6 +12,11 @@ function getInitialLanguage(): Language {
 
 export function useLanguage() {
   const [language, setLanguage] = useState<Language>(getInitialLanguage)
+
+  // Screen readers pick the voice from the page language
+  useEffect(() => {
+    document.documentElement.lang = language
+  }, [language])
 
   const toggleLanguage = () => {
     const next: Language = language === 'en' ? 'uk' : 'en'

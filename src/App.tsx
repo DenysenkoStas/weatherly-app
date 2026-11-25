@@ -277,8 +277,14 @@ function App() {
               <MoonIcon className={styles.toggleIcon} />
             )}
           </button>
-          <button type="button" className={styles.headerToggle} onClick={toggleLanguage}>
-            {language === 'en' ? 'EN' : 'UA'}
+          <button
+            type="button"
+            className={styles.headerToggle}
+            onClick={toggleLanguage}
+            aria-label={t.language_switch}
+            title={t.language_switch}
+          >
+            {t.language}
           </button>
         </div>
       </header>

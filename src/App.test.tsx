@@ -29,11 +29,12 @@ describe('App', () => {
   it('switches the language', () => {
     render(<App />)
 
-    fireEvent.click(screen.getByRole('button', { name: 'EN' }))
+    fireEvent.click(screen.getByRole('button', { name: en.language_switch }))
 
-    expect(screen.getByRole('button', { name: 'UA' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: uk.language_switch })).toBeTruthy()
     expect(screen.getByText(uk.empty_state)).toBeTruthy()
     expect(localStorage.getItem('weatherly-lang')).toBe('uk')
+    expect(document.documentElement.lang).toBe('uk')
   })
 
   it('switches the theme', () => {

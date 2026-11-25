@@ -13,6 +13,10 @@
               : 'light'
         document.documentElement.dataset.theme = theme
         document.documentElement.style.colorScheme = theme
+
+        const lang = localStorage.getItem('weatherly-lang')
+        document.documentElement.lang =
+          lang === 'en' || lang === 'uk' ? lang : navigator.language.startsWith('uk') ? 'uk' : 'en'
       })()
     </script>
     <meta charset="UTF-8" />

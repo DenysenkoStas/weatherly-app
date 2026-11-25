@@ -30,6 +30,7 @@ export const en = {
   searchPlaceholder: 'Search city...',
   searchButton: 'Search',
   language: 'EN',
+  language_switch: 'Language: EN. Switch to Ukrainian',
   theme_light: 'Switch to light theme',
   theme_dark: 'Switch to dark theme',
   feels_like: 'Feels like',

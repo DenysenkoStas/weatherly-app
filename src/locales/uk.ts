@@ -30,6 +30,7 @@ export const uk = {
   searchPlaceholder: 'Пошук міста...',
   searchButton: 'Пошук',
   language: 'UA',
+  language_switch: 'Мова: UA. Перемкнути на англійську',
   theme_light: 'Увімкнути світлу тему',
   theme_dark: 'Увімкнути темну тему',
   feels_like: 'Відчувається як',
