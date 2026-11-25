@@ -221,6 +221,9 @@
 }
 
 .hourCell {
+  // Anchors the screen-reader-only labels: otherwise they are placed outside the scrolling row
+  // and widen the whole page
+  position: relative;
   display: flex;
   grid-row: 2;
   flex-direction: column;
