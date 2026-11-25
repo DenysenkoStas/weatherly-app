@@ -27,6 +27,7 @@ const weather: Record<number, string> = {
 
 export const uk = {
   appName: 'Weatherly',
+  cities_found: 'Знайдено міст: {n}',
   searchPlaceholder: 'Пошук міста...',
   language: 'UA',
   language_switch: 'Мова: UA. Перемкнути на англійську',
@@ -71,6 +72,7 @@ export const uk = {
   same_as_yesterday: 'Так само, як учора',
   yesterday_at: 'Учора о {time} було {temp}',
   offline: 'офлайн',
+  loading_weather: 'Завантаження погоди…',
   refresh: 'Оновити',
   air_quality: 'Якість повітря',
   aqi_levels: {
@@ -95,6 +97,7 @@ export const uk = {
   add_favorite: 'Додати до обраного',
   favorites: 'Обрані міста',
   remove_favorite: 'Видалити з обраного',
+  favorite_position: '{city}: позиція {n} з {total}',
   reorder_hint: 'Перетягніть або натисніть Alt+←/→, щоб змінити порядок',
   empty_title: 'Яка погода сьогодні?',
   empty_state: 'Знайдіть місто через пошук або оберіть одне з популярних',

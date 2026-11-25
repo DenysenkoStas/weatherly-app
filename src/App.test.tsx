@@ -169,5 +169,6 @@ describe('App', () => {
 
     const stored = JSON.parse(localStorage.getItem('weatherly_favorites') ?? '[]')
     expect(stored.map((city: { name: string }) => city.name)).toEqual(['Uzhhorod', 'Poltava'])
+    expect(screen.getByText('Poltava: position 2 of 2')).toBeTruthy()
   })
 })

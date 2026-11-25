@@ -26,7 +26,7 @@ export function CityList({
 
   if (results.length === 0 && emptyMessage) {
     return (
-      <div className={styles.list} role="status" aria-live="polite">
+      <div className={styles.list}>
         <p className={emptyMessageVariant === 'error' ? styles.emptyError : styles.emptyMuted}>
           {emptyMessage}
         </p>

@@ -213,6 +213,20 @@ function App() {
 
   const showEmptyState = !displayCoords && !weatherLoading && !geolocLoading && !error
 
+  // Read out by screen readers whenever it changes: loading, then the weather of the new place
+  const weatherStatus = showWeatherSkeleton
+    ? t.loading_weather
+    : showWeather && weather
+      ? [
+          cityName,
+          `${Math.round(weather.temperature_2m)}${tWithUnits.temp_unit}`,
+          getWeatherLabel(weather.weather_code, t.weather),
+          weatherFromCache && t.offline,
+        ]
+          .filter(Boolean)
+          .join(', ')
+      : ''
+
   const sky = weather && displayCoords ? getSky(weather.weather_code, weather.is_day === 1) : null
 
   return (
@@ -229,6 +243,7 @@ function App() {
             loading={geoLoading}
             searchError={geoError}
             searchErrorMessage={searchErrorMessage}
+            resultsMessage={t.cities_found}
           />
         </div>
         <div className={styles.headerFavorites}>
@@ -293,7 +308,11 @@ function App() {
         <div className={styles.main}>
           {showWeatherSkeleton && <WeatherCardSkeleton showDetails={!isDesktop} />}
 
-          {error && <p className={styles.error}>{t.errors[error as keyof typeof t.errors]}</p>}
+          {error && (
+            <p className={styles.error} role="alert">
+              {t.errors[error as keyof typeof t.errors]}
+            </p>
+          )}
 
           {showWeather && (
             <WeatherCard
@@ -362,6 +381,10 @@ function App() {
           </div>
         )}
       </main>
+
+      <p className={styles.visuallyHidden} role="status">
+        {weatherStatus}
+      </p>
     </div>
   )
 }

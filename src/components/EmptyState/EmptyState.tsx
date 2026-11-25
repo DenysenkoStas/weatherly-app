@@ -41,7 +41,11 @@ export function EmptyState({
         </button>
       )}
 
-      {locationDenied && <p className={styles.note}>{t.errors.geolocation_denied}</p>}
+      {locationDenied && (
+        <p className={styles.note} role="alert">
+          {t.errors.geolocation_denied}
+        </p>
+      )}
 
       <div className={styles.popular}>
         <h3 className={styles.popularTitle}>{t.popular_cities}</h3>

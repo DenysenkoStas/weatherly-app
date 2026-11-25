@@ -1,3 +1,5 @@
+@use '../../styles/a11y' as *;
+
 .wrapper {
   position: relative;
   display: flex;
@@ -55,4 +57,8 @@
   to {
     transform: translateY(-50%) rotate(360deg);
   }
+}
+
+.visuallyHidden {
+  @include visually-hidden;
 }

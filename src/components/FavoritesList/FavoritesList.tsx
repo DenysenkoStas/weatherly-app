@@ -11,7 +11,12 @@ interface FavoritesListProps {
   onSelect: (city: FavoriteCity) => void
   onRemove: (city: FavoriteCity) => void
   onReorder: (ids: string[]) => void
-  t: { favorites: string; remove_favorite: string; reorder_hint: string }
+  t: {
+    favorites: string
+    favorite_position: string
+    remove_favorite: string
+    reorder_hint: string
+  }
 }
 
 interface Overflow {
@@ -29,6 +34,8 @@ export function FavoritesList({
 }: FavoritesListProps) {
   const listRef = useRef<HTMLUListElement>(null)
   const [overflow, setOverflow] = useState<Overflow>({ start: false, end: false })
+  // A keyboard move is read out by screen readers: the chip keeps focus, so nothing else is
+  const [announcement, setAnnouncement] = useState('')
 
   // On desktop the chips sit in one scrollable row in the header:
   // track which edges have hidden chips (for the fade) and let the mouse wheel scroll sideways.
@@ -77,6 +84,12 @@ export function FavoritesList({
     const to = from + (event.key === 'ArrowLeft' ? -1 : 1)
     if (to < 0 || to >= ids.length) return
     onReorder(moveItem(ids, from, to))
+    setAnnouncement(
+      t.favorite_position
+        .replace('{city}', byId.get(id)?.name ?? '')
+        .replace('{n}', String(to + 1))
+        .replace('{total}', String(ids.length)),
+    )
     // The chip's DOM node moves, which drops the focus: put it back
     requestAnimationFrame(() => {
       listRef.current
@@ -150,6 +163,9 @@ export function FavoritesList({
           )
         })}
       </ul>
+      <p className={styles.visuallyHidden} role="status">
+        {announcement}
+      </p>
     </nav>
   )
 }

@@ -12,6 +12,8 @@ interface SearchBarProps {
   loading?: boolean
   searchError?: string | null
   searchErrorMessage?: string
+  // Screen reader message with the number of results, `{n}` is replaced
+  resultsMessage: string
 }
 
 export function SearchBar({
@@ -23,6 +25,7 @@ export function SearchBar({
   loading = false,
   searchError,
   searchErrorMessage,
+  resultsMessage,
 }: SearchBarProps) {
   const inputId = useId()
   const listboxId = useId()
@@ -36,6 +39,11 @@ export function SearchBar({
   const showEmptyState = !!searchError && !!searchErrorMessage && !loading
   const hasDropdownContent = loading || results.length > 0 || showEmptyState
   const isDropdownOpen = !isDropdownDismissed && !!value.trim() && hasDropdownContent
+  let status = ''
+  if (isDropdownOpen && !loading) {
+    if (results.length > 0) status = resultsMessage.replace('{n}', String(results.length))
+    else if (showEmptyState) status = searchErrorMessage ?? ''
+  }
   const activeOptionId =
     activeIndex >= 0 && results[activeIndex] ? `${listboxId}-option-${activeIndex}` : undefined
 
@@ -158,6 +166,9 @@ export function SearchBar({
           />
         )}
       </div>
+      <p className={styles.visuallyHidden} role="status">
+        {status}
+      </p>
     </div>
   )
 }

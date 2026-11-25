@@ -27,6 +27,7 @@ const weather: Record<number, string> = {
 
 export const en = {
   appName: 'Weatherly',
+  cities_found: 'Cities found: {n}',
   searchPlaceholder: 'Search city...',
   language: 'EN',
   language_switch: 'Language: EN. Switch to Ukrainian',
@@ -71,6 +72,7 @@ export const en = {
   same_as_yesterday: 'Same as yesterday',
   yesterday_at: 'Yesterday at {time} it was {temp}',
   offline: 'offline',
+  loading_weather: 'Loading the weather…',
   refresh: 'Refresh',
   air_quality: 'Air quality',
   aqi_levels: {
@@ -95,6 +97,7 @@ export const en = {
   add_favorite: 'Add to favorites',
   favorites: 'Favorite cities',
   remove_favorite: 'Remove from favorites',
+  favorite_position: '{city}: position {n} of {total}',
   reorder_hint: 'Drag or press Alt+←/→ to reorder',
   empty_title: "What's the weather like?",
   empty_state: 'Search for a city or pick a popular one',

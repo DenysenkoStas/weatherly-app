@@ -1,4 +1,5 @@
 @use './styles/breakpoints' as *;
+@use './styles/a11y' as *;
 
 .app {
   --sky-glow: transparent;
@@ -245,4 +246,8 @@
   to {
     opacity: 0.35;
   }
+}
+
+.visuallyHidden {
+  @include visually-hidden;
 }
