@@ -21,7 +21,7 @@ import { FavoritesList } from './components/FavoritesList'
 import { EmptyState } from './components/EmptyState'
 import { AirQualityCard } from './components/AirQualityCard'
 import { AirQualityCardSkeleton } from './components/AirQualityCardSkeleton'
-import { UnitsMenu } from './components/UnitsMenu'
+import { SettingsMenu } from './components/SettingsMenu'
 import { SunIcon, MoonIcon, LocationIcon } from './components/ThemeIcons'
 import { useFavorites, makeFavoriteId } from './hooks/useFavorites'
 import type { Coords, FavoriteCity, GeoResult } from './types'
@@ -273,7 +273,7 @@ function App() {
               />
             </button>
           )}
-          <UnitsMenu
+          <SettingsMenu
             units={units}
             onTemperatureChange={setTemperatureUnit}
             onWindChange={setWindUnit}

@@ -119,7 +119,7 @@ describe('App', () => {
     localStorage.setItem('weatherly_last_location', JSON.stringify({ lat: 49.59, lon: 34.55 }))
 
     render(<App />)
-    fireEvent.click(screen.getByRole('button', { name: `${en.units}: °C, m/s` }))
+    fireEvent.click(screen.getByRole('button', { name: `${en.settings}: °C, m/s` }))
     fireEvent.click(screen.getByRole('radio', { name: '°F' }))
     fireEvent.click(screen.getByRole('radio', { name: 'km/h' }))
 
@@ -128,7 +128,7 @@ describe('App', () => {
       .filter((url) => url.startsWith('https://api.open-meteo.com/'))
     expect(weatherUrls.at(-1)).toContain('temperature_unit=fahrenheit')
     expect(weatherUrls.at(-1)).toContain('wind_speed_unit=kmh')
-    expect(screen.getByRole('button', { name: `${en.units}: °F, km/h` })).toBeTruthy()
+    expect(screen.getByRole('button', { name: `${en.settings}: °F, km/h` })).toBeTruthy()
   })
 
   it('removes a city from the favorites chips', () => {

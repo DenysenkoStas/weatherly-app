@@ -37,7 +37,7 @@ export const en = {
   feels_like: 'Feels like',
   humidity: 'Humidity',
   wind: 'Wind',
-  units: 'Units',
+  settings: 'Settings',
   temperature: 'Temperature',
   temp_units: { celsius: '°C', fahrenheit: '°F' },
   wind_units: { ms: 'm/s', kmh: 'km/h' },

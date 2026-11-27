@@ -37,7 +37,7 @@ export const uk = {
   feels_like: 'Відчувається як',
   humidity: 'Вологість',
   wind: 'Вітер',
-  units: 'Одиниці виміру',
+  settings: 'Налаштування',
   temperature: 'Температура',
   temp_units: { celsius: '°C', fahrenheit: '°F' },
   wind_units: { ms: 'м/с', kmh: 'км/год' },

@@ -1,25 +1,25 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import type { TemperatureUnit, Units, WindUnit } from '../../types'
-import styles from './UnitsMenu.module.scss'
+import styles from './SettingsMenu.module.scss'
 
 const TEMPERATURE_UNITS: readonly TemperatureUnit[] = ['celsius', 'fahrenheit']
 const WIND_UNITS: readonly WindUnit[] = ['ms', 'kmh']
 
-interface UnitsMenuTranslations {
-  units: string
+interface SettingsMenuTranslations {
+  settings: string
   temperature: string
   wind: string
   temp_units: Record<TemperatureUnit, string>
   wind_units: Record<WindUnit, string>
 }
 
-interface UnitsMenuProps {
+interface SettingsMenuProps {
   units: Units
   onTemperatureChange: (unit: TemperatureUnit) => void
   onWindChange: (unit: WindUnit) => void
   // Same look as the other header buttons
   buttonClassName?: string
-  t: UnitsMenuTranslations
+  t: SettingsMenuTranslations
 }
 
 interface OptionGroupProps<T extends string> {
@@ -61,13 +61,13 @@ function OptionGroup<T extends string>({
   )
 }
 
-export function UnitsMenu({
+export function SettingsMenu({
   units,
   onTemperatureChange,
   onWindChange,
   buttonClassName,
   t,
-}: UnitsMenuProps) {
+}: SettingsMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -104,14 +104,14 @@ export function UnitsMenu({
         onClick={() => setIsOpen((open) => !open)}
         aria-expanded={isOpen}
         aria-controls={isOpen ? menuId : undefined}
-        aria-label={`${t.units}: ${summary}`}
-        title={t.units}
+        aria-label={`${t.settings}: ${summary}`}
+        title={t.settings}
       >
         {t.temp_units[units.temperature]}
       </button>
 
       {isOpen && (
-        <div id={menuId} className={styles.menu} role="group" aria-label={t.units}>
+        <div id={menuId} className={styles.menu} role="group" aria-label={t.settings}>
           <OptionGroup
             name={`${menuId}-temperature`}
             legend={t.temperature}
