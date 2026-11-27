@@ -1,7 +1,6 @@
 @use '../../styles/breakpoints' as *;
 @use '../../styles/a11y' as *;
-
-$fade: 24px;
+@use '../../styles/fade' as *;
 
 .list {
   display: flex;
@@ -22,23 +21,7 @@ $fade: 24px;
       display: none;
     }
 
-    &[data-fade-end] {
-      mask-image: linear-gradient(to right, #000 calc(100% - #{$fade}), transparent);
-    }
-
-    &[data-fade-start] {
-      mask-image: linear-gradient(to right, transparent, #000 $fade);
-    }
-
-    &[data-fade-start][data-fade-end] {
-      mask-image: linear-gradient(
-        to right,
-        transparent,
-        #000 $fade,
-        #000 calc(100% - #{$fade}),
-        transparent
-      );
-    }
+    @include edge-fade;
   }
 }
 

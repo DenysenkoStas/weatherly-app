@@ -12,6 +12,7 @@ import {
 import { getWeatherIcon } from '../../utils/wmoIcons'
 import { MeteoIcon } from '../MeteoIcon'
 import { getWeatherLabel } from '../../utils'
+import { useHorizontalScroll } from '../../hooks/useHorizontalScroll'
 import styles from './ForecastCard.module.scss'
 
 // Keep in sync with .hourlyTrack in ForecastCard.module.scss
@@ -20,6 +21,8 @@ const HOUR_CELL_GAP = 4
 const HOUR_STEP = HOUR_CELL_WIDTH + HOUR_CELL_GAP
 // Minimum temperature span of the chart scale, in degrees
 const CHART_MIN_RANGE = 8
+// Keep in sync with the edge-fade size: a selected day under the fade scrolls out of it
+const DAY_PICKER_FADE = 24
 
 interface ForecastCardTranslations {
   days: readonly string[]
@@ -55,6 +58,7 @@ export function ForecastCard({
   const hourlyScrollRef = useRef<HTMLDivElement>(null)
   const dayPickerRef = useRef<HTMLDivElement>(null)
   const gradientId = `chart-fill-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
+  const dayPickerOverflow = useHorizontalScroll(dayPickerRef, forecast.time.length)
 
   const selectedDate = forecast.time[selectedDayIndex]
   const hours = useMemo(() => getHourlyForDay(hourly, selectedDate), [hourly, selectedDate])
@@ -99,6 +103,20 @@ export function ForecastCard({
     container.scrollTo({ left: Math.max(0, target), behavior: 'auto' })
   }, [selectedDayIndex, selectedDate, timezone, hours])
 
+  // Two weeks of days don't fit: bring the selected one fully into view, clear of the edge fade
+  useLayoutEffect(() => {
+    const picker = dayPickerRef.current
+    const tab = picker?.querySelector<HTMLElement>(`[data-day-index="${selectedDayIndex}"]`)
+    if (!picker || !tab) return
+
+    const pickerRect = picker.getBoundingClientRect()
+    const tabRect = tab.getBoundingClientRect()
+    const hiddenStart = pickerRect.left + DAY_PICKER_FADE - tabRect.left
+    const hiddenEnd = tabRect.right - (pickerRect.right - DAY_PICKER_FADE)
+    if (hiddenStart > 0) picker.scrollLeft -= hiddenStart
+    else if (hiddenEnd > 0) picker.scrollLeft += hiddenEnd
+  }, [selectedDayIndex])
+
   // Tabs pattern: one Tab stop for the whole row, arrows and Home/End pick the day
   const handleDayKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
     const last = forecast.time.length - 1
@@ -121,10 +139,13 @@ export function ForecastCard({
         className={styles.dayPicker}
         role="tablist"
         aria-label={t.forecast_days}
+        data-fade-start={dayPickerOverflow.start || undefined}
+        data-fade-end={dayPickerOverflow.end || undefined}
       >
         {forecast.time.map((dateStr, i) => {
           const date = new Date(dateStr)
-          const label = i === 0 ? t.today : t.days[date.getUTCDay()]
+          // The weekday repeats over two weeks: the day of the month tells them apart
+          const label = i === 0 ? t.today : `${t.days[date.getUTCDay()]} ${date.getUTCDate()}`
           const isSelected = selectedDayIndex === i
           const precipChance = forecast.precipitation_probability_max[i] ?? 0
           return (

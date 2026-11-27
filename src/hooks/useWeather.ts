@@ -155,7 +155,7 @@ export function useWeather(): UseWeatherReturn {
         url.searchParams.set('temperature_unit', requestedUnits.temperature)
         url.searchParams.set('wind_speed_unit', requestedUnits.wind)
         url.searchParams.set('timezone', 'auto')
-        url.searchParams.set('forecast_days', '7')
+        url.searchParams.set('forecast_days', '16')
         url.searchParams.set('past_days', '1')
 
         const res = await globalThis.fetch(url)

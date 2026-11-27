@@ -1,6 +1,7 @@
 @use '../../styles/breakpoints' as *;
 @use '../../styles/scrollbar' as *;
 @use '../../styles/a11y' as *;
+@use '../../styles/fade' as *;
 
 .card {
   display: flex;
@@ -22,6 +23,7 @@
   padding-block: 12px;
   overflow-x: auto;
   @include thin-scrollbar;
+  @include edge-fade;
 
   &::before,
   &::after {

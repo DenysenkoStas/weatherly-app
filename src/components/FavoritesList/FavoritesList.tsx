@@ -1,7 +1,8 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import { useId, useMemo, useRef, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import type { FavoriteCity } from '../../types'
 import { moveItem } from '../../utils'
+import { useHorizontalScroll } from '../../hooks/useHorizontalScroll'
 import { useDragReorder } from './useDragReorder'
 import styles from './FavoritesList.module.scss'
 
@@ -19,11 +20,6 @@ interface FavoritesListProps {
   }
 }
 
-interface Overflow {
-  start: boolean
-  end: boolean
-}
-
 export function FavoritesList({
   favorites,
   activeId,
@@ -34,44 +30,11 @@ export function FavoritesList({
 }: FavoritesListProps) {
   const listRef = useRef<HTMLUListElement>(null)
   const hintId = useId()
-  const [overflow, setOverflow] = useState<Overflow>({ start: false, end: false })
   // A keyboard move is read out by screen readers: the chip keeps focus, so nothing else is
   const [announcement, setAnnouncement] = useState('')
 
-  // On desktop the chips sit in one scrollable row in the header:
-  // track which edges have hidden chips (for the fade) and let the mouse wheel scroll sideways.
-  useEffect(() => {
-    const list = listRef.current
-    if (!list) return
-
-    const update = () => {
-      const maxScroll = list.scrollWidth - list.clientWidth
-      const start = list.scrollLeft > 1
-      const end = list.scrollLeft < maxScroll - 1
-      setOverflow((prev) => (prev.start === start && prev.end === end ? prev : { start, end }))
-    }
-
-    const handleWheel = (event: WheelEvent) => {
-      if (list.scrollWidth <= list.clientWidth) return
-      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return
-      event.preventDefault()
-      // A vertical wheel turn scrolls the row sideways
-      const step = event.deltaY
-      list.scrollLeft += step
-    }
-
-    // ResizeObserver also fires once right after observe(), which sets the initial fade
-    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(update) : null
-    observer?.observe(list)
-    list.addEventListener('scroll', update, { passive: true })
-    list.addEventListener('wheel', handleWheel, { passive: false })
-
-    return () => {
-      observer?.disconnect()
-      list.removeEventListener('scroll', update)
-      list.removeEventListener('wheel', handleWheel)
-    }
-  }, [favorites.length])
+  // On desktop the chips sit in one scrollable row in the header
+  const overflow = useHorizontalScroll(listRef, favorites.length)
 
   const ids = useMemo(() => favorites.map((city) => city.id), [favorites])
   const byId = useMemo(() => new Map(favorites.map((city) => [city.id, city])), [favorites])

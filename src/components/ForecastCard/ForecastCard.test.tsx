@@ -59,6 +59,13 @@ describe('ForecastCard day tabs', () => {
     expect(tabs.map((tab) => tab.tabIndex)).toEqual([0, -1, -1])
   })
 
+  it('labels the days after today with the weekday and the day of the month', () => {
+    render(<Forecast />)
+
+    const labels = screen.getAllByRole('tab').map((tab) => tab.firstElementChild?.textContent)
+    expect(labels).toEqual(['Today', 'Tue 24', 'Wed 25'])
+  })
+
   it('moves between days with the arrow, Home and End keys', () => {
     render(<Forecast />)
     const tabs = screen.getAllByRole('tab')

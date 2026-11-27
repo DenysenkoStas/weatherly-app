@@ -1,0 +1,21 @@
+// Fades the edges of a sideways-scrolling row where items are hidden.
+// The row sets data-fade-start / data-fade-end from useHorizontalScroll.
+@mixin edge-fade($size: 24px) {
+  &[data-fade-end] {
+    mask-image: linear-gradient(to right, #000 calc(100% - #{$size}), transparent);
+  }
+
+  &[data-fade-start] {
+    mask-image: linear-gradient(to right, transparent, #000 $size);
+  }
+
+  &[data-fade-start][data-fade-end] {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 $size,
+      #000 calc(100% - #{$size}),
+      transparent
+    );
+  }
+}

@@ -1,6 +1,6 @@
 # Weatherly
 
-A weather web app built with React and TypeScript. Search for a city or use your current location to see the weather now, an hourly and 7-day forecast, and air quality. Save favorite cities, share a link to a city, and install the app to use it offline.
+A weather web app built with React and TypeScript. Search for a city or use your current location to see the weather now, an hourly and 16-day forecast, and air quality. Save favorite cities, share a link to a city, and install the app to use it offline.
 
 **[Live demo](https://denysenkostas.github.io/weatherly-app/)**
 
@@ -12,7 +12,7 @@ A weather web app built with React and TypeScript. Search for a city or use your
 - Comparison with yesterday at the same hour ("3° colder than yesterday")
 - Rain and snow in the next 2 hours ("Rain expected around 14:15")
 - Sunrise, sunset, and daylight progress
-- 7-day forecast with daily highs, lows, and chance of precipitation
+- 16-day forecast with daily highs, lows, and chance of precipitation
 - Hourly forecast for each day with a temperature chart
 - Air quality: European AQI, PM2.5, PM10, and pollen in season (Europe)
 - Day and night weather icons, background tinted by the current sky
