@@ -60,6 +60,17 @@ export const uk = {
   sunrise: 'Схід',
   sunset: 'Захід',
   daylight: 'Світловий день',
+  moon_phases: {
+    new: 'Молодик',
+    waxing_crescent: 'Молодий місяць',
+    first_quarter: 'Перша чверть',
+    waxing_gibbous: 'Зростаючий місяць',
+    full: 'Повня',
+    waning_gibbous: 'Спадний місяць',
+    last_quarter: 'Остання чверть',
+    waning_crescent: 'Старий місяць',
+  },
+  moon_illuminated: 'освітлено',
   hours_short: 'год',
   minutes_short: 'хв',
   errors: {

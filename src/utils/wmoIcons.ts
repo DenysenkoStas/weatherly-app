@@ -44,8 +44,25 @@ import overcastNightSnowAnimated from '@meteocons/svg/fill/overcast-night-snow.s
 import overcastNightSnowStill from '@meteocons/svg-static/fill/overcast-night-snow.svg?url'
 import thunderstormsNightHailAnimated from '@meteocons/svg/fill/thunderstorms-night-hail.svg?url'
 import thunderstormsNightHailStill from '@meteocons/svg-static/fill/thunderstorms-night-hail.svg?url'
+import moonNewAnimated from '@meteocons/svg/fill/moon-new.svg?raw'
+import moonNewStill from '@meteocons/svg-static/fill/moon-new.svg?raw'
+import moonWaxingCrescentAnimated from '@meteocons/svg/fill/moon-waxing-crescent.svg?raw'
+import moonWaxingCrescentStill from '@meteocons/svg-static/fill/moon-waxing-crescent.svg?raw'
+import moonFirstQuarterAnimated from '@meteocons/svg/fill/moon-first-quarter.svg?raw'
+import moonFirstQuarterStill from '@meteocons/svg-static/fill/moon-first-quarter.svg?raw'
+import moonWaxingGibbousAnimated from '@meteocons/svg/fill/moon-waxing-gibbous.svg?raw'
+import moonWaxingGibbousStill from '@meteocons/svg-static/fill/moon-waxing-gibbous.svg?raw'
+import moonFullAnimated from '@meteocons/svg/fill/moon-full.svg?raw'
+import moonFullStill from '@meteocons/svg-static/fill/moon-full.svg?raw'
+import moonWaningGibbousAnimated from '@meteocons/svg/fill/moon-waning-gibbous.svg?raw'
+import moonWaningGibbousStill from '@meteocons/svg-static/fill/moon-waning-gibbous.svg?raw'
+import moonLastQuarterAnimated from '@meteocons/svg/fill/moon-last-quarter.svg?raw'
+import moonLastQuarterStill from '@meteocons/svg-static/fill/moon-last-quarter.svg?raw'
+import moonWaningCrescentAnimated from '@meteocons/svg/fill/moon-waning-crescent.svg?raw'
+import moonWaningCrescentStill from '@meteocons/svg-static/fill/moon-waning-crescent.svg?raw'
 import type { IconSources } from '../types'
 import type { PrecipitationType } from './nowcast'
+import type { MoonPhase } from './moon'
 import { withVisibleDetails } from './iconColors'
 
 const clearDay: IconSources = { animated: clearDayAnimated, still: clearDayStill }
@@ -158,4 +175,25 @@ const precipitationIcons: Record<PrecipitationType, IconSources> = {
 
 export function getPrecipitationIcon(type: PrecipitationType): IconSources {
   return precipitationIcons[type]
+}
+
+// Raw, so the near-black details of some moons stay visible on the dark card
+const moonIcon = (animated: string, still: string): IconSources => ({
+  animated: withVisibleDetails(animated),
+  still: withVisibleDetails(still),
+})
+
+const moonIcons: Record<MoonPhase, IconSources> = {
+  new: moonIcon(moonNewAnimated, moonNewStill),
+  waxing_crescent: moonIcon(moonWaxingCrescentAnimated, moonWaxingCrescentStill),
+  first_quarter: moonIcon(moonFirstQuarterAnimated, moonFirstQuarterStill),
+  waxing_gibbous: moonIcon(moonWaxingGibbousAnimated, moonWaxingGibbousStill),
+  full: moonIcon(moonFullAnimated, moonFullStill),
+  waning_gibbous: moonIcon(moonWaningGibbousAnimated, moonWaningGibbousStill),
+  last_quarter: moonIcon(moonLastQuarterAnimated, moonLastQuarterStill),
+  waning_crescent: moonIcon(moonWaningCrescentAnimated, moonWaningCrescentStill),
+}
+
+export function getMoonIcon(phase: MoonPhase): IconSources {
+  return moonIcons[phase]
 }

@@ -1,3 +1,5 @@
+@use '../../styles/a11y' as *;
+
 // Part of the weather card: the card's own flex gap spaces the sections
 .inline {
   display: contents;
@@ -116,6 +118,32 @@
   font-size: 12px;
   color: var(--text-muted);
   text-align: center;
+}
+
+// Under the daylight line: the moon phase and how much of it is lit
+.moon {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: -4px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+// Wider than the line: overflows it instead of raising it
+.moonIcon {
+  width: 24px;
+  height: 24px;
+  margin-block: -4px;
+  filter: var(--icon-filter);
+}
+
+.moonText {
+  text-align: center;
+}
+
+.visuallyHidden {
+  @include visually-hidden;
 }
 
 .hintInline {

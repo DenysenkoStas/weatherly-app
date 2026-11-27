@@ -60,6 +60,17 @@ export const en = {
   sunrise: 'Sunrise',
   sunset: 'Sunset',
   daylight: 'Daylight',
+  moon_phases: {
+    new: 'New moon',
+    waxing_crescent: 'Waxing crescent',
+    first_quarter: 'First quarter',
+    waxing_gibbous: 'Waxing gibbous',
+    full: 'Full moon',
+    waning_gibbous: 'Waning gibbous',
+    last_quarter: 'Last quarter',
+    waning_crescent: 'Waning crescent',
+  },
+  moon_illuminated: 'lit',
   hours_short: 'h',
   minutes_short: 'min',
   errors: {

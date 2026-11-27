@@ -21,10 +21,12 @@ import {
   formatHour,
   getCompassIndex,
   getDaylightProgress,
+  getMoonPhase,
   getUvLevel,
   withVisibleDetails,
 } from '../../utils'
-import type { UvLevel } from '../../utils'
+import type { MoonPhase, UvLevel } from '../../utils'
+import { getMoonIcon } from '../../utils/wmoIcons'
 import { MeteoIcon } from '../MeteoIcon'
 import styles from './WeatherDetails.module.scss'
 
@@ -63,6 +65,8 @@ export interface WeatherDetailsTranslations {
   sunrise: string
   sunset: string
   daylight: string
+  moon_phases: Record<MoonPhase, string>
+  moon_illuminated: string
   hours_short: string
   minutes_short: string
 }
@@ -116,6 +120,8 @@ export function WeatherDetails({ weather, sun, variant = 'inline', t }: WeatherD
   const direction = t.directions[getCompassIndex(weather.wind_direction_10m)]
   const uvLevel = getUvLevel(weather.uv_index)
   const daylightProgress = sun ? getDaylightProgress(sun.sunrise, sun.sunset, weather.time) : null
+  // The same for every city: the moment the data is shown
+  const moon = getMoonPhase(new Date())
 
   // On desktop the details are a card of their own, so they get a region name
   const Root = isCard ? 'section' : 'div'
@@ -203,6 +209,16 @@ export function WeatherDetails({ weather, sun, variant = 'inline', t }: WeatherD
             </div>
             <span className={styles.hint}>
               {t.daylight} {formatDuration(sun.daylightDuration, t)}
+            </span>
+            <span className={styles.moon}>
+              <MeteoIcon className={styles.moonIcon} icon={getMoonIcon(moon.phase)} />
+              {/* One block, so a narrow screen wraps the name and keeps "· 89%" with it */}
+              <span className={styles.moonText}>
+                {t.moon_phases[moon.phase]}
+                <span aria-hidden="true">{'\u00a0·\u00a0'}</span>
+                <span className={styles.visuallyHidden}>, {t.moon_illuminated} </span>
+                {Math.round(moon.illumination * 100)}%
+              </span>
             </span>
           </div>
 

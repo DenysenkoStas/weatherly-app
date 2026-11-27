@@ -11,7 +11,7 @@ A weather web app built with React and TypeScript. Search for a city or use your
 - Current weather: temperature, feels like, humidity, wind speed and direction, pressure, UV index, precipitation
 - Comparison with yesterday at the same hour ("3° colder than yesterday")
 - Rain and snow in the next 2 hours ("Rain expected around 14:15")
-- Sunrise, sunset, and daylight progress
+- Sunrise, sunset, and daylight progress; the moon phase (calculated locally)
 - 16-day forecast with daily highs, lows, and chance of precipitation
 - Hourly forecast for each day with a chart: temperature, feels like, wind (speed and direction), or precipitation in mm
 - Air quality: European AQI, PM2.5, PM10, and pollen in season (Europe)
