@@ -74,6 +74,21 @@
   }
 }
 
+// Left of ↻: the same kind of button
+.share {
+  composes: refresh;
+  right: 48px;
+}
+
+.shareIcon {
+  width: 18px;
+  height: 18px;
+}
+
+.visuallyHidden {
+  @include visually-hidden;
+}
+
 .favorite {
   position: absolute;
   top: 12px;
@@ -112,6 +127,14 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
+  // A long city name wraps before the corner buttons (share + ↻ end 80px from the card edge)
+  // and stays centered
+  padding-inline: 56px;
+  text-align: center;
+
+  @media (max-width: 400px) {
+    padding-inline: 64px;
+  }
 }
 
 .city {

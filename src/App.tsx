@@ -26,6 +26,7 @@ import { SettingsMenu } from './components/SettingsMenu'
 import { SunIcon, MoonIcon, LocationIcon } from './components/ThemeIcons'
 import { useFavorites, makeFavoriteId } from './hooks/useFavorites'
 import { useFavoritesWeather } from './hooks/useFavoritesWeather'
+import { useShare } from './hooks/useShare'
 import type { Coords, FavoriteCity, GeoResult } from './types'
 import {
   compareWithYesterday,
@@ -197,6 +198,7 @@ function App() {
   // Labels follow the data on screen, so a pending refetch never shows °F next to °C values
   const shownUnits = weatherUnits ?? units
   // Asked again with every update of the main forecast, so the chips are as fresh as the card
+  const { share, copied: shareCopied } = useShare()
   const favoriteTemperatures = useFavoritesWeather(favorites, units.temperature, updatedAt)
   const tWithUnits = useMemo(
     () => ({
@@ -339,6 +341,14 @@ function App() {
                 nowcast={getNowcast(minutely)}
                 refreshing={weatherRefreshing}
                 onRefresh={handleRefresh}
+                onShare={() =>
+                  share({
+                    title: document.title,
+                    text: `${cityName}: ${Math.round(weather.temperature_2m)}${tWithUnits.temp_unit}, ${getWeatherLabel(weather.weather_code, t.weather, t.weather_unknown).toLowerCase()}`,
+                    url: window.location.href,
+                  })
+                }
+                shareCopied={shareCopied}
                 onToggleFavorite={handleToggleFavorite}
                 showDetails={!isDesktop}
                 t={tWithUnits}

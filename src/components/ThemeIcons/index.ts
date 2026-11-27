@@ -1,1 +1,1 @@
-export { SunIcon, MoonIcon, LocationIcon, SettingsIcon } from './ThemeIcons'
+export { SunIcon, MoonIcon, LocationIcon, SettingsIcon, ShareIcon, CheckIcon } from './ThemeIcons'

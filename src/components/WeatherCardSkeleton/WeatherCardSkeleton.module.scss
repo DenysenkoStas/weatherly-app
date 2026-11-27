@@ -56,6 +56,11 @@
   border-radius: 6px;
 }
 
+.share {
+  composes: refresh;
+  right: 48px;
+}
+
 .city {
   @include bone;
 

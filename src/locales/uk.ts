@@ -93,6 +93,8 @@ export const uk = {
   offline: 'офлайн',
   loading_weather: 'Завантаження погоди…',
   refresh: 'Оновити',
+  share: 'Поділитися',
+  link_copied: 'Посилання скопійовано',
   air_quality: 'Якість повітря',
   aqi_levels: {
     good: 'Добра',

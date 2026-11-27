@@ -5,6 +5,7 @@ import { WeatherDetails } from '../WeatherDetails'
 import type { SunTimes, WeatherDetailsTranslations } from '../WeatherDetails'
 import { getPrecipitationIcon, getWeatherIcon } from '../../utils/wmoIcons'
 import { MeteoIcon } from '../MeteoIcon'
+import { CheckIcon, ShareIcon } from '../ThemeIcons'
 import styles from './WeatherCard.module.scss'
 
 interface WeatherCardTranslations extends WeatherDetailsTranslations {
@@ -17,6 +18,8 @@ interface WeatherCardTranslations extends WeatherDetailsTranslations {
   yesterday_at: string
   nowcast: Record<PrecipitationType, Record<NowcastKind, string>>
   refresh: string
+  share: string
+  link_copied: string
   add_favorite: string
   remove_favorite: string
 }
@@ -37,6 +40,9 @@ interface WeatherCardProps {
   // A silent refresh is running
   refreshing?: boolean
   onRefresh: () => void
+  onShare: () => void
+  // The link was just copied (where the browser has no share sheet)
+  shareCopied?: boolean
   onToggleFavorite: () => void
   // On desktop the details live in a card of their own next to the forecast
   showDetails?: boolean
@@ -55,6 +61,8 @@ export function WeatherCard({
   nowcast = null,
   refreshing = false,
   onRefresh,
+  onShare,
+  shareCopied = false,
   onToggleFavorite,
   showDetails = true,
   t,
@@ -90,6 +98,16 @@ export function WeatherCard({
           ↻
         </span>
       </button>
+      <button className={styles.share} onClick={onShare} aria-label={t.share} title={t.share}>
+        {shareCopied ? (
+          <CheckIcon className={styles.shareIcon} />
+        ) : (
+          <ShareIcon className={styles.shareIcon} />
+        )}
+      </button>
+      <p className={styles.visuallyHidden} role="status">
+        {shareCopied ? t.link_copied : ''}
+      </p>
       <button
         className={`${styles.favorite}${isFavorite ? ` ${styles.favoriteActive}` : ''}`}
         onClick={onToggleFavorite}

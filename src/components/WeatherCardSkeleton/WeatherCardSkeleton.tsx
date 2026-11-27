@@ -9,6 +9,7 @@ export function WeatherCardSkeleton({ showDetails = true }: WeatherCardSkeletonP
   return (
     <div className={`${styles.card}${showDetails ? '' : ` ${styles.cardCompact}`}`}>
       <div className={styles.favorite} />
+      <div className={styles.share} />
       <div className={styles.refresh} />
       <div className={styles.top}>
         <div className={styles.city} />

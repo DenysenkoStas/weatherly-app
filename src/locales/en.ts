@@ -93,6 +93,8 @@ export const en = {
   offline: 'offline',
   loading_weather: 'Loading the weather…',
   refresh: 'Refresh',
+  share: 'Share',
+  link_copied: 'Link copied',
   air_quality: 'Air quality',
   aqi_levels: {
     good: 'Good',

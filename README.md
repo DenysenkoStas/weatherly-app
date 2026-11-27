@@ -22,7 +22,7 @@ A weather web app built with React and TypeScript. Search for a city or use your
 - City search with debounced autocomplete and keyboard navigation
 - Current location via the browser's geolocation
 - Opens the last viewed city on start
-- Shareable links: the city is kept in the address (`?lat=…&lon=…`)
+- Shareable links: the city is kept in the address (`?lat=…&lon=…`); the Share button opens the system share sheet or copies the link
 - Favorite cities with their current temperature: remove from the chip, reorder by dragging (or Alt + ←/→)
 
 **App**
