@@ -3,6 +3,12 @@ import type { WeatherHourly } from '../types'
 export interface HourlyEntry {
   time: string
   temperature: number
+  feelsLike: number
+  windSpeed: number
+  /** Where the wind blows from, degrees */
+  windDirection: number
+  /** mm over the hour before `time` */
+  precipitation: number
   weatherCode: number
   precipitationProbability: number
   isDay: boolean
@@ -13,6 +19,10 @@ export function getHourlyForDay(hourly: WeatherHourly, dateStr: string): HourlyE
     .map((time, i) => ({
       time,
       temperature: hourly.temperature_2m[i],
+      feelsLike: hourly.apparent_temperature[i],
+      windSpeed: hourly.wind_speed_10m[i],
+      windDirection: hourly.wind_direction_10m[i],
+      precipitation: hourly.precipitation[i] ?? 0,
       weatherCode: hourly.weather_code[i],
       precipitationProbability: hourly.precipitation_probability[i] ?? 0,
       isDay: (hourly.is_day[i] ?? 1) === 1,

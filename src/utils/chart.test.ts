@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getAreaPath, getChartPoints, getLinePath } from './chart'
+import { getAreaPath, getBarHeights, getChartPoints, getLinePath } from './chart'
 
 describe('getChartPoints', () => {
   it('places x at the centre of each cell', () => {
@@ -58,5 +58,19 @@ describe('chart paths', () => {
 
   it('returns an empty area path for no points', () => {
     expect(getAreaPath([])).toBe('')
+  })
+})
+
+describe('getBarHeights', () => {
+  it('scales the tallest bar to the top padding', () => {
+    expect(getBarHeights([0, 2, 4], 1)).toEqual([0, 42.5, 85])
+  })
+
+  it('keeps small amounts short against the minimum scale', () => {
+    expect(getBarHeights([0.1, 0.5], 1)).toEqual([8.5, 42.5])
+  })
+
+  it('draws no bar for zero or missing-as-negative values', () => {
+    expect(getBarHeights([0, -1], 1)).toEqual([0, 0])
   })
 })

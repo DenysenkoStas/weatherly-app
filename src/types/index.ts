@@ -85,6 +85,11 @@ export interface WeatherDaily {
 export interface WeatherHourly {
   time: string[]
   temperature_2m: number[]
+  apparent_temperature: number[]
+  wind_speed_10m: number[]
+  wind_direction_10m: number[]
+  // mm over the hour before the time
+  precipitation: number[]
   weather_code: number[]
   precipitation_probability: number[]
   is_day: number[]

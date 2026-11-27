@@ -132,12 +132,29 @@
   border-top: 1px solid var(--border);
 }
 
+// Narrow cards: the view switch spans a row under the day heading.
+// From $forecast-row: the day on the left, the switch on the right, as tall as the plain
+// heading was (45px). By width, not by wrapping, so the skeleton can match it.
+.hourlyHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px 10px;
+
+  @media (min-width: $forecast-row) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 16px 5px;
+  }
+}
+
 .hourlyHeading {
   display: flex;
   align-items: baseline;
   gap: 8px;
   margin: 0;
-  padding: 14px 16px 10px;
   font-size: 14px;
   font-weight: 600;
   color: var(--text-heading);
@@ -147,6 +164,75 @@
   font-size: 12px;
   font-weight: 400;
   color: var(--text-muted);
+}
+
+.views {
+  display: grid;
+  // Equal options across the narrow card, compact next to the heading
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  gap: 2px;
+
+  @media (min-width: $forecast-row) {
+    grid-auto-columns: auto;
+  }
+
+  margin: 0;
+  padding: 3px;
+  min-width: 0;
+  background: var(--surface-hover);
+  border: none;
+  border-radius: 8px;
+}
+
+.view {
+  position: relative;
+  display: flex;
+}
+
+.viewInput {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.viewLabel {
+  flex: 1;
+  padding: 3px 8px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  white-space: nowrap;
+  // --text-muted falls short of 4.5:1 on the switch background in the dark theme
+  color: var(--text);
+  border-radius: 6px;
+  transition:
+    color 0.2s,
+    background 0.2s;
+
+  // The four options still fit a 320px screen
+  @media (max-width: 400px) {
+    padding-inline: 4px;
+    font-size: 11px;
+  }
+}
+
+.viewInput:hover + .viewLabel {
+  color: var(--text-heading);
+}
+
+.viewInput:checked + .viewLabel {
+  color: var(--text-heading);
+  background: var(--surface);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 15%);
+}
+
+.viewInput:focus-visible + .viewLabel {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }
 
 .hourlyScroll {
@@ -218,6 +304,15 @@
   stroke-linejoin: round;
 }
 
+.chartBar {
+  fill: var(--accent);
+  opacity: 0.45;
+}
+
+.chartBarCurrent {
+  opacity: 1;
+}
+
 .chartDot {
   position: absolute;
   width: 8px;
@@ -251,7 +346,7 @@
   color: var(--accent);
 }
 
-.hourCellCurrent .hourTemp {
+.hourCellCurrent .hourValue {
   color: var(--text-heading);
 }
 
@@ -268,11 +363,21 @@
   filter: var(--icon-filter);
 }
 
-.hourTemp {
+.hourValue {
+  display: flex;
+  align-items: center;
+  gap: 2px;
   font-size: 14px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--text-heading);
+}
+
+.windArrow {
+  flex: 0 0 auto;
+  width: 12px;
+  height: 12px;
+  color: var(--accent);
 }
 
 .hourPrecip {

@@ -72,7 +72,9 @@ function loadSnapshot(key: string): WeatherSnapshot | null {
     const snapshot: WeatherSnapshot | null = JSON.parse(
       localStorage.getItem(SNAPSHOT_KEY) ?? 'null',
     )
-    return snapshot?.key === key && snapshot.data?.current ? snapshot : null
+    // A copy saved by an older version may lack the fields read since: skip it
+    const complete = snapshot?.data?.current && snapshot.data.hourly?.apparent_temperature
+    return snapshot?.key === key && complete ? snapshot : null
   } catch {
     return null
   }
@@ -147,7 +149,16 @@ export function useWeather(): UseWeatherReturn {
         )
         url.searchParams.set(
           'hourly',
-          'temperature_2m,weather_code,precipitation_probability,is_day',
+          [
+            'temperature_2m',
+            'apparent_temperature',
+            'wind_speed_10m',
+            'wind_direction_10m',
+            'precipitation',
+            'weather_code',
+            'precipitation_probability',
+            'is_day',
+          ].join(','),
         )
         url.searchParams.set('minutely_15', 'precipitation,snowfall')
         url.searchParams.set('forecast_minutely_15', String(NOWCAST_STEPS))

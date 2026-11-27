@@ -142,6 +142,13 @@ export const en = {
   forecast_days: 'Forecast days',
   forecast: 'Forecast',
   hourly_forecast: 'Hourly forecast',
+  hourly_view: 'Hourly view',
+  hourly_views: {
+    temperature: 'Temperature',
+    feels_like: 'Feels like',
+    wind: 'Wind',
+    precipitation: 'Precipitation',
+  },
   now: 'now',
   weather_unknown: 'Unknown',
   weather,

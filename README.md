@@ -13,7 +13,7 @@ A weather web app built with React and TypeScript. Search for a city or use your
 - Rain and snow in the next 2 hours ("Rain expected around 14:15")
 - Sunrise, sunset, and daylight progress
 - 16-day forecast with daily highs, lows, and chance of precipitation
-- Hourly forecast for each day with a temperature chart
+- Hourly forecast for each day with a chart: temperature, feels like, wind (speed and direction), or precipitation in mm
 - Air quality: European AQI, PM2.5, PM10, and pollen in season (Europe)
 - Day and night weather icons, background tinted by the current sky
 

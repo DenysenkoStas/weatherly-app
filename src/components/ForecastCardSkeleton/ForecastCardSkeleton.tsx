@@ -18,7 +18,10 @@ export function ForecastCardSkeleton() {
       </div>
 
       <div className={styles.hourly}>
-        <div className={styles.heading} />
+        <div className={styles.header}>
+          <div className={styles.heading} />
+          <div className={styles.views} />
+        </div>
         <div className={styles.chart} />
         <div className={styles.hours}>
           {Array.from({ length: HOURS }, (_, i) => (

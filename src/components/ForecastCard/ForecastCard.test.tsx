@@ -23,6 +23,10 @@ const hourlyTimes = days.flatMap((day) => [`${day}T12:00`, `${day}T13:00`])
 const hourly: WeatherHourly = {
   time: hourlyTimes,
   temperature_2m: hourlyTimes.map(() => 2),
+  apparent_temperature: hourlyTimes.map(() => -1),
+  wind_speed_10m: hourlyTimes.map(() => 5),
+  wind_direction_10m: hourlyTimes.map(() => 225),
+  precipitation: hourlyTimes.map((_, i) => (i === 1 ? 0.4 : 0)),
   weather_code: hourlyTimes.map(() => 3),
   precipitation_probability: hourlyTimes.map(() => 0),
   is_day: hourlyTimes.map(() => 1),
@@ -37,7 +41,7 @@ function Forecast() {
       timezone="UTC"
       selectedDayIndex={selectedDayIndex}
       onSelectDay={setSelectedDayIndex}
-      t={{ ...en, temp_unit: '°C' }}
+      t={{ ...en, temp_unit: '°C', wind_unit: 'm/s' }}
     />
   )
 }
@@ -87,6 +91,31 @@ describe('ForecastCard day tabs', () => {
     fireEvent.keyDown(tabs[2], { key: 'Home' })
     expect(tabs[0].getAttribute('aria-selected')).toBe('true')
     expect(document.activeElement).toBe(tabs[0])
+  })
+
+  it('switches the hourly values between temperature, feels like, wind and precipitation', () => {
+    render(<Forecast />)
+    const hours = screen.getByRole('region', { name: en.hourly_forecast })
+    const values = () =>
+      within(hours)
+        .getAllByRole('listitem')
+        .map((item) => item.textContent)
+
+    expect(
+      (screen.getByRole('radio', { name: en.hourly_views.temperature }) as HTMLInputElement)
+        .checked,
+    ).toBe(true)
+    expect(values()[0]).toContain('2°C')
+
+    fireEvent.click(screen.getByRole('radio', { name: en.hourly_views.feels_like }))
+    expect(values()[0]).toContain('-1°C')
+
+    fireEvent.click(screen.getByRole('radio', { name: en.hourly_views.wind }))
+    expect(values()[0]).toContain('5 m/s, SW')
+    expect(screen.getByRole('heading', { level: 2 }).textContent).toContain('m/s')
+
+    fireEvent.click(screen.getByRole('radio', { name: en.hourly_views.precipitation }))
+    expect(values()[1]).toContain('0.4 mm')
   })
 
   it('makes the hours a focusable list with the current hour marked', () => {

@@ -1,4 +1,4 @@
-import { useId, useLayoutEffect, useMemo, useRef } from 'react'
+import { useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import type { WeatherDaily, WeatherHourly } from '../../types'
 import {
@@ -8,7 +8,10 @@ import {
   getChartPoints,
   getLinePath,
   getAreaPath,
+  getBarHeights,
+  getCompassIndex,
 } from '../../utils'
+import type { HourlyEntry } from '../../utils'
 import { getWeatherIcon } from '../../utils/wmoIcons'
 import { MeteoIcon } from '../MeteoIcon'
 import { getWeatherLabel } from '../../utils'
@@ -19,16 +22,38 @@ import styles from './ForecastCard.module.scss'
 const HOUR_CELL_WIDTH = 56
 const HOUR_CELL_GAP = 4
 const HOUR_STEP = HOUR_CELL_WIDTH + HOUR_CELL_GAP
-// Minimum temperature span of the chart scale, in degrees
-const CHART_MIN_RANGE = 8
+// Minimum span of the chart scale, so small changes stay gentle slopes
+const CHART_MIN_RANGE: Record<Exclude<HourlyView, 'precipitation'>, number> = {
+  temperature: 8,
+  feels_like: 8,
+  wind: 5,
+}
+// mm: the precipitation bars fill the chart from this amount up
+const PRECIPITATION_MIN_SCALE = 1
+const BAR_WIDTH = 24
 // Keep in sync with the edge-fade size: a selected day under the fade scrolls out of it
 const DAY_PICKER_FADE = 24
+
+const HOURLY_VIEWS = ['temperature', 'feels_like', 'wind', 'precipitation'] as const
+type HourlyView = (typeof HOURLY_VIEWS)[number]
+
+const getHourlyValue: Record<HourlyView, (hour: HourlyEntry) => number> = {
+  temperature: (hour) => hour.temperature,
+  feels_like: (hour) => hour.feelsLike,
+  wind: (hour) => hour.windSpeed,
+  precipitation: (hour) => hour.precipitation,
+}
 
 interface ForecastCardTranslations {
   days: readonly string[]
   months: readonly string[]
   today: string
   temp_unit: string
+  wind_unit: string
+  precipitation_unit: string
+  directions: readonly string[]
+  hourly_view: string
+  hourly_views: Record<HourlyView, string>
   forecast: string
   forecast_days: string
   hourly_forecast: string
@@ -58,6 +83,9 @@ export function ForecastCard({
   const hourlyScrollRef = useRef<HTMLDivElement>(null)
   const dayPickerRef = useRef<HTMLDivElement>(null)
   const gradientId = `chart-fill-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
+  const viewName = useId()
+  // Stays when another day is picked
+  const [view, setView] = useState<HourlyView>('temperature')
   const dayPickerOverflow = useHorizontalScroll(dayPickerRef, forecast.time.length)
 
   const selectedDate = forecast.time[selectedDayIndex]
@@ -68,17 +96,62 @@ export function ForecastCard({
   const currentHourIndex = selectedDayIndex === 0 ? getCurrentHourIndex(hours, timezone) : null
 
   const trackWidth = hours.length * HOUR_STEP - HOUR_CELL_GAP
+  const values = useMemo(() => hours.map(getHourlyValue[view]), [hours, view])
   const chartPoints = useMemo(
     () =>
       getChartPoints(
-        hours.map((hour) => hour.temperature),
+        values,
         HOUR_STEP,
         HOUR_CELL_WIDTH / 2,
         15,
-        CHART_MIN_RANGE,
+        view === 'precipitation' ? 0 : CHART_MIN_RANGE[view],
       ),
-    [hours],
+    [values, view],
   )
+  const barHeights = useMemo(
+    () => (view === 'precipitation' ? getBarHeights(values, PRECIPITATION_MIN_SCALE) : []),
+    [values, view],
+  )
+  // Wind and precipitation have no unit in the cells: it is named next to the date
+  const viewUnit =
+    view === 'wind' ? t.wind_unit : view === 'precipitation' ? t.precipitation_unit : null
+
+  const renderValue = (hour: HourlyEntry) => {
+    switch (view) {
+      case 'temperature':
+      case 'feels_like':
+        return `${Math.round(getHourlyValue[view](hour))}${t.temp_unit}`
+      case 'wind':
+        return (
+          <>
+            <svg
+              className={styles.windArrow}
+              style={{ transform: `rotate(${hour.windDirection + 180}deg)` }}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M12 20V4M6 10l6-6 6 6" />
+            </svg>
+            {Math.round(hour.windSpeed)}
+            <span className={styles.visuallyHidden}>
+              {` ${t.wind_unit}, ${t.directions[getCompassIndex(hour.windDirection)]}`}
+            </span>
+          </>
+        )
+      case 'precipitation':
+        return (
+          <>
+            {Number(hour.precipitation.toFixed(1))}
+            <span className={styles.visuallyHidden}> {t.precipitation_unit}</span>
+          </>
+        )
+    }
+  }
 
   useLayoutEffect(() => {
     const container = hourlyScrollRef.current
@@ -199,10 +272,32 @@ export function ForecastCard({
           aria-labelledby={`forecast-day-${selectedDayIndex}`}
           className={styles.hourlySection}
         >
-          <h2 className={styles.hourlyHeading}>
-            {dayLabel}
-            <span className={styles.hourlyDate}>{dateLabel}</span>
-          </h2>
+          <div className={styles.hourlyHeader}>
+            <h2 className={styles.hourlyHeading}>
+              {dayLabel}
+              <span className={styles.hourlyDate}>
+                {dateLabel}
+                {viewUnit && ` · ${viewUnit}`}
+              </span>
+            </h2>
+
+            <fieldset className={styles.views}>
+              <legend className={styles.visuallyHidden}>{t.hourly_view}</legend>
+              {HOURLY_VIEWS.map((option) => (
+                <label key={option} className={styles.view}>
+                  <input
+                    className={styles.viewInput}
+                    type="radio"
+                    name={viewName}
+                    value={option}
+                    checked={view === option}
+                    onChange={() => setView(option)}
+                  />
+                  <span className={styles.viewLabel}>{t.hourly_views[option]}</span>
+                </label>
+              ))}
+            </fieldset>
+          </div>
 
           {/* Focusable, so the keyboard can scroll the hours with the arrow keys */}
           <div
@@ -224,26 +319,42 @@ export function ForecastCard({
                   viewBox={`0 0 ${trackWidth} 100`}
                   preserveAspectRatio="none"
                 >
-                  <defs>
-                    <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" className={styles.chartFillTop} />
-                      <stop offset="100%" className={styles.chartFillBottom} />
-                    </linearGradient>
-                  </defs>
-                  <path d={getAreaPath(chartPoints)} fill={`url(#${gradientId})`} />
-                  <path
-                    d={getLinePath(chartPoints)}
-                    className={styles.chartLine}
-                    vectorEffect="non-scaling-stroke"
-                  />
+                  {view === 'precipitation' ? (
+                    chartPoints.map((point, i) => (
+                      <rect
+                        key={hours[i].time}
+                        className={`${styles.chartBar} ${currentHourIndex === i ? styles.chartBarCurrent : ''}`}
+                        x={point.x - BAR_WIDTH / 2}
+                        y={100 - barHeights[i]}
+                        width={BAR_WIDTH}
+                        height={barHeights[i]}
+                      />
+                    ))
+                  ) : (
+                    <>
+                      <defs>
+                        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" className={styles.chartFillTop} />
+                          <stop offset="100%" className={styles.chartFillBottom} />
+                        </linearGradient>
+                      </defs>
+                      <path d={getAreaPath(chartPoints)} fill={`url(#${gradientId})`} />
+                      <path
+                        d={getLinePath(chartPoints)}
+                        className={styles.chartLine}
+                        vectorEffect="non-scaling-stroke"
+                      />
+                    </>
+                  )}
                 </svg>
-                {chartPoints.map((point, i) => (
-                  <span
-                    key={hours[i].time}
-                    className={`${styles.chartDot} ${currentHourIndex === i ? styles.chartDotCurrent : ''}`}
-                    style={{ left: point.x, top: `${point.y}%` }}
-                  />
-                ))}
+                {view !== 'precipitation' &&
+                  chartPoints.map((point, i) => (
+                    <span
+                      key={hours[i].time}
+                      className={`${styles.chartDot} ${currentHourIndex === i ? styles.chartDotCurrent : ''}`}
+                      style={{ left: point.x, top: `${point.y}%` }}
+                    />
+                  ))}
               </div>
 
               {hours.map((hour, i) => (
@@ -265,10 +376,7 @@ export function ForecastCard({
                     icon={getWeatherIcon(hour.weatherCode, hour.isDay)}
                     alt={getWeatherLabel(hour.weatherCode, t.weather, t.weather_unknown)}
                   />
-                  <span className={styles.hourTemp}>
-                    {Math.round(hour.temperature)}
-                    {t.temp_unit}
-                  </span>
+                  <span className={styles.hourValue}>{renderValue(hour)}</span>
                   {hour.precipitationProbability > 0 ? (
                     <span className={styles.hourPrecip}>
                       <span className={styles.visuallyHidden}>{t.precipitation_chance}: </span>

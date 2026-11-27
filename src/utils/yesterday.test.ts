@@ -25,6 +25,10 @@ const response = {
   hourly: {
     time: [...hours('2026-11-22', yesterdayTemps), ...hours('2026-11-23', todayTemps)],
     temperature_2m: [...yesterdayTemps, ...todayTemps],
+    apparent_temperature: [...yesterdayTemps, ...todayTemps],
+    wind_speed_10m: [...yesterdayTemps, ...todayTemps],
+    wind_direction_10m: [...yesterdayTemps, ...todayTemps],
+    precipitation: [...yesterdayTemps, ...todayTemps],
     weather_code: [...yesterdayTemps, ...todayTemps],
     precipitation_probability: [...yesterdayTemps, ...todayTemps],
     is_day: [...yesterdayTemps, ...todayTemps],
@@ -39,6 +43,10 @@ describe('splitPastDay', () => {
     expect(data.daily.precipitation_probability_max).toEqual([null])
     expect(data.hourly.time[0]).toBe('2026-11-23T00:00')
     expect(data.hourly.temperature_2m).toHaveLength(24)
+    expect(data.hourly.apparent_temperature[0]).toBe(100)
+    expect(data.hourly.wind_speed_10m).toHaveLength(24)
+    expect(data.hourly.wind_direction_10m).toHaveLength(24)
+    expect(data.hourly.precipitation).toHaveLength(24)
     expect(yesterday?.time).toHaveLength(24)
     expect(yesterday?.temperature_2m[17]).toBe(17)
   })

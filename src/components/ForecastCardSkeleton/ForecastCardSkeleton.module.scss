@@ -78,6 +78,34 @@
   border-top: 1px solid var(--border);
 }
 
+// Like the real header: the view switch under the heading, next to it from $forecast-row.
+// In a row the 30px switch sets the height, so the margins give back what the real
+// header's smaller paddings (10px / 5px instead of 14px / 10px) take
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  @media (min-width: $forecast-row) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-block: -4px -5px;
+  }
+}
+
+.views {
+  @include bone;
+
+  height: 30px;
+  border-radius: 8px;
+
+  @media (min-width: $forecast-row) {
+    width: 288px;
+  }
+}
+
 .heading {
   @include bone;
 

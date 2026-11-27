@@ -142,6 +142,13 @@ export const uk = {
   forecast_days: 'Дні прогнозу',
   forecast: 'Прогноз',
   hourly_forecast: 'Погодинний прогноз',
+  hourly_view: 'Показник по годинах',
+  hourly_views: {
+    temperature: 'Температура',
+    feels_like: 'Відчувається',
+    wind: 'Вітер',
+    precipitation: 'Опади',
+  },
   now: 'зараз',
   weather_unknown: 'Невідомо',
   weather,

@@ -33,6 +33,10 @@ export function splitPastDay(data: WeatherResponse): {
       hourly: {
         time: dropHours(data.hourly.time),
         temperature_2m: dropHours(data.hourly.temperature_2m),
+        apparent_temperature: dropHours(data.hourly.apparent_temperature),
+        wind_speed_10m: dropHours(data.hourly.wind_speed_10m),
+        wind_direction_10m: dropHours(data.hourly.wind_direction_10m),
+        precipitation: dropHours(data.hourly.precipitation),
         weather_code: dropHours(data.hourly.weather_code),
         precipitation_probability: dropHours(data.hourly.precipitation_probability),
         is_day: dropHours(data.hourly.is_day),

@@ -45,3 +45,13 @@ export function getAreaPath(points: ChartPoint[], bottom = 100): string {
   const last = points[points.length - 1]
   return `${getLinePath(points)} L${last.x} ${bottom} L${first.x} ${bottom} Z`
 }
+
+/**
+ * Heights of bars standing on the chart bottom, in percent of the chart height, for amounts
+ * from 0. The scale reaches at least `minMax`, so light rain stays a short bar instead of
+ * filling the chart; the tallest bar stops `padding`% below the top.
+ */
+export function getBarHeights(values: number[], minMax: number, padding = 15): number[] {
+  const max = Math.max(minMax, ...values)
+  return values.map((value) => (Math.max(value, 0) / max) * (100 - padding))
+}

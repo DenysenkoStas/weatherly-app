@@ -7,6 +7,10 @@ function makeDayHours(date: string): HourlyEntry[] {
   return Array.from({ length: 24 }, (_, hour) => ({
     time: `${date}T${String(hour).padStart(2, '0')}:00`,
     temperature: 20,
+    feelsLike: 18,
+    windSpeed: 3,
+    windDirection: 0,
+    precipitation: 0,
     weatherCode: 0,
     precipitationProbability: 0,
     isDay: hour >= 7 && hour < 17,
@@ -17,6 +21,10 @@ describe('getHourlyForDay', () => {
   const hourly: WeatherHourly = {
     time: ['2026-06-26T23:00', '2026-06-27T00:00', '2026-06-27T01:00', '2026-06-28T00:00'],
     temperature_2m: [18, 17, 16, 15],
+    apparent_temperature: [16, 15, 14, 13],
+    wind_speed_10m: [3, 4, 5, 6],
+    wind_direction_10m: [90, 180, 270, 0],
+    precipitation: [0, 0.2, 0, 1.4],
     weather_code: [0, 1, 2, 3],
     precipitation_probability: [0, 10, 20, 30],
     is_day: [0, 0, 0, 1],
@@ -29,6 +37,10 @@ describe('getHourlyForDay', () => {
       {
         time: '2026-06-27T00:00',
         temperature: 17,
+        feelsLike: 15,
+        windSpeed: 4,
+        windDirection: 180,
+        precipitation: 0.2,
         weatherCode: 1,
         precipitationProbability: 10,
         isDay: false,
@@ -36,6 +48,10 @@ describe('getHourlyForDay', () => {
       {
         time: '2026-06-27T01:00',
         temperature: 16,
+        feelsLike: 14,
+        windSpeed: 5,
+        windDirection: 270,
+        precipitation: 0,
         weatherCode: 2,
         precipitationProbability: 20,
         isDay: false,
