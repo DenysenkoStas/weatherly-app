@@ -24,8 +24,8 @@ import thunderstormsAnimated from '@meteocons/svg/fill/thunderstorms.svg?url'
 import thunderstormsStill from '@meteocons/svg-static/fill/thunderstorms.svg?url'
 import thunderstormsDayHailAnimated from '@meteocons/svg/fill/thunderstorms-day-hail.svg?url'
 import thunderstormsDayHailStill from '@meteocons/svg-static/fill/thunderstorms-day-hail.svg?url'
-import notAvailableAnimated from '@meteocons/svg/fill/not-available.svg?url'
-import notAvailableStill from '@meteocons/svg-static/fill/not-available.svg?url'
+import notAvailableAnimated from '@meteocons/svg/fill/not-available.svg?raw'
+import notAvailableStill from '@meteocons/svg-static/fill/not-available.svg?raw'
 import clearNightAnimated from '@meteocons/svg/fill/clear-night.svg?url'
 import clearNightStill from '@meteocons/svg-static/fill/clear-night.svg?url'
 import mostlyClearNightAnimated from '@meteocons/svg/fill/mostly-clear-night.svg?url'
@@ -41,6 +41,7 @@ import overcastNightSnowStill from '@meteocons/svg-static/fill/overcast-night-sn
 import thunderstormsNightHailAnimated from '@meteocons/svg/fill/thunderstorms-night-hail.svg?url'
 import thunderstormsNightHailStill from '@meteocons/svg-static/fill/thunderstorms-night-hail.svg?url'
 import type { IconSources } from '../types'
+import { withVisibleDetails } from './iconColors'
 
 const clearDay: IconSources = { animated: clearDayAnimated, still: clearDayStill }
 const mostlyClearDay: IconSources = { animated: mostlyClearDayAnimated, still: mostlyClearDayStill }
@@ -67,7 +68,10 @@ const thunderstormsDayHail: IconSources = {
   animated: thunderstormsDayHailAnimated,
   still: thunderstormsDayHailStill,
 }
-const notAvailable: IconSources = { animated: notAvailableAnimated, still: notAvailableStill }
+const notAvailable: IconSources = {
+  animated: withVisibleDetails(notAvailableAnimated),
+  still: withVisibleDetails(notAvailableStill),
+}
 const clearNight: IconSources = { animated: clearNightAnimated, still: clearNightStill }
 const mostlyClearNight: IconSources = {
   animated: mostlyClearNightAnimated,

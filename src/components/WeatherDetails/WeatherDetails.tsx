@@ -22,16 +22,11 @@ import {
   getCompassIndex,
   getDaylightProgress,
   getUvLevel,
+  withVisibleDetails,
 } from '../../utils'
 import type { UvLevel } from '../../utils'
 import { MeteoIcon } from '../MeteoIcon'
 import styles from './WeatherDetails.module.scss'
-
-// These icons draw details (the "UV" text, the horizon line) in near-black, which disappears
-// on the dark card: a mid gray reads in both themes
-function withVisibleDetails(svg: string): string {
-  return `data:image/svg+xml,${encodeURIComponent(svg.replace('#202939', '#64748b'))}`
-}
 
 const thermometerIcon: IconSources = { animated: thermometerAnimated, still: thermometerStill }
 const humidityIcon: IconSources = { animated: humidityAnimated, still: humidityStill }
