@@ -113,16 +113,18 @@ export function WeatherCard({
           {t.temp_unit}
         </div>
         {comparison && (
-          <p className={styles.comparison} title={yesterdayDetail}>
-            {comparison.difference === 0
-              ? t.same_as_yesterday
-              : (comparison.difference < 0
-                  ? t.colder_than_yesterday
-                  : t.warmer_than_yesterday
-                ).replace('{n}', String(Math.abs(comparison.difference)))}
-            {/* The tooltip only shows on hover, screen readers get the detail as text */}
-            <span className={styles.visuallyHidden}>. {yesterdayDetail}</span>
-          </p>
+          // The detail stays visible: touch screens can't hover for a tooltip
+          <div className={styles.comparison}>
+            <p className={styles.comparisonSummary}>
+              {comparison.difference === 0
+                ? t.same_as_yesterday
+                : (comparison.difference < 0
+                    ? t.colder_than_yesterday
+                    : t.warmer_than_yesterday
+                  ).replace('{n}', String(Math.abs(comparison.difference)))}
+            </p>
+            <p className={styles.comparisonDetail}>{yesterdayDetail}</p>
+          </div>
         )}
       </div>
 

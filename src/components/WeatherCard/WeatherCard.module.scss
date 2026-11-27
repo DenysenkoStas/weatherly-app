@@ -140,10 +140,24 @@
 }
 
 .comparison {
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--text-muted);
+
+  p {
+    margin: 0;
+  }
+}
+
+.comparisonSummary {
   font-size: 14px;
   line-height: 20px;
-  color: var(--text-muted);
+}
+
+.comparisonDetail {
+  font-size: 12px;
+  line-height: 18px;
 }
 
 .temp {
@@ -160,8 +174,4 @@
 
 .offline {
   color: var(--amber);
-}
-
-.visuallyHidden {
-  @include visually-hidden;
 }
