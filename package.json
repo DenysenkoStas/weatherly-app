@@ -36,7 +36,7 @@
     "jsdom": "^31.0.1",
     "prettier": "^3.8.4",
     "sass": "^1.101.0",
-    "typescript": "~6.0.2",
+    "typescript": "~7.0.2",
     "typescript-eslint": "^8.59.2",
     "vite": "^8.3.8",
     "vite-plugin-pwa": "^2.0.0",
