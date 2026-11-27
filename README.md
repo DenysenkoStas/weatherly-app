@@ -44,6 +44,7 @@ A weather web app built with React and TypeScript. Search for a city or use your
 - [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) (Workbox) for the service worker and manifest
 - [@meteocons/svg](https://github.com/basmilius/meteocons) and [@meteocons/svg-static](https://github.com/basmilius/meteocons) for weather icons (still copies when animation is off)
 - Vitest and Testing Library for tests
+- Playwright for end-to-end tests (in the installed Chrome, against mocked APIs)
 
 ## Getting Started
 
@@ -65,6 +66,7 @@ The service worker is only active in a production build: use `npm run build` and
 | `npm run preview` | Preview production build locally |
 | `npm test` | Run tests once |
 | `npm run test:watch` | Run tests in watch mode |
+| `npm run test:e2e` | Build, then run the end-to-end tests (Playwright) |
 | `npm run lint` | Run ESLint |
 | `npm run format` | Format source files with Prettier |
 | `npm run format:check` | Check formatting with Prettier |
@@ -83,6 +85,7 @@ No API keys required.
 ## Project Structure
 
 ```
+e2e/              # End-to-end tests and the fake API answers they use
 public/           # Favicon and PWA icons
 src/
 ├── components/   # UI components, each in its own folder with a skeleton where needed
@@ -98,4 +101,4 @@ Tests live next to the code they cover (`*.test.ts`, `*.test.tsx`).
 
 ## Deployment
 
-Every push to `master` runs GitHub Actions: lint, formatting check, tests, and build, then deploys to GitHub Pages. The base path is configured in `vite.config.ts` as `/weatherly-app/`.
+Every push to `master` runs GitHub Actions: lint, formatting check, tests, end-to-end tests, and build, then deploys to GitHub Pages. The base path is configured in `vite.config.ts` as `/weatherly-app/`.
