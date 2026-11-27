@@ -14,6 +14,10 @@ import rainAnimated from '@meteocons/svg/fill/rain.svg?url'
 import rainStill from '@meteocons/svg-static/fill/rain.svg?url'
 import snowAnimated from '@meteocons/svg/fill/snow.svg?url'
 import snowStill from '@meteocons/svg-static/fill/snow.svg?url'
+import raindropAnimated from '@meteocons/svg/fill/raindrop.svg?url'
+import raindropStill from '@meteocons/svg-static/fill/raindrop.svg?url'
+import sleetAnimated from '@meteocons/svg/fill/sleet.svg?url'
+import sleetStill from '@meteocons/svg-static/fill/sleet.svg?url'
 import snowflakeAnimated from '@meteocons/svg/fill/snowflake.svg?url'
 import snowflakeStill from '@meteocons/svg-static/fill/snowflake.svg?url'
 import overcastDayRainAnimated from '@meteocons/svg/fill/overcast-day-rain.svg?url'
@@ -41,6 +45,7 @@ import overcastNightSnowStill from '@meteocons/svg-static/fill/overcast-night-sn
 import thunderstormsNightHailAnimated from '@meteocons/svg/fill/thunderstorms-night-hail.svg?url'
 import thunderstormsNightHailStill from '@meteocons/svg-static/fill/thunderstorms-night-hail.svg?url'
 import type { IconSources } from '../types'
+import type { PrecipitationType } from './nowcast'
 import { withVisibleDetails } from './iconColors'
 
 const clearDay: IconSources = { animated: clearDayAnimated, still: clearDayStill }
@@ -55,6 +60,8 @@ const drizzle: IconSources = { animated: drizzleAnimated, still: drizzleStill }
 const rain: IconSources = { animated: rainAnimated, still: rainStill }
 const snow: IconSources = { animated: snowAnimated, still: snowStill }
 const snowflake: IconSources = { animated: snowflakeAnimated, still: snowflakeStill }
+const raindrop: IconSources = { animated: raindropAnimated, still: raindropStill }
+const sleet: IconSources = { animated: sleetAnimated, still: sleetStill }
 const overcastDayRain: IconSources = {
   animated: overcastDayRainAnimated,
   still: overcastDayRainStill,
@@ -141,4 +148,14 @@ const nightIcons: Record<number, IconSources> = {
 export function getWeatherIcon(code: number, isDay = true): IconSources {
   if (!isDay && nightIcons[code]) return nightIcons[code]
   return wmoIcons[code] ?? notAvailable
+}
+
+const precipitationIcons: Record<PrecipitationType, IconSources> = {
+  rain: raindrop,
+  snow: snowflake,
+  mixed: sleet,
+}
+
+export function getPrecipitationIcon(type: PrecipitationType): IconSources {
+  return precipitationIcons[type]
 }

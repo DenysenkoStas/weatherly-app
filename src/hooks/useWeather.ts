@@ -6,16 +6,21 @@ import type {
   WeatherCurrent,
   WeatherDaily,
   WeatherHourly,
+  WeatherMinutely15,
   YesterdayHourly,
 } from '../types'
 import { splitPastDay } from '../utils'
 
 const WEATHER_API = 'https://api.open-meteo.com/v1/forecast'
+// The current 15-minute step and 2 hours after it
+const NOWCAST_STEPS = 9
 
 interface UseWeatherReturn {
   weather: WeatherCurrent | null
   forecast: WeatherDaily | null
   hourly: WeatherHourly | null
+  /** Precipitation for the next 2 hours; null for a saved copy, where it is out of date */
+  minutely: WeatherMinutely15 | null
   timezone: string | null
   updatedAt: Date | null
   /** Units of the data on screen (may lag behind the chosen ones until the refetch arrives) */
@@ -77,6 +82,7 @@ export function useWeather(): UseWeatherReturn {
   const [weather, setWeather] = useState<WeatherCurrent | null>(null)
   const [forecast, setForecast] = useState<WeatherDaily | null>(null)
   const [hourly, setHourly] = useState<WeatherHourly | null>(null)
+  const [minutely, setMinutely] = useState<WeatherMinutely15 | null>(null)
   const [timezone, setTimezone] = useState<string | null>(null)
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null)
   const [units, setUnits] = useState<Units | null>(null)
@@ -105,6 +111,7 @@ export function useWeather(): UseWeatherReturn {
         setWeather(data.current)
         setForecast(data.daily)
         setHourly(data.hourly)
+        setMinutely(cached ? null : (data.minutely_15 ?? null))
         setTimezone(data.timezone)
         setUpdatedAt(at)
         setUnits(requestedUnits)
@@ -142,6 +149,9 @@ export function useWeather(): UseWeatherReturn {
           'hourly',
           'temperature_2m,weather_code,precipitation_probability,is_day',
         )
+        url.searchParams.set('minutely_15', 'precipitation,snowfall')
+        url.searchParams.set('forecast_minutely_15', String(NOWCAST_STEPS))
+        url.searchParams.set('past_minutely_15', '0')
         url.searchParams.set('temperature_unit', requestedUnits.temperature)
         url.searchParams.set('wind_speed_unit', requestedUnits.wind)
         url.searchParams.set('timezone', 'auto')
@@ -180,6 +190,7 @@ export function useWeather(): UseWeatherReturn {
     weather,
     forecast,
     hourly,
+    minutely,
     timezone,
     updatedAt,
     units,

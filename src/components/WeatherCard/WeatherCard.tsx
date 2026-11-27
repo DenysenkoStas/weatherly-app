@@ -1,9 +1,9 @@
 import { useId } from 'react'
 import type { WeatherCurrent } from '../../types'
-import type { YesterdayComparison } from '../../utils'
+import type { Nowcast, NowcastKind, PrecipitationType, YesterdayComparison } from '../../utils'
 import { WeatherDetails } from '../WeatherDetails'
 import type { SunTimes, WeatherDetailsTranslations } from '../WeatherDetails'
-import { getWeatherIcon } from '../../utils/wmoIcons'
+import { getPrecipitationIcon, getWeatherIcon } from '../../utils/wmoIcons'
 import { MeteoIcon } from '../MeteoIcon'
 import styles from './WeatherCard.module.scss'
 
@@ -15,6 +15,7 @@ interface WeatherCardTranslations extends WeatherDetailsTranslations {
   warmer_than_yesterday: string
   same_as_yesterday: string
   yesterday_at: string
+  nowcast: Record<PrecipitationType, Record<NowcastKind, string>>
   refresh: string
   add_favorite: string
   remove_favorite: string
@@ -31,6 +32,8 @@ interface WeatherCardProps {
   offline?: boolean
   // Current temperature against the same hour yesterday
   comparison?: YesterdayComparison | null
+  // Rain or snow starting or stopping within the next 2 hours
+  nowcast?: Nowcast | null
   // A silent refresh is running
   refreshing?: boolean
   onRefresh: () => void
@@ -49,6 +52,7 @@ export function WeatherCard({
   isFavorite,
   offline = false,
   comparison = null,
+  nowcast = null,
   refreshing = false,
   onRefresh,
   onToggleFavorite,
@@ -127,6 +131,15 @@ export function WeatherCard({
           </div>
         )}
       </div>
+
+      {nowcast && (
+        <p className={styles.nowcast}>
+          <MeteoIcon className={styles.nowcastIcon} icon={getPrecipitationIcon(nowcast.type)} />
+          {nowcast.kind === 'ongoing'
+            ? t.nowcast[nowcast.type].ongoing
+            : t.nowcast[nowcast.type][nowcast.kind].replace('{time}', nowcast.time)}
+        </p>
+      )}
 
       {showDetails && <WeatherDetails weather={weather} sun={sun} t={t} />}
 

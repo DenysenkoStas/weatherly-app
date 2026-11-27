@@ -90,6 +90,15 @@ export interface WeatherHourly {
   is_day: number[]
 }
 
+/** Precipitation by 15 minutes; each value is the sum of the 15 minutes before its time */
+export interface WeatherMinutely15 {
+  time: string[]
+  // mm of water, snow included
+  precipitation: (number | null)[]
+  // cm of fresh snow
+  snowfall: (number | null)[]
+}
+
 /** Hourly temperatures of the day before today (from `past_days=1`) */
 export type YesterdayHourly = Pick<WeatherHourly, 'time' | 'temperature_2m'>
 
@@ -98,6 +107,8 @@ export interface WeatherResponse {
   current: WeatherCurrent
   daily: WeatherDaily
   hourly: WeatherHourly
+  // Missing in offline copies saved before it was requested
+  minutely_15?: WeatherMinutely15
 }
 
 /** A Meteocons icon: animated, and a still copy for when motion is off */

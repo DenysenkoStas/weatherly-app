@@ -10,6 +10,7 @@ A weather web app built with React and TypeScript. Search for a city or use your
 
 - Current weather: temperature, feels like, humidity, wind speed and direction, pressure, UV index, precipitation
 - Comparison with yesterday at the same hour ("3° colder than yesterday")
+- Rain and snow in the next 2 hours ("Rain expected around 14:15")
 - Sunrise, sunset, and daylight progress
 - 7-day forecast with daily highs, lows, and chance of precipitation
 - Hourly forecast for each day with a temperature chart
@@ -74,7 +75,7 @@ No API keys required.
 
 | Service | Purpose |
 |---------|---------|
-| [Open-Meteo Forecast](https://open-meteo.com/) | Current weather, hourly and daily forecast, yesterday's temperatures |
+| [Open-Meteo Forecast](https://open-meteo.com/) | Current weather, precipitation for the next 2 hours, hourly and daily forecast, yesterday's temperatures |
 | [Open-Meteo Air Quality](https://open-meteo.com/en/docs/air-quality-api) | European AQI, particulate matter, and pollen |
 | [Open-Meteo Geocoding](https://open-meteo.com/en/docs/geocoding-api) | City search |
 | [Nominatim](https://nominatim.openstreetmap.org/) | Reverse geocoding (city name from coordinates) |

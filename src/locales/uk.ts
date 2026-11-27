@@ -73,6 +73,23 @@ export const uk = {
   warmer_than_yesterday: 'На {n}° тепліше, ніж учора',
   same_as_yesterday: 'Так само, як учора',
   yesterday_at: 'Учора о {time} було {temp}',
+  nowcast: {
+    rain: {
+      start: 'Дощ почнеться близько {time}',
+      stop: 'Дощ закінчиться близько {time}',
+      ongoing: 'Дощ найближчі 2 години',
+    },
+    snow: {
+      start: 'Сніг почнеться близько {time}',
+      stop: 'Сніг закінчиться близько {time}',
+      ongoing: 'Сніг найближчі 2 години',
+    },
+    mixed: {
+      start: 'Дощ зі снігом почнеться близько {time}',
+      stop: 'Дощ зі снігом закінчиться близько {time}',
+      ongoing: 'Дощ зі снігом найближчі 2 години',
+    },
+  },
   offline: 'офлайн',
   loading_weather: 'Завантаження погоди…',
   refresh: 'Оновити',

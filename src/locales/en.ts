@@ -73,6 +73,23 @@ export const en = {
   warmer_than_yesterday: '{n}° warmer than yesterday',
   same_as_yesterday: 'Same as yesterday',
   yesterday_at: 'Yesterday at {time} it was {temp}',
+  nowcast: {
+    rain: {
+      start: 'Rain expected around {time}',
+      stop: 'Rain ending around {time}',
+      ongoing: 'Rain for the next 2 hours',
+    },
+    snow: {
+      start: 'Snow expected around {time}',
+      stop: 'Snow ending around {time}',
+      ongoing: 'Snow for the next 2 hours',
+    },
+    mixed: {
+      start: 'Rain and snow expected around {time}',
+      stop: 'Rain and snow ending around {time}',
+      ongoing: 'Rain and snow for the next 2 hours',
+    },
+  },
   offline: 'offline',
   loading_weather: 'Loading the weather…',
   refresh: 'Refresh',

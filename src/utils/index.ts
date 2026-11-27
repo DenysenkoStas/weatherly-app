@@ -11,6 +11,8 @@ export type { AqiLevel, PollenLevel, PollenReading, PollenType } from './airQual
 export { moveItem } from './moveItem'
 export { compareWithYesterday, splitPastDay } from './yesterday'
 export type { YesterdayComparison } from './yesterday'
+export { getNowcast } from './nowcast'
+export type { Nowcast, NowcastKind, PrecipitationType } from './nowcast'
 export { getSky } from './sky'
 export type { Sky } from './sky'
 export { withVisibleDetails } from './iconColors'

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getWeatherIcon, wmoIcons } from './wmoIcons'
+import { getPrecipitationIcon, getWeatherIcon, wmoIcons } from './wmoIcons'
 
 describe('getWeatherIcon', () => {
   it('uses the day icon by default', () => {
@@ -19,5 +19,16 @@ describe('getWeatherIcon', () => {
 
   it('falls back for an unknown code', () => {
     expect(getWeatherIcon(42, false)).toBe(getWeatherIcon(42))
+  })
+})
+
+describe('getPrecipitationIcon', () => {
+  it('uses the snowflake for snow, as for snow grains', () => {
+    expect(getPrecipitationIcon('snow')).toBe(wmoIcons[77])
+  })
+
+  it('has a different icon for each type', () => {
+    const icons = new Set((['rain', 'snow', 'mixed'] as const).map(getPrecipitationIcon))
+    expect(icons.size).toBe(3)
   })
 })

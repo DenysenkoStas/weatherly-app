@@ -160,6 +160,22 @@
   line-height: 18px;
 }
 
+.nowcast {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+// The icon is wider than the line: let it overflow instead of raising the line
+.nowcastIcon {
+  width: 32px;
+  height: 32px;
+  margin-block: -6px;
+  filter: var(--icon-filter);
+}
+
 .temp {
   font-size: 72px;
   font-weight: 300;

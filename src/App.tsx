@@ -28,6 +28,7 @@ import { useFavorites, makeFavoriteId } from './hooks/useFavorites'
 import type { Coords, FavoriteCity, GeoResult } from './types'
 import {
   compareWithYesterday,
+  getNowcast,
   getSky,
   getWeatherLabel,
   parseLocationParams,
@@ -49,6 +50,7 @@ function App() {
     weather,
     forecast,
     hourly,
+    minutely,
     timezone,
     updatedAt,
     units: weatherUnits,
@@ -330,6 +332,7 @@ function App() {
                 isFavorite={currentFavoriteId ? isFavorite(currentFavoriteId) : false}
                 offline={weatherFromCache}
                 comparison={compareWithYesterday(weather.time, weather.temperature_2m, yesterday)}
+                nowcast={getNowcast(minutely)}
                 refreshing={weatherRefreshing}
                 onRefresh={handleRefresh}
                 onToggleFavorite={handleToggleFavorite}
