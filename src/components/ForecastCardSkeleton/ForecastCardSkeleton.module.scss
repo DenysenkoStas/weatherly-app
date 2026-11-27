@@ -107,9 +107,13 @@
   margin-top: 10px;
   overflow: hidden;
 
-  // Under the chart; the bottom padding stands in for the real hour track's thin scrollbar
+  // Under the chart
   @media (min-width: $desktop) {
     margin-top: 0;
+  }
+
+  // The real hours always overflow: with a mouse their thin scrollbar takes 10px
+  @media (hover: hover) and (pointer: fine) {
     padding-bottom: 10px;
   }
 }
