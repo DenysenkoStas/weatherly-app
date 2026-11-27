@@ -68,7 +68,8 @@
   font-weight: 500;
   white-space: nowrap;
   text-align: center;
-  color: var(--text-muted);
+  // --text-muted falls short of 4.5:1 on the segmented background in the dark theme
+  color: var(--text);
   border-radius: 6px;
   transition:
     color 0.2s,
