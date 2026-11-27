@@ -50,6 +50,33 @@ describe('useWeather', () => {
     expect(result.current.minutely).toBeNull()
   })
 
+  it('aborts the previous request and ignores its late answer', async () => {
+    let answerFirst: (res: Response) => void = () => {}
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockImplementationOnce(() => new Promise((resolve) => (answerFirst = resolve)))
+      .mockImplementationOnce(ok)
+    vi.stubGlobal('fetch', fetchMock)
+    const { result } = renderHook(() => useWeather())
+
+    let first: Promise<void> = Promise.resolve()
+    act(() => {
+      first = result.current.fetch(49.59, 34.55)
+    })
+    await act(() => result.current.fetch(50.45, 30.52))
+    expect(fetchMock.mock.calls[0][1]?.signal?.aborted).toBe(true)
+
+    // The first city answers last, with another temperature: it must not replace the second
+    const late = { ...response, current: { temperature_2m: -10 } }
+    await act(async () => {
+      answerFirst(new Response(JSON.stringify(late)))
+      await first
+    })
+
+    expect(result.current.weather?.temperature_2m).toBe(3)
+    expect(result.current.loading).toBe(false)
+  })
+
   it('reports an error offline when there is no copy of that place', async () => {
     vi.stubGlobal(
       'fetch',

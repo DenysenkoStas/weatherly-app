@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import type { Language } from '../types'
+import { useLatestRequest } from './useLatestRequest'
 
 const NOMINATIM_API = 'https://nominatim.openstreetmap.org/reverse'
 const USER_AGENT = 'Weatherly/1.0 (https://denysenkostas.github.io/weatherly-app)'
@@ -13,9 +14,12 @@ interface UseReverseGeocodingReturn {
 export function useReverseGeocoding(language: Language): UseReverseGeocodingReturn {
   const [cityName, setCityName] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  // A slow name for the previous place must not replace the current one
+  const { start } = useLatestRequest()
 
   const fetchCityName = useCallback(
     async (lat: number, lon: number) => {
+      const signal = start()
       setLoading(true)
 
       try {
@@ -30,13 +34,16 @@ export function useReverseGeocoding(language: Language): UseReverseGeocodingRetu
             'Accept-Language': language,
             'User-Agent': USER_AGENT,
           },
+          signal,
         })
+        if (signal.aborted) return
         if (!res.ok) {
           setCityName(null)
           return
         }
 
         const data = await res.json()
+        if (signal.aborted) return
         const name =
           data.address?.city ||
           data.address?.town ||
@@ -45,13 +52,13 @@ export function useReverseGeocoding(language: Language): UseReverseGeocodingRetu
           null
         setCityName(name)
       } catch {
-        // Offline and the service worker has no saved name for this place and language
-        setCityName(null)
+        // Aborted by a newer request; otherwise offline and the service worker has no saved name
+        if (!signal.aborted) setCityName(null)
       } finally {
-        setLoading(false)
+        if (!signal.aborted) setLoading(false)
       }
     },
-    [language],
+    [language, start],
   )
 
   return { cityName, loading, fetchCityName }

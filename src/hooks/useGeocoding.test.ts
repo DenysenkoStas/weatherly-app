@@ -104,6 +104,55 @@ describe('useGeocoding', () => {
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
+  it('ignores the late answer of an older query', async () => {
+    const kyiv = { ...poltava, id: 703448, name: 'Київ' }
+    let answerFirst: (value: unknown) => void = () => {}
+    const fetchMock = vi
+      .fn()
+      .mockImplementationOnce(() => new Promise((resolve) => (answerFirst = resolve)))
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ results: [kyiv] }) })
+    vi.stubGlobal('fetch', fetchMock)
+    const { result } = renderHook(() => useGeocoding('uk'))
+
+    let first: Promise<void> = Promise.resolve()
+    act(() => {
+      first = result.current.search('Пол')
+    })
+    await act(() => result.current.search('Київ'))
+    expect(fetchMock.mock.calls[0][1].signal.aborted).toBe(true)
+
+    await act(async () => {
+      answerFirst({ ok: true, json: async () => ({ results: [poltava] }) })
+      await first
+    })
+
+    expect(result.current.results).toEqual([kyiv])
+  })
+
+  it('reset drops the search still running', async () => {
+    let answer: (value: unknown) => void = () => {}
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementationOnce(() => new Promise((resolve) => (answer = resolve))),
+    )
+    const { result } = renderHook(() => useGeocoding('uk'))
+
+    let pending: Promise<void> = Promise.resolve()
+    act(() => {
+      pending = result.current.search('Полтава')
+    })
+    expect(result.current.loading).toBe(true)
+    act(() => result.current.reset())
+
+    await act(async () => {
+      answer({ ok: true, json: async () => ({ results: [poltava] }) })
+      await pending
+    })
+
+    expect(result.current.results).toEqual([])
+    expect(result.current.loading).toBe(false)
+  })
+
   it('reset clears results and error', async () => {
     mockFetchResponse({ results: [] })
     const { result } = renderHook(() => useGeocoding('en'))

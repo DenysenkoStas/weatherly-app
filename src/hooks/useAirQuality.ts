@@ -1,4 +1,5 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
+import { useLatestRequest } from './useLatestRequest'
 import type { AirQualityCurrent, AirQualityResponse } from '../types'
 
 const AIR_QUALITY_API = 'https://air-quality-api.open-meteo.com/v1/air-quality'
@@ -25,12 +26,11 @@ export function useAirQuality() {
   const [airQuality, setAirQuality] = useState<AirQualityCurrent | null>(null)
   // Only a new place shows a skeleton; a silent refresh keeps the card
   const [loading, setLoading] = useState(false)
-  const requestIdRef = useRef(0)
+  const { start } = useLatestRequest()
 
   const fetch = useCallback(
     async (lat: number, lon: number, { silent = false }: FetchOptions = {}) => {
-      const requestId = ++requestIdRef.current
-      const isLatest = () => requestId === requestIdRef.current
+      const signal = start()
 
       // A new place must not show the previous city's air
       if (!silent) {
@@ -45,22 +45,22 @@ export function useAirQuality() {
         url.searchParams.set('current', CURRENT_FIELDS.join(','))
         url.searchParams.set('timezone', 'auto')
 
-        const res = await globalThis.fetch(url)
-        if (!isLatest()) return
+        const res = await globalThis.fetch(url, { signal })
+        if (signal.aborted) return
         if (!res.ok) {
           if (!silent) setAirQuality(null)
           return
         }
 
         const data: AirQualityResponse = await res.json()
-        if (isLatest()) setAirQuality(data.current)
+        if (!signal.aborted) setAirQuality(data.current)
       } catch {
-        // Keep whatever is on screen; nothing to report
+        // Aborted by a newer request, or failed: keep whatever is on screen, nothing to report
       } finally {
-        if (isLatest()) setLoading(false)
+        if (!signal.aborted) setLoading(false)
       }
     },
-    [],
+    [start],
   )
 
   return { airQuality, loading, fetch }

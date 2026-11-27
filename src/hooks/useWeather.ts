@@ -1,4 +1,5 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback } from 'react'
+import { useLatestRequest } from './useLatestRequest'
 import type {
   Units,
   WeatherResponse,
@@ -59,8 +60,8 @@ export function useWeather(): UseWeatherReturn {
   const [loading, setLoading] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  // Only the latest request may update the state, so a slow answer for the previous city is dropped
-  const requestIdRef = useRef(0)
+  // A new request aborts the previous one, so a slow answer for the previous city is dropped
+  const { start } = useLatestRequest()
 
   const fetch = useCallback(
     async (
@@ -68,8 +69,7 @@ export function useWeather(): UseWeatherReturn {
       lon: number,
       { silent = false, units: requestedUnits = DEFAULT_UNITS }: FetchOptions = {},
     ) => {
-      const requestId = ++requestIdRef.current
-      const isLatest = () => requestId === requestIdRef.current
+      const signal = start()
 
       // The response includes yesterday: split it off the forecast
       const show = (raw: WeatherResponse, at: Date, cached: boolean) => {
@@ -134,28 +134,28 @@ export function useWeather(): UseWeatherReturn {
         url.searchParams.set('forecast_days', '16')
         url.searchParams.set('past_days', '1')
 
-        const res = await globalThis.fetch(url)
-        if (!isLatest()) return
+        const res = await globalThis.fetch(url, { signal })
+        if (signal.aborted) return
         if (!res.ok) {
           setError('fetch_failed')
           return
         }
 
         const data: WeatherResponse = await res.json()
-        if (!isLatest()) return
+        if (signal.aborted) return
         const cachedAt = res.headers.get(CACHED_AT_HEADER)
         show(data, cachedAt ? new Date(cachedAt) : new Date(), cachedAt !== null)
       } catch {
-        // No network and no saved copy of this place
-        if (isLatest()) setError('fetch_failed')
+        // Aborted by a newer request; otherwise no network and no saved copy of this place
+        if (!signal.aborted) setError('fetch_failed')
       } finally {
-        if (isLatest()) {
+        if (!signal.aborted) {
           setLoading(false)
           setRefreshing(false)
         }
       }
     },
-    [],
+    [start],
   )
 
   return {
