@@ -238,7 +238,7 @@
 .locating {
   animation: locating 1s ease-in-out infinite alternate;
 
-  @media (prefers-reduced-motion: reduce) {
+  @include reduced-motion {
     animation: none;
   }
 }

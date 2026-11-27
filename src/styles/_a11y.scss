@@ -7,3 +7,17 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+// For animations that loop: stops them when the system asks for less motion (unless the app's
+// animation setting is "on") or when the setting is "off". useMotion sets <html data-motion>.
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    :root:not([data-motion='on']) & {
+      @content;
+    }
+  }
+
+  :root[data-motion='off'] & {
+    @content;
+  }
+}

@@ -1,9 +1,11 @@
 import { useEffect, useId, useRef, useState } from 'react'
-import type { TemperatureUnit, Units, WindUnit } from '../../types'
+import type { Motion, TemperatureUnit, Units, WindUnit } from '../../types'
+import { SettingsIcon } from '../ThemeIcons'
 import styles from './SettingsMenu.module.scss'
 
 const TEMPERATURE_UNITS: readonly TemperatureUnit[] = ['celsius', 'fahrenheit']
 const WIND_UNITS: readonly WindUnit[] = ['ms', 'kmh']
+const MOTION_MODES: readonly Motion[] = ['auto', 'on', 'off']
 
 interface SettingsMenuTranslations {
   settings: string
@@ -11,14 +13,19 @@ interface SettingsMenuTranslations {
   wind: string
   temp_units: Record<TemperatureUnit, string>
   wind_units: Record<WindUnit, string>
+  motion: string
+  motion_modes: Record<Motion, string>
 }
 
 interface SettingsMenuProps {
   units: Units
   onTemperatureChange: (unit: TemperatureUnit) => void
   onWindChange: (unit: WindUnit) => void
-  // Same look as the other header buttons
+  motion: Motion
+  onMotionChange: (motion: Motion) => void
+  // Same look as the other header icon buttons
   buttonClassName?: string
+  iconClassName?: string
   t: SettingsMenuTranslations
 }
 
@@ -65,7 +72,10 @@ export function SettingsMenu({
   units,
   onTemperatureChange,
   onWindChange,
+  motion,
+  onMotionChange,
   buttonClassName,
+  iconClassName,
   t,
 }: SettingsMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
@@ -107,7 +117,7 @@ export function SettingsMenu({
         aria-label={`${t.settings}: ${summary}`}
         title={t.settings}
       >
-        {t.temp_units[units.temperature]}
+        <SettingsIcon className={iconClassName} />
       </button>
 
       {isOpen && (
@@ -127,6 +137,14 @@ export function SettingsMenu({
             value={units.wind}
             labels={t.wind_units}
             onChange={onWindChange}
+          />
+          <OptionGroup
+            name={`${menuId}-motion`}
+            legend={t.motion}
+            options={MOTION_MODES}
+            value={motion}
+            labels={t.motion_modes}
+            onChange={onMotionChange}
           />
         </div>
       )}

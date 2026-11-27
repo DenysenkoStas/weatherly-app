@@ -41,6 +41,8 @@ export const uk = {
   temperature: 'Температура',
   temp_units: { celsius: '°C', fahrenheit: '°F' },
   wind_units: { ms: 'м/с', kmh: 'км/год' },
+  motion: 'Анімація',
+  motion_modes: { auto: 'Авто', on: 'Увімк.', off: 'Вимк.' },
   pressure: 'Тиск',
   pressure_unit: 'гПа',
   uv_index: 'UV-індекс',

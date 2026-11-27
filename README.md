@@ -29,6 +29,7 @@ A weather web app built with React and TypeScript. Search for a city or use your
 - Installable PWA; the app and the last forecast work offline
 - Refreshes stale data when you return to the tab
 - °C / °F and m/s / km/h units
+- Animation setting: auto (follows the system's reduced motion), on, or off
 - Light and dark themes, EN / UA languages
 - Responsive layout from phones to wide desktops
 - Skeletons that match the loaded cards, so nothing jumps
@@ -40,7 +41,7 @@ A weather web app built with React and TypeScript. Search for a city or use your
 - Vite
 - SCSS Modules
 - [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) (Workbox) for the service worker and manifest
-- [@meteocons/svg](https://github.com/basmilius/meteocons) and [@meteocons/svg-static](https://github.com/basmilius/meteocons) for weather icons (still copies when the system asks for reduced motion)
+- [@meteocons/svg](https://github.com/basmilius/meteocons) and [@meteocons/svg-static](https://github.com/basmilius/meteocons) for weather icons (still copies when animation is off)
 - Vitest and Testing Library for tests
 
 ## Getting Started

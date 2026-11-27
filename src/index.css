@@ -69,16 +69,6 @@ body {
   margin: 0;
 }
 
-/* Only a wrapper for the reduced-motion icon source: the <img> inside is what gets laid out.
-   <source> is not hidden by default, so with `contents` it would become a grid or flex item. */
-picture {
-  display: contents;
-}
-
-picture > source {
-  display: none;
-}
-
 h1,
 h2,
 h3 {

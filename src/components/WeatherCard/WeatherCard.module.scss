@@ -62,7 +62,7 @@
   display: inline-block;
   animation: refresh-spin 0.9s linear infinite;
 
-  @media (prefers-reduced-motion: reduce) {
+  @include reduced-motion {
     animation: none;
     opacity: 0.5;
   }

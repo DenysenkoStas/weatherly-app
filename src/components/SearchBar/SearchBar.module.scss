@@ -53,7 +53,7 @@
   animation: spin 0.6s linear infinite;
 
   // A still ring is enough: the field is also marked busy for screen readers
-  @media (prefers-reduced-motion: reduce) {
+  @include reduced-motion {
     animation: none;
   }
 }

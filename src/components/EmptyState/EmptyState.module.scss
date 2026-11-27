@@ -1,3 +1,5 @@
+@use '../../styles/a11y' as *;
+
 .card {
   display: flex;
   flex-direction: column;
@@ -18,7 +20,7 @@
   filter: var(--icon-filter);
   animation: float 4s ease-in-out infinite;
 
-  @media (prefers-reduced-motion: reduce) {
+  @include reduced-motion {
     animation: none;
   }
 }

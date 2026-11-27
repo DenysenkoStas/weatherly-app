@@ -2,6 +2,8 @@ import type { en, uk } from '../locales'
 
 export type Language = 'en' | 'uk'
 export type Theme = 'light' | 'dark'
+/** Icon animation: `auto` follows the system reduced-motion setting */
+export type Motion = 'auto' | 'on' | 'off'
 export type TemperatureUnit = 'celsius' | 'fahrenheit'
 export type WindUnit = 'ms' | 'kmh'
 
@@ -98,7 +100,7 @@ export interface WeatherResponse {
   hourly: WeatherHourly
 }
 
-/** A Meteocons icon: animated, and a still copy for `prefers-reduced-motion` */
+/** A Meteocons icon: animated, and a still copy for when motion is off */
 export interface IconSources {
   animated: string
   still: string

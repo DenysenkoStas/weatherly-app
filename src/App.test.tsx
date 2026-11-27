@@ -131,6 +131,20 @@ describe('App', () => {
     expect(screen.getByRole('button', { name: `${en.settings}: °F, km/h` })).toBeTruthy()
   })
 
+  it('turns the animation off from the settings menu', () => {
+    render(<App />)
+    fireEvent.click(screen.getByRole('button', { name: `${en.settings}: °C, m/s` }))
+
+    expect(screen.getByRole('radio', { name: en.motion_modes.auto })).toHaveProperty(
+      'checked',
+      true,
+    )
+    fireEvent.click(screen.getByRole('radio', { name: en.motion_modes.off }))
+
+    expect(document.documentElement.dataset.motion).toBe('off')
+    expect(localStorage.getItem('weatherly-motion')).toBe('off')
+  })
+
   it('removes a city from the favorites chips', () => {
     localStorage.setItem(
       'weatherly_favorites',

@@ -1,3 +1,5 @@
+@use './a11y' as *;
+
 @keyframes shimmer {
   0% {
     background-position: -400px 0;
@@ -19,7 +21,7 @@
   animation: shimmer 1.4s infinite linear;
 
   // The bones still mark the loading layout, just without the moving shine
-  @media (prefers-reduced-motion: reduce) {
+  @include reduced-motion {
     animation: none;
   }
 }

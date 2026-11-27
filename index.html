@@ -17,6 +17,9 @@
         const lang = localStorage.getItem('weatherly-lang')
         document.documentElement.lang =
           lang === 'en' || lang === 'uk' ? lang : navigator.language.startsWith('uk') ? 'uk' : 'en'
+
+        const motion = localStorage.getItem('weatherly-motion')
+        document.documentElement.dataset.motion = motion === 'on' || motion === 'off' ? motion : 'auto'
       })()
     </script>
     <meta charset="UTF-8" />
