@@ -105,6 +105,12 @@
   padding-right: 8px;
 }
 
+.temperature {
+  margin-left: 2px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
 .cross {
   visibility: hidden;
   font-size: 15px;

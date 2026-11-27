@@ -25,6 +25,7 @@ import { AirQualityCardSkeleton } from './components/AirQualityCardSkeleton'
 import { SettingsMenu } from './components/SettingsMenu'
 import { SunIcon, MoonIcon, LocationIcon } from './components/ThemeIcons'
 import { useFavorites, makeFavoriteId } from './hooks/useFavorites'
+import { useFavoritesWeather } from './hooks/useFavoritesWeather'
 import type { Coords, FavoriteCity, GeoResult } from './types'
 import {
   compareWithYesterday,
@@ -195,6 +196,8 @@ function App() {
   const locatingFromScratch = geolocLoading && !displayCoords
   // Labels follow the data on screen, so a pending refetch never shows °F next to °C values
   const shownUnits = weatherUnits ?? units
+  // Asked again with every update of the main forecast, so the chips are as fresh as the card
+  const favoriteTemperatures = useFavoritesWeather(favorites, units.temperature, updatedAt)
   const tWithUnits = useMemo(
     () => ({
       ...t,
@@ -255,6 +258,7 @@ function App() {
             <FavoritesList
               favorites={favorites}
               activeId={currentFavoriteId}
+              temperatures={favoriteTemperatures}
               onSelect={handleSelectFavorite}
               onRemove={(city) => removeFavorite(city.id)}
               onReorder={reorderFavorites}

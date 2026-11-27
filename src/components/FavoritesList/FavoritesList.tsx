@@ -9,6 +9,8 @@ import styles from './FavoritesList.module.scss'
 interface FavoritesListProps {
   favorites: FavoriteCity[]
   activeId?: string | null
+  /** Current temperatures by favorite id; a chip without one shows just the name */
+  temperatures?: Readonly<Record<string, number>>
   onSelect: (city: FavoriteCity) => void
   onRemove: (city: FavoriteCity) => void
   onReorder: (ids: string[]) => void
@@ -23,6 +25,7 @@ interface FavoritesListProps {
 export function FavoritesList({
   favorites,
   activeId,
+  temperatures = {},
   onSelect,
   onRemove,
   onReorder,
@@ -79,6 +82,7 @@ export function FavoritesList({
           const isActive = city.id === activeId
           const isDragging = city.id === draggingId
           const removeLabel = `${t.remove_favorite}: ${city.name}`
+          const temperature = temperatures[city.id]
           return (
             <li
               key={city.id}
@@ -123,6 +127,14 @@ export function FavoritesList({
                 onKeyDown={(event) => handleKeyDown(event, city.id)}
               >
                 {city.name}
+                {temperature !== undefined && (
+                  // The space sits outside the span: the accessible name keeps it there
+                  // ("Lviv -2°", not "Lviv-2°"), while a span trims its own edges
+                  <>
+                    {' '}
+                    <span className={styles.temperature}>{Math.round(temperature)}°</span>
+                  </>
+                )}
               </button>
             </li>
           )

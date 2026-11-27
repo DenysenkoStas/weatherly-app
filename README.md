@@ -23,7 +23,7 @@ A weather web app built with React and TypeScript. Search for a city or use your
 - Current location via the browser's geolocation
 - Opens the last viewed city on start
 - Shareable links: the city is kept in the address (`?lat=…&lon=…`)
-- Favorite cities: remove from the chip, reorder by dragging (or Alt + ←/→)
+- Favorite cities with their current temperature: remove from the chip, reorder by dragging (or Alt + ←/→)
 
 **App**
 
