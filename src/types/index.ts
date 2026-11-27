@@ -114,8 +114,7 @@ export interface WeatherResponse {
   current: WeatherCurrent
   daily: WeatherDaily
   hourly: WeatherHourly
-  // Missing in offline copies saved before it was requested
-  minutely_15?: WeatherMinutely15
+  minutely_15: WeatherMinutely15
 }
 
 /** A Meteocons icon: animated, and a still copy for when motion is off */
