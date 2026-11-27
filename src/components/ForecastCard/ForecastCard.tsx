@@ -32,6 +32,7 @@ interface ForecastCardTranslations {
   now: string
   precipitation_chance: string
   weather: Record<number, string>
+  weather_unknown: string
 }
 
 interface ForecastCardProps {
@@ -241,7 +242,7 @@ export function ForecastCard({
                   <MeteoIcon
                     className={styles.hourIcon}
                     icon={getWeatherIcon(hour.weatherCode, hour.isDay)}
-                    alt={getWeatherLabel(hour.weatherCode, t.weather)}
+                    alt={getWeatherLabel(hour.weatherCode, t.weather, t.weather_unknown)}
                   />
                   <span className={styles.hourTemp}>
                     {Math.round(hour.temperature)}

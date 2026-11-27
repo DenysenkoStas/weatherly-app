@@ -124,5 +124,6 @@ export const uk = {
   forecast: 'Прогноз',
   hourly_forecast: 'Погодинний прогноз',
   now: 'зараз',
+  weather_unknown: 'Невідомо',
   weather,
 } as const

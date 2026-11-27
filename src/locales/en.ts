@@ -124,5 +124,6 @@ export const en = {
   forecast: 'Forecast',
   hourly_forecast: 'Hourly forecast',
   now: 'now',
+  weather_unknown: 'Unknown',
   weather,
 } as const

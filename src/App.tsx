@@ -220,7 +220,7 @@ function App() {
       ? [
           cityName,
           `${Math.round(weather.temperature_2m)}${tWithUnits.temp_unit}`,
-          getWeatherLabel(weather.weather_code, t.weather),
+          getWeatherLabel(weather.weather_code, t.weather, t.weather_unknown),
           weatherFromCache && t.offline,
         ]
           .filter(Boolean)
@@ -319,7 +319,7 @@ function App() {
               city={cityName}
               weather={weather}
               sun={sun}
-              description={getWeatherLabel(weather.weather_code, t.weather)}
+              description={getWeatherLabel(weather.weather_code, t.weather, t.weather_unknown)}
               updatedAt={updatedAt}
               isFavorite={currentFavoriteId ? isFavorite(currentFavoriteId) : false}
               offline={weatherFromCache}

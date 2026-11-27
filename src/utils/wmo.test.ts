@@ -4,13 +4,13 @@ import { en, uk } from '../locales'
 
 describe('getWeatherLabel', () => {
   it('returns the label for a known WMO code', () => {
-    expect(getWeatherLabel(3, en.weather)).toBe('Overcast')
-    expect(getWeatherLabel(3, uk.weather)).toBe('Хмарно')
+    expect(getWeatherLabel(3, en.weather, en.weather_unknown)).toBe('Overcast')
+    expect(getWeatherLabel(3, uk.weather, uk.weather_unknown)).toBe('Хмарно')
   })
 
-  it('falls back to code 0 for an unknown code', () => {
-    expect(getWeatherLabel(42, en.weather)).toBe(en.weather[0])
-    expect(getWeatherLabel(42, uk.weather)).toBe(uk.weather[0])
+  it('uses the unknown label for a code without a translation', () => {
+    expect(getWeatherLabel(42, en.weather, en.weather_unknown)).toBe('Unknown')
+    expect(getWeatherLabel(42, uk.weather, uk.weather_unknown)).toBe('Невідомо')
   })
 
   it('has a translation for every WMO code in both languages', () => {
@@ -20,8 +20,8 @@ describe('getWeatherLabel', () => {
     expect(ukCodes.sort()).toEqual(enCodes.sort())
 
     for (const code of enCodes) {
-      expect(getWeatherLabel(code, en.weather)).toBeTruthy()
-      expect(getWeatherLabel(code, uk.weather)).toBeTruthy()
+      expect(getWeatherLabel(code, en.weather, en.weather_unknown)).toBeTruthy()
+      expect(getWeatherLabel(code, uk.weather, uk.weather_unknown)).toBeTruthy()
     }
   })
 })
