@@ -29,7 +29,7 @@ A weather web app built with React and TypeScript. Search for a city or use your
 
 - Installable PWA; the app and the last forecast work offline
 - Refreshes stale data when you return to the tab
-- °C / °F and m/s / km/h units
+- °C / °F and m/s / km/h units; 12- or 24-hour clock (auto: by the app language)
 - Animation setting: auto (follows the system's reduced motion), on, or off
 - Light and dark themes, EN / UA languages
 - Responsive layout from phones to wide desktops

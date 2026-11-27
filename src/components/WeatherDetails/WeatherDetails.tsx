@@ -18,7 +18,7 @@ import type { ReactNode } from 'react'
 import type { IconSources, WeatherCurrent } from '../../types'
 import {
   formatDuration,
-  formatHour,
+  formatClock,
   getCompassIndex,
   getDaylightProgress,
   getMoonPhase,
@@ -27,6 +27,7 @@ import {
 } from '../../utils'
 import type { MoonPhase, UvLevel } from '../../utils'
 import { getMoonIcon } from '../../utils/wmoIcons'
+import { useClock } from '../../hooks/useTimeFormat'
 import { MeteoIcon } from '../MeteoIcon'
 import styles from './WeatherDetails.module.scss'
 
@@ -117,6 +118,7 @@ function Detail({ icon, iconClassName, label, value, hint, inlineHint = false }:
 
 export function WeatherDetails({ weather, sun, variant = 'inline', t }: WeatherDetailsProps) {
   const isCard = variant === 'card'
+  const clock = useClock()
   const direction = t.directions[getCompassIndex(weather.wind_direction_10m)]
   const uvLevel = getUvLevel(weather.uv_index)
   const daylightProgress = sun ? getDaylightProgress(sun.sunrise, sun.sunset, weather.time) : null
@@ -194,7 +196,7 @@ export function WeatherDetails({ weather, sun, variant = 'inline', t }: WeatherD
         <div className={styles.sun}>
           <div className={styles.sunEnd}>
             <MeteoIcon className={styles.sunIcon} icon={sunriseIcon} width={40} height={40} />
-            <span className={styles.sunTime}>{formatHour(sun.sunrise)}</span>
+            <span className={styles.sunTime}>{formatClock(sun.sunrise, clock)}</span>
             <span className={styles.label}>{t.sunrise}</span>
           </div>
 
@@ -224,7 +226,7 @@ export function WeatherDetails({ weather, sun, variant = 'inline', t }: WeatherD
 
           <div className={styles.sunEnd}>
             <MeteoIcon className={styles.sunIcon} icon={sunsetIcon} width={40} height={40} />
-            <span className={styles.sunTime}>{formatHour(sun.sunset)}</span>
+            <span className={styles.sunTime}>{formatClock(sun.sunset, clock)}</span>
             <span className={styles.label}>{t.sunset}</span>
           </div>
         </div>

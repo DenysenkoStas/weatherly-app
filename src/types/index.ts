@@ -4,6 +4,8 @@ export type Language = 'en' | 'uk'
 export type Theme = 'light' | 'dark'
 /** Icon animation: `auto` follows the system reduced-motion setting */
 export type Motion = 'auto' | 'on' | 'off'
+/** Clock for the times on screen: `auto` follows the app language */
+export type TimeFormat = 'auto' | '12h' | '24h'
 export type TemperatureUnit = 'celsius' | 'fahrenheit'
 export type WindUnit = 'ms' | 'kmh'
 

@@ -41,6 +41,8 @@ export const en = {
   temperature: 'Temperature',
   temp_units: { celsius: '°C', fahrenheit: '°F' },
   wind_units: { ms: 'm/s', kmh: 'km/h' },
+  time_format: 'Time',
+  time_formats: { auto: 'Auto', '12h': '12-hour', '24h': '24-hour' },
   motion: 'Animation',
   motion_modes: { auto: 'Auto', on: 'On', off: 'Off' },
   pressure: 'Pressure',

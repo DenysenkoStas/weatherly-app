@@ -11,6 +11,7 @@ import { useRefreshWhenStale } from './hooks/useRefreshWhenStale'
 import { useAirQuality } from './hooks/useAirQuality'
 import { useUnits } from './hooks/useUnits'
 import { MotionContext, useMotion } from './hooks/useMotion'
+import { ClockContext, getClock, useTimeFormat } from './hooks/useTimeFormat'
 import { SearchBar } from './components/SearchBar'
 import { WeatherCard } from './components/WeatherCard'
 import { WeatherCardSkeleton } from './components/WeatherCardSkeleton'
@@ -47,6 +48,8 @@ function App() {
   const { theme, toggleTheme } = useTheme()
   const { units, setTemperatureUnit, setWindUnit } = useUnits()
   const { motion, setMotion } = useMotion()
+  const { timeFormat, setTimeFormat } = useTimeFormat()
+  const clock = useMemo(() => getClock(timeFormat, language), [timeFormat, language])
   const { results, loading: geoLoading, error: geoError, search, reset } = useGeocoding(language)
   const {
     weather,
@@ -240,175 +243,179 @@ function App() {
 
   return (
     <MotionContext value={motion}>
-      <div className={styles.app} data-sky={sky ?? undefined}>
-        <header className={styles.header}>
-          <h1 className={styles.logo}>{t.appName}</h1>
-          <div className={styles.headerSearch}>
-            <SearchBar
-              placeholder={t.searchPlaceholder}
-              onSearch={handleSearch}
-              onReset={reset}
-              results={results}
-              onSelect={handleSelectCity}
-              loading={geoLoading}
-              searchError={geoError}
-              searchErrorMessage={searchErrorMessage}
-              resultsMessage={t.cities_found}
-            />
-          </div>
-          <div className={styles.headerFavorites}>
-            <FavoritesList
-              favorites={favorites}
-              activeId={currentFavoriteId}
-              temperatures={favoriteTemperatures}
-              onSelect={handleSelectFavorite}
-              onRemove={(city) => removeFavorite(city.id)}
-              onReorder={reorderFavorites}
-              t={t}
-            />
-          </div>
-          <div className={styles.headerActions}>
-            {geolocSupported && (
+      <ClockContext value={clock}>
+        <div className={styles.app} data-sky={sky ?? undefined}>
+          <header className={styles.header}>
+            <h1 className={styles.logo}>{t.appName}</h1>
+            <div className={styles.headerSearch}>
+              <SearchBar
+                placeholder={t.searchPlaceholder}
+                onSearch={handleSearch}
+                onReset={reset}
+                results={results}
+                onSelect={handleSelectCity}
+                loading={geoLoading}
+                searchError={geoError}
+                searchErrorMessage={searchErrorMessage}
+                resultsMessage={t.cities_found}
+              />
+            </div>
+            <div className={styles.headerFavorites}>
+              <FavoritesList
+                favorites={favorites}
+                activeId={currentFavoriteId}
+                temperatures={favoriteTemperatures}
+                onSelect={handleSelectFavorite}
+                onRemove={(city) => removeFavorite(city.id)}
+                onReorder={reorderFavorites}
+                t={t}
+              />
+            </div>
+            <div className={styles.headerActions}>
+              {geolocSupported && (
+                <button
+                  type="button"
+                  className={`${styles.headerToggle} ${styles.headerToggleIcon}`}
+                  onClick={handleLocate}
+                  disabled={geolocDenied}
+                  aria-label={t.locate_me}
+                  aria-pressed={isViewingLocation}
+                  aria-busy={geolocLoading}
+                  title={geolocDenied ? t.errors.geolocation_denied : t.locate_me}
+                >
+                  <LocationIcon
+                    className={`${styles.toggleIcon}${geolocLoading ? ` ${styles.locating}` : ''}`}
+                  />
+                </button>
+              )}
+              <SettingsMenu
+                units={units}
+                onTemperatureChange={setTemperatureUnit}
+                onWindChange={setWindUnit}
+                timeFormat={timeFormat}
+                onTimeFormatChange={setTimeFormat}
+                motion={motion}
+                onMotionChange={setMotion}
+                buttonClassName={`${styles.headerToggle} ${styles.headerToggleIcon}`}
+                iconClassName={styles.toggleIcon}
+                t={t}
+              />
               <button
                 type="button"
                 className={`${styles.headerToggle} ${styles.headerToggleIcon}`}
-                onClick={handleLocate}
-                disabled={geolocDenied}
-                aria-label={t.locate_me}
-                aria-pressed={isViewingLocation}
-                aria-busy={geolocLoading}
-                title={geolocDenied ? t.errors.geolocation_denied : t.locate_me}
+                onClick={toggleTheme}
+                aria-label={theme === 'dark' ? t.theme_light : t.theme_dark}
               >
-                <LocationIcon
-                  className={`${styles.toggleIcon}${geolocLoading ? ` ${styles.locating}` : ''}`}
-                />
+                {theme === 'dark' ? (
+                  <SunIcon className={styles.toggleIcon} />
+                ) : (
+                  <MoonIcon className={styles.toggleIcon} />
+                )}
               </button>
-            )}
-            <SettingsMenu
-              units={units}
-              onTemperatureChange={setTemperatureUnit}
-              onWindChange={setWindUnit}
-              motion={motion}
-              onMotionChange={setMotion}
-              buttonClassName={`${styles.headerToggle} ${styles.headerToggleIcon}`}
-              iconClassName={styles.toggleIcon}
-              t={t}
-            />
-            <button
-              type="button"
-              className={`${styles.headerToggle} ${styles.headerToggleIcon}`}
-              onClick={toggleTheme}
-              aria-label={theme === 'dark' ? t.theme_light : t.theme_dark}
-            >
-              {theme === 'dark' ? (
-                <SunIcon className={styles.toggleIcon} />
-              ) : (
-                <MoonIcon className={styles.toggleIcon} />
+              <button
+                type="button"
+                className={styles.headerToggle}
+                onClick={toggleLanguage}
+                aria-label={t.language_switch}
+                title={t.language_switch}
+              >
+                {t.language}
+              </button>
+            </div>
+          </header>
+
+          <main className={`${styles.layout}${showEmptyState ? ` ${styles.layoutEmpty}` : ''}`}>
+            <div className={styles.main}>
+              {showWeatherSkeleton && <WeatherCardSkeleton showDetails={!isDesktop} />}
+
+              {error && (
+                <p className={styles.error} role="alert">
+                  {t.errors[error as keyof typeof t.errors]}
+                </p>
               )}
-            </button>
-            <button
-              type="button"
-              className={styles.headerToggle}
-              onClick={toggleLanguage}
-              aria-label={t.language_switch}
-              title={t.language_switch}
-            >
-              {t.language}
-            </button>
-          </div>
-        </header>
 
-        <main className={`${styles.layout}${showEmptyState ? ` ${styles.layoutEmpty}` : ''}`}>
-          <div className={styles.main}>
-            {showWeatherSkeleton && <WeatherCardSkeleton showDetails={!isDesktop} />}
-
-            {error && (
-              <p className={styles.error} role="alert">
-                {t.errors[error as keyof typeof t.errors]}
-              </p>
-            )}
-
-            {showWeather && (
-              <WeatherCard
-                city={cityName}
-                weather={weather}
-                sun={sun}
-                description={getWeatherLabel(weather.weather_code, t.weather, t.weather_unknown)}
-                updatedAt={updatedAt}
-                isFavorite={currentFavoriteId ? isFavorite(currentFavoriteId) : false}
-                offline={weatherFromCache}
-                comparison={compareWithYesterday(weather.time, weather.temperature_2m, yesterday)}
-                nowcast={getNowcast(minutely)}
-                refreshing={weatherRefreshing}
-                onRefresh={handleRefresh}
-                onShare={() =>
-                  share({
-                    title: document.title,
-                    text: `${cityName}: ${Math.round(weather.temperature_2m)}${tWithUnits.temp_unit}, ${getWeatherLabel(weather.weather_code, t.weather, t.weather_unknown).toLowerCase()}`,
-                    url: window.location.href,
-                  })
-                }
-                shareCopied={shareCopied}
-                onToggleFavorite={handleToggleFavorite}
-                showDetails={!isDesktop}
-                t={tWithUnits}
-              />
-            )}
-          </div>
-
-          <div className={styles.aside}>
-            {showEmptyState && (
-              <EmptyState
-                canLocate={geolocSupported}
-                locationDenied={geolocDenied}
-                onLocate={handleLocate}
-                onSelectCity={handleSelectFavorite}
-                t={t}
-              />
-            )}
-
-            {(weatherLoading || locatingFromScratch || (!!displayCoords && !forecast)) && (
-              <ForecastCardSkeleton />
-            )}
-
-            {forecast && hourly && timezone && !weatherLoading && (
-              <ForecastCard
-                forecast={forecast}
-                hourly={hourly}
-                timezone={timezone}
-                selectedDayIndex={selectedDayIndex}
-                onSelectDay={setSelectedDayIndex}
-                t={{ ...tWithUnits, weather: t.weather as Record<number, string> }}
-              />
-            )}
-          </div>
-
-          {isDesktop && (showWeatherSkeleton || showWeather) && (
-            <div className={styles.wide}>
-              {showWeatherSkeleton && <WeatherDetailsSkeleton variant="card" />}
               {showWeather && (
-                <WeatherDetails weather={weather} sun={sun} variant="card" t={tWithUnits} />
+                <WeatherCard
+                  city={cityName}
+                  weather={weather}
+                  sun={sun}
+                  description={getWeatherLabel(weather.weather_code, t.weather, t.weather_unknown)}
+                  updatedAt={updatedAt}
+                  isFavorite={currentFavoriteId ? isFavorite(currentFavoriteId) : false}
+                  offline={weatherFromCache}
+                  comparison={compareWithYesterday(weather.time, weather.temperature_2m, yesterday)}
+                  nowcast={getNowcast(minutely)}
+                  refreshing={weatherRefreshing}
+                  onRefresh={handleRefresh}
+                  onShare={() =>
+                    share({
+                      title: document.title,
+                      text: `${cityName}: ${Math.round(weather.temperature_2m)}${tWithUnits.temp_unit}, ${getWeatherLabel(weather.weather_code, t.weather, t.weather_unknown).toLowerCase()}`,
+                      url: window.location.href,
+                    })
+                  }
+                  shareCopied={shareCopied}
+                  onToggleFavorite={handleToggleFavorite}
+                  showDetails={!isDesktop}
+                  t={tWithUnits}
+                />
               )}
             </div>
-          )}
 
-          {(showWeatherSkeleton || (showWeather && airQualityLoading)) && (
-            <div className={styles.wide}>
-              <AirQualityCardSkeleton />
+            <div className={styles.aside}>
+              {showEmptyState && (
+                <EmptyState
+                  canLocate={geolocSupported}
+                  locationDenied={geolocDenied}
+                  onLocate={handleLocate}
+                  onSelectCity={handleSelectFavorite}
+                  t={t}
+                />
+              )}
+
+              {(weatherLoading || locatingFromScratch || (!!displayCoords && !forecast)) && (
+                <ForecastCardSkeleton />
+              )}
+
+              {forecast && hourly && timezone && !weatherLoading && (
+                <ForecastCard
+                  forecast={forecast}
+                  hourly={hourly}
+                  timezone={timezone}
+                  selectedDayIndex={selectedDayIndex}
+                  onSelectDay={setSelectedDayIndex}
+                  t={{ ...tWithUnits, weather: t.weather as Record<number, string> }}
+                />
+              )}
             </div>
-          )}
 
-          {showWeather && airQuality && (
-            <div className={styles.wide}>
-              <AirQualityCard airQuality={airQuality} t={t} />
-            </div>
-          )}
-        </main>
+            {isDesktop && (showWeatherSkeleton || showWeather) && (
+              <div className={styles.wide}>
+                {showWeatherSkeleton && <WeatherDetailsSkeleton variant="card" />}
+                {showWeather && (
+                  <WeatherDetails weather={weather} sun={sun} variant="card" t={tWithUnits} />
+                )}
+              </div>
+            )}
 
-        <p className={styles.visuallyHidden} role="status">
-          {weatherStatus}
-        </p>
-      </div>
+            {(showWeatherSkeleton || (showWeather && airQualityLoading)) && (
+              <div className={styles.wide}>
+                <AirQualityCardSkeleton />
+              </div>
+            )}
+
+            {showWeather && airQuality && (
+              <div className={styles.wide}>
+                <AirQualityCard airQuality={airQuality} t={t} />
+              </div>
+            )}
+          </main>
+
+          <p className={styles.visuallyHidden} role="status">
+            {weatherStatus}
+          </p>
+        </div>
+      </ClockContext>
     </MotionContext>
   )
 }

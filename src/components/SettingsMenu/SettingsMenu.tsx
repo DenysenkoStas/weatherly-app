@@ -1,10 +1,11 @@
 import { useEffect, useId, useRef, useState } from 'react'
-import type { Motion, TemperatureUnit, Units, WindUnit } from '../../types'
+import type { Motion, TemperatureUnit, TimeFormat, Units, WindUnit } from '../../types'
 import { SettingsIcon } from '../ThemeIcons'
 import styles from './SettingsMenu.module.scss'
 
 const TEMPERATURE_UNITS: readonly TemperatureUnit[] = ['celsius', 'fahrenheit']
 const WIND_UNITS: readonly WindUnit[] = ['ms', 'kmh']
+const TIME_FORMATS: readonly TimeFormat[] = ['auto', '12h', '24h']
 const MOTION_MODES: readonly Motion[] = ['auto', 'on', 'off']
 
 interface SettingsMenuTranslations {
@@ -13,6 +14,8 @@ interface SettingsMenuTranslations {
   wind: string
   temp_units: Record<TemperatureUnit, string>
   wind_units: Record<WindUnit, string>
+  time_format: string
+  time_formats: Record<TimeFormat, string>
   motion: string
   motion_modes: Record<Motion, string>
 }
@@ -21,6 +24,8 @@ interface SettingsMenuProps {
   units: Units
   onTemperatureChange: (unit: TemperatureUnit) => void
   onWindChange: (unit: WindUnit) => void
+  timeFormat: TimeFormat
+  onTimeFormatChange: (timeFormat: TimeFormat) => void
   motion: Motion
   onMotionChange: (motion: Motion) => void
   // Same look as the other header icon buttons
@@ -72,6 +77,8 @@ export function SettingsMenu({
   units,
   onTemperatureChange,
   onWindChange,
+  timeFormat,
+  onTimeFormatChange,
   motion,
   onMotionChange,
   buttonClassName,
@@ -137,6 +144,14 @@ export function SettingsMenu({
             value={units.wind}
             labels={t.wind_units}
             onChange={onWindChange}
+          />
+          <OptionGroup
+            name={`${menuId}-time`}
+            legend={t.time_format}
+            options={TIME_FORMATS}
+            value={timeFormat}
+            labels={t.time_formats}
+            onChange={onTimeFormatChange}
           />
           <OptionGroup
             name={`${menuId}-motion`}

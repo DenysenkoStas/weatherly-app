@@ -6,6 +6,8 @@ import type { SunTimes, WeatherDetailsTranslations } from '../WeatherDetails'
 import { getPrecipitationIcon, getWeatherIcon } from '../../utils/wmoIcons'
 import { MeteoIcon } from '../MeteoIcon'
 import { CheckIcon, ShareIcon } from '../ThemeIcons'
+import { useClock } from '../../hooks/useTimeFormat'
+import { formatClock, formatDeviceTime } from '../../utils'
 import styles from './WeatherCard.module.scss'
 
 interface WeatherCardTranslations extends WeatherDetailsTranslations {
@@ -68,16 +70,18 @@ export function WeatherCard({
   t,
 }: WeatherCardProps) {
   const cityId = useId()
-  const time = updatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  const clock = useClock()
+  // In the app language and the chosen clock, not the browser's
+  const time = formatDeviceTime(updatedAt, clock)
   // An offline copy can be from another day: then show the date too
   const isToday = updatedAt.toDateString() === new Date().toDateString()
   const stamp = isToday
     ? `${t.updated_at} ${time}`
-    : `${t.updated_on} ${updatedAt.toLocaleDateString([], { day: 'numeric', month: 'short' })}, ${time}`
+    : `${t.updated_on} ${updatedAt.toLocaleDateString(clock.locale, { day: 'numeric', month: 'short' })}, ${time}`
 
   const yesterdayDetail = comparison
     ? t.yesterday_at
-        .replace('{time}', comparison.hour)
+        .replace('{time}', formatClock(comparison.hour, clock))
         .replace('{temp}', `${comparison.yesterdayTemperature}${t.temp_unit}`)
     : undefined
 
@@ -155,7 +159,10 @@ export function WeatherCard({
           <MeteoIcon className={styles.nowcastIcon} icon={getPrecipitationIcon(nowcast.type)} />
           {nowcast.kind === 'ongoing'
             ? t.nowcast[nowcast.type].ongoing
-            : t.nowcast[nowcast.type][nowcast.kind].replace('{time}', nowcast.time)}
+            : t.nowcast[nowcast.type][nowcast.kind].replace(
+                '{time}',
+                formatClock(nowcast.time, clock),
+              )}
         </p>
       )}
 

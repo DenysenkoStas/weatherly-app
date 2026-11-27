@@ -183,6 +183,8 @@
 }
 
 .sunTime {
+  // "7:54 AM" stays on one line on narrow screens
+  white-space: nowrap;
   font-size: 16px;
   font-weight: 500;
   color: var(--text-heading);

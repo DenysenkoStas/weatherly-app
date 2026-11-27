@@ -30,10 +30,6 @@ export function getHourlyForDay(hourly: WeatherHourly, dateStr: string): HourlyE
     .filter((entry) => entry.time.startsWith(dateStr))
 }
 
-export function formatHour(isoTime: string): string {
-  return isoTime.slice(11, 16)
-}
-
 function getHourlyTimeKey(date: Date, timeZone: string): string {
   const parts = new Intl.DateTimeFormat('en-GB', {
     timeZone,

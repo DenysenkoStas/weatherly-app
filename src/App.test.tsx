@@ -135,14 +135,26 @@ describe('App', () => {
     render(<App />)
     fireEvent.click(screen.getByRole('button', { name: `${en.settings}: °C, m/s` }))
 
-    expect(screen.getByRole('radio', { name: en.motion_modes.auto })).toHaveProperty(
+    // The time format group has an "Auto" option too: look inside the animation group
+    const animation = within(screen.getByRole('group', { name: en.motion }))
+    expect(animation.getByRole('radio', { name: en.motion_modes.auto })).toHaveProperty(
       'checked',
       true,
     )
-    fireEvent.click(screen.getByRole('radio', { name: en.motion_modes.off }))
+    fireEvent.click(animation.getByRole('radio', { name: en.motion_modes.off }))
 
     expect(document.documentElement.dataset.motion).toBe('off')
     expect(localStorage.getItem('weatherly-motion')).toBe('off')
+  })
+
+  it('switches to a 12-hour clock from the settings menu', () => {
+    render(<App />)
+    fireEvent.click(screen.getByRole('button', { name: `${en.settings}: °C, m/s` }))
+
+    const time = within(screen.getByRole('group', { name: en.time_format }))
+    fireEvent.click(time.getByRole('radio', { name: en.time_formats['12h'] }))
+
+    expect(localStorage.getItem('weatherly-time-format')).toBe('12h')
   })
 
   it('removes a city from the favorites chips', () => {

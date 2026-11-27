@@ -3,7 +3,7 @@ import type { KeyboardEvent } from 'react'
 import type { WeatherDaily, WeatherHourly } from '../../types'
 import {
   getHourlyForDay,
-  formatHour,
+  formatHourLabel,
   getCurrentHourIndex,
   getChartPoints,
   getLinePath,
@@ -16,6 +16,7 @@ import { getWeatherIcon } from '../../utils/wmoIcons'
 import { MeteoIcon } from '../MeteoIcon'
 import { getWeatherLabel } from '../../utils'
 import { useHorizontalScroll } from '../../hooks/useHorizontalScroll'
+import { useClock } from '../../hooks/useTimeFormat'
 import styles from './ForecastCard.module.scss'
 
 // Keep in sync with .hourlyTrack in ForecastCard.module.scss
@@ -86,6 +87,7 @@ export function ForecastCard({
   const viewName = useId()
   // Stays when another day is picked
   const [view, setView] = useState<HourlyView>('temperature')
+  const clock = useClock()
   const dayPickerOverflow = useHorizontalScroll(dayPickerRef, forecast.time.length)
 
   const selectedDate = forecast.time[selectedDayIndex]
@@ -369,7 +371,7 @@ export function ForecastCard({
                     {currentHourIndex === i && (
                       <span className={styles.visuallyHidden}>{t.now}, </span>
                     )}
-                    {formatHour(hour.time)}
+                    {formatHourLabel(hour.time, clock)}
                   </span>
                   <MeteoIcon
                     className={styles.hourIcon}

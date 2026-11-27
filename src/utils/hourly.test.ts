@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { formatHour, getCurrentHourIndex, getHourlyForDay } from './hourly'
+import { getCurrentHourIndex, getHourlyForDay } from './hourly'
 import type { HourlyEntry } from './hourly'
 import type { WeatherHourly } from '../types'
 
@@ -70,13 +70,6 @@ describe('getHourlyForDay', () => {
     } as unknown as WeatherHourly
 
     expect(getHourlyForDay(withGap, '2026-06-27')[0].precipitationProbability).toBe(0)
-  })
-})
-
-describe('formatHour', () => {
-  it('extracts HH:MM from an ISO time string', () => {
-    expect(formatHour('2026-06-27T09:00')).toBe('09:00')
-    expect(formatHour('2026-06-27T23:00')).toBe('23:00')
   })
 })
 
