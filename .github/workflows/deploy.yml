@@ -1,17 +1,20 @@
 name: Deploy to GitHub Pages
 
+# Checks run for every pull request (Dependabot's included); only a push to master deploys
 on:
   push:
+    branches:
+      - master
+  pull_request:
     branches:
       - master
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
+# A newer run of the same branch or pull request cancels the older one
 concurrency:
-  group: pages
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -40,12 +43,17 @@ jobs:
       - run: npm run build
 
       - uses: actions/upload-pages-artifact@v5
+        if: github.event_name == 'push'
         with:
           path: dist
 
   deploy:
     needs: build
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

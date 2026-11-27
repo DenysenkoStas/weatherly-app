@@ -101,4 +101,4 @@ Tests live next to the code they cover (`*.test.ts`, `*.test.tsx`).
 
 ## Deployment
 
-Every push to `master` runs GitHub Actions: lint, formatting check, tests, end-to-end tests, and build, then deploys to GitHub Pages. The base path is configured in `vite.config.ts` as `/weatherly-app/`.
+Every push to `master` and every pull request run GitHub Actions: lint, formatting check, tests, end-to-end tests, and build; a push to `master` then deploys to GitHub Pages. Dependabot opens weekly pull requests with dependency and GitHub Actions updates. The base path is configured in `vite.config.ts` as `/weatherly-app/`.
